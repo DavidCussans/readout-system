@@ -1,0 +1,137 @@
+\documentclass[a4paper]{article}
+
+\RequirePackage{geometry}
+\RequirePackage{graphicx}
+\usepackage{authblk}
+%\usepackage{cleveref}
+\usepackage{caption}
+%\usepackage{subcaption}
+\usepackage[UKenglish]{babel}
+\usepackage{alltt}
+\usepackage{afterpage}
+
+\geometry{
+  a4paper,%
+  textwidth=16cm,% 
+  textheight=23.2cm,%
+  marginparsep=7pt,% 
+  marginparwidth=2.5cm%
+}
+
+\renewcommand*{\familydefault}{\sfdefault}
+
+\title{Requirements for the SoLid read-out system}
+\author[]{SoLid collaboration}
+
+
+\begin{document}
+
+
+\maketitle
+
+\abstract{
+}
+
+\tableofcontents
+
+\section{Introduction}
+
+This document defines the requirements for the full scale SoLid experiment's read-out system (the scope of which is defined below).
+The purpose of the requirements is to ensure that the read-out system that will be produced will perform the necessary functionality for the SoLid experiment to be successful.
+Two forms of requirements are defined.
+Mandatory requirements use the term `must', whilst the term `should' is used for requirements which are desirably but not mandatory.
+The requirements constrain the the overall design of the system, but should not constrain specific implementations.
+For example, it is a requirement that there be a neutron trigger but not a requirement that a specific algorithm be used for the trigger.
+During the design phase of the read-out system development the requirements may be updated, but once the initial version is agreed by the collaboration it is hoped that major changes will not be required.
+
+\subsection{Scope of the read-out system}
+
+The read out system includes the Silicon Photomultipliers (SiPMs), all electronics used to bias the SiPMs and store data collected from them, the software used to control the electronics,  the computing systems and software used to store and transmit the data out of SCK and the user interfaces to that software. 
+The read out system does not include the scintillators, wavelength shifting fibres, mechanical frames, shielding, etc. that forms the physical detector. 
+The read out system also does not include any software or computing systems used for data analysis or storage once the data is transmitted out of SCK.
+
+\section{Requirements}
+
+The requirements are split into a number of categories.
+The physics requirements are those that are constrained by the need to perform the physics analyses (an oscillation search and spectrum measurement) planned for the experiment.
+The infrastructure requirements are constrained by the infrastructure availability at BR2.
+The operational requirements define how an operator should be able to control the experiment.
+The budget requirements cover the time and cost constraints on the system.
+
+\subsection{Physics requirements}
+
+\begin{itemize}
+\item Neutron trigger - The system must be able to trigger on neutron signals. 
+    The neutron trigger should be x \% efficient for neutrons captured in the 6LiF:ZnS layer. 
+    For each neutron trigger the system must be able to store at least 0.5 ms of data from relevant channels. 
+    These requirements will ensure that the IBD trigger efficiency is independent of the positron energy and that the trigger rate does not strongly depend upon background signal rates.
+\item Threshold trigger - The system must be able to trigger when a signal above a defined threshold is detected from one or more scintillator cubes. 
+    This will allow measurement of efficiency of the neutron trigger and calibration running without neutron signals.
+\item Random trigger -  The system must be able to be randomly triggered. 
+    This will allow measurements of low amplitude signals.
+\item Cosmic muon trigger - The system should be able to trigger on a the signal from a cosmic ray muon crossing many scintillator cubes. 
+    For each cosmic ray trigger the system must be able to store relevant data in a time window around the trigger. 
+    This will allow studies of cosmic ray related background events.
+\item Energy range - Each channel must have a large enough range that a cosmic muon crossing a horizontal fibre does not normally saturate the range. 
+    This will allow the use of cosmic rays for energy calibration. 
+\item Channel resolution - Each channel must have a high enough resolution that the single pixel avalanche amplitude can be measured. 
+    This will allow the channel uniformity and stability to be measured and ensure that the read out system does not limit the energy resolution of the detector.
+\item Noise - The read out system will introduce analog and digital noise to the signals from the SiPMs. 
+    The combined noise from the read out system must be less than a single pixel avalanche and should be less than 0.1 PA.
+\item Channel uniformity - The readout system must be capable of supplying all channels with an over voltage that is uniform within x \%. 
+    This will limit systematic variations in the measurement of IBD candidates at different locations within the detector.
+\item Channel stability - The readout system must be cable of maintaining an over voltage that is stable within x \% over the five years of operation. 
+    This will limit systematic variations in the measurement of IBD candidates in reactor on/off cycles.
+\item Number of channels - The system must be capable of scaling up to take data from at least 6000 channels. 
+    This will allow the detector volume to be increased using the same read out design should additional modules be funded.  
+\item Experiment duration - The system should be capable of running for five years. 
+    This will allow a sensitive search for short baseline oscillations.
+\item Data required - The system must store the following data: 
+    \begin{itemize}
+    \item The time, position and waveform for signals identified as neutrons
+    \item The time, position and number of pixel avalanches of any signals identified as coming from the PVT within a time window of -x and +y around the neutron trigger
+    \item The over voltage supplied to all channels at all times during the experiment.
+    \item The temperature and any other local conditions measured during the experiment.
+    \item The start/end times and the trigger conditions for any data run.   
+    \end{itemize}
+    This will provide enough information to perform an oscillation analysis.
+\end{itemize}
+
+\subsection{Infrastructure requirements}
+
+\begin{itemize}
+\item A single optical Ethernet connection can be used to transfer data from the detector to the computing room at BR2.
+\item x is provided to power the read out system.
+\item The total bandwidth of data transmitted out of SCK should be limited to x GB/day.
+\item x, y, z are not allowed within the containment building.
+\end{itemize}
+
+\subsection{Operational requirements}
+
+\begin{itemize}
+\item Operators must be able to set a uniform over voltage on a set of channels. 
+\item Operators must be able to set a uniform bias voltage on a set of channels.
+\item Updating the bias voltage of all channels should take less than 30 s.
+\item Operators must be able to start and stop a data taking run defining:
+\item The trigger conditions for the run
+\item The duration of the run
+\item The channels included in the run
+\item Operators must be able to view the current state of the detector and any ongoing run.
+\item Operators must be able to view the historic state of the detector and any previous runs. 
+\item The system must not require constant supervision.
+\item The system should run autonomously, sending out alerts to operators when failures occur.
+\item The system should be operable from outside of SCK.
+\end{itemize}
+
+\subsection{Budget requirements}
+
+This section currently covers the budget requirements for the first phase of the detector deployment, funded by the Belgian research council. 
+The total costs below should include the purchase of parts and any workshop time required to assemble the electronics.
+\begin{itemize}
+\item The first phase of the experiment must be deployed by x (date) and should be deployed by y (date). 
+\item The total cost of the read out system for the first phase must be less than x euro and should be less than y euro.
+\item The read out system must cost less than x euro per channel and should cost less than y euro per channel.
+\end{itemize}
+
+
+\end{document}
