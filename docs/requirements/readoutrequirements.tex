@@ -23,7 +23,7 @@
 
 \title{Requirements for the SoLid read-out system}
 \author[]{SoLid collaboration}
-\date{\today\\V0.0}
+\date{\today\\V0.1}
 
 
 \begin{document}
@@ -45,7 +45,7 @@ During the design phase of the read-out system development the requirements may 
 
 \subsection{Scope of the read-out system}
 
-The read out system includes the Silicon Photomultipliers (SiPMs), all electronics used to bias the SiPMs and store data collected from them, the software used to control the electronics,  the computing systems and software used to store and transmit the data out of SCK and the user interfaces to that software. 
+The read out system includes the photo sensors (likely Silicon Photomultipliers or SiPMs), all electronics used to bias the sensors and store data collected from them, the software used to control the electronics,  the computing systems and software used to store and transmit the data out of SCK and the user interfaces to that software. 
 The read out system does not include the scintillators, wavelength shifting fibres, mechanical frames, shielding, etc. that forms the physical detector. 
 The read out system also does not include any software or computing systems used for data analysis or storage once the data is transmitted out of SCK.
 
@@ -60,11 +60,11 @@ The budget requirements cover the time and cost constraints on the system.
 \subsection{Physics requirements}
 
 \begin{itemize}
-\item Neutron trigger - The system must be able to trigger on neutron signals. 
+\item Neutron trigger - The system must be able to trigger on neutron signals coming from one vertical and one horizontal fibre in the same plane. 
     The neutron trigger should be x \% efficient for neutrons captured in the $^6$LiF:ZnS(Ag) layer. 
-    For each neutron trigger the system must be able to store at least 0.5 ms of data from relevant channels. 
+    For each neutron trigger the system must be able to store at least 0.5 ms of data from relevant channels around the neutron ID. 
     These requirements will ensure that the IBD trigger efficiency is independent of the positron energy and that the trigger rate does not strongly depend upon background signal rates.
-\item Threshold trigger - The system must be able to trigger when a signal above a defined threshold is detected from one or more scintillator cubes. 
+\item Threshold trigger - The system must be able to trigger when a signal above a defined threshold is detected from one or more fibres in coincidence.
     This will allow measurement of efficiency of the neutron trigger and calibration running without neutron signals.
 \item Random trigger -  The system must be able to be randomly triggered. 
     This will allow measurements of low amplitude signals.
@@ -73,10 +73,10 @@ The budget requirements cover the time and cost constraints on the system.
     This will allow studies of cosmic ray related background events.
 \item Energy range - Each channel must have a large enough range that a cosmic muon crossing a horizontal fibre does not normally saturate the range. 
     This will allow the use of cosmic rays for energy calibration. 
-\item Channel resolution - Each channel must have a high enough resolution that the single pixel avalanche amplitude can be measured. 
+\item Channel resolution - Each channel must have a high enough resolution that the single photon amplitude can be measured. 
     This will allow the channel uniformity and stability to be measured and ensure that the read out system does not limit the energy resolution of the detector.
-\item Noise - The read out system will introduce analog and digital noise to the signals from the SiPMs. 
-    The combined noise from the read out system must be less than a single pixel avalanche and should be less than 0.1 PA.
+\item Noise - The read out system will introduce analog and digital noise to the signals from the sensors. 
+    The combined noise from the read out system must be less than a single photon detection and should be less than 0.1 photons.
 \item Channel uniformity - The readout system must be capable of supplying all channels with an over voltage that is uniform within x \%. 
     This will limit systematic variations in the measurement of IBD candidates at different locations within the detector.
 \item Channel stability - The readout system must be cable of maintaining an over voltage that is stable within x \% over the five years of operation. 
@@ -88,7 +88,7 @@ The budget requirements cover the time and cost constraints on the system.
 \item Data required - The system must store the following data: 
     \begin{itemize}
     \item The time, position and waveform for signals identified as neutrons
-    \item The time, position and number of pixel avalanches of any signals identified as coming from the PVT within a time window of -x and +y around the neutron trigger
+    \item Enough data to extract the time, position and number of photons of any signals identified as coming from the PVT within a time window of -x and +y around the neutron trigger
     \item The over voltage supplied to all channels at all times during the experiment.
     \item The temperature and any other local conditions measured during the experiment.
     \item The start/end times and the trigger conditions for any data run.   
