@@ -85,6 +85,17 @@ They will receive the slow control and waveform data.
 The software will perform data reduction on the triggered data before writing it to disk.
 The computing system will act as a short term (few day) cache of the data, which will be transferred off site for long term storage.
 
+The system is designed to ensure modularity, potentially down to the plane level.
+This will allow either each plane or a small number of planes, to be run independently.
+This will allow, for example, pre-deployment tests with radioactive sources and cosmic rays using the full read-out chain for a plane.
+The modularity will also allow flexibility in the grounding scheme used, giving the potential to fully isolate each plane from the others if needed.
+
+The layout of the system parts was also considered.
+Assuming single ended read-out of the fibres, the preferred layout would be to place all SiPMs on two adjacent edges of the detector.
+From here all cables would be routed to the shared corner, out of the plane and to the analog and digital board which would be mounted outside the shielding within the footprint of the plane.
+The cabling for the sensors may be a small number of ribbon cables per edge, allowing simple connection to the analog boards.
+The shielding of the detector should be designed such that the analog and digital boards do not need to be removed from their mounting to access the detector inside the shielding.
+
 \section{Sensor choice}
 
 To reduce the R\&D required in the upgrade it was decided to stay with $3\times3$ mm SiPMs.
@@ -102,6 +113,7 @@ The three main options being:
 Comparing the specifications of the sensors it seems that Sensl's C series may be a better replacement for the Hamamatsu sensors.
 However, direct comparisons between the devices based on specifications is not easy, and so samples of the above sensors should be evaluated.
 The evaluation should measure the gain, dark count rate and cross talk probability for each sensor for a range of temperatures and over voltages.
+
 
 \section{Amplification and shaping}
 
