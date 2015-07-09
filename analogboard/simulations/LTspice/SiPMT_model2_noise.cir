@@ -1,0 +1,31 @@
+* Z:\home\phdgc\Solid\circuit_simulation\SiPMT\SiPMT_model2.asc
+* Injects signal into one or more active cells from node PH
+
+.SUBCKT SiPMT  anode cathode ph PARAMS: Cd=80f Cq=8f Cm=59p Rd=1k Rq=300k Nf=1 Np=3599 Ith=100u Vbd=70.5
+
+* Parameters
+* .PARAM Cd=80f
+* .PARAM Cq=8f
+* .PARAM Cm=0.5f
+* .PARAM Rd=1k
+* .PARAM Rq=300k
+* .PARAM Nf=1
+* .PARAM Np=3599
+* .PARAM Ith=100u
+* .PARAM Vbd=70.5
+
+* Passive cells
+Rqp cathode N002 {Rq/Np}
+Cqp cathode N002 {Cq*Np}
+Cdp N002 anode {Cd*Np}
+
+* Active cells
+Rq cathode N001 {Rq/Nf}
+Cq cathode N001 {Cq*Nf}
+Cd N001 anode {Cd*Nf}
+Rd N001 ph {Rd/Nf}
+
+* Overall parasitic capacitance
+Cg cathode anode {Cg}
+
+.ends
