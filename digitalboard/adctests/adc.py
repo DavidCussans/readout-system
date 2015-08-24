@@ -22,6 +22,17 @@ lvdscurrents = {
         1.75: 0b111
 }
 
+napchannels = {
+        1: 0b0001,
+        2: 0b0001,
+        3: 0b0010,
+        4: 0b0010,
+        5: 0b0100,
+        6: 0b0100,
+        7: 0b1000,
+        8: 0b1000
+}
+
 class ADC:
 
     def __init__(self, checkwrite=False):
@@ -49,6 +60,7 @@ class ADC:
         return self.readreg("B", addr)
 
     def reset(self, bank=None):
+        """Reset ADC bank(s)."""
         rstcmd  = 0x1 << 7
         if bank == "A" or bank is None:
             self.writerega(0x0, rstcmd) 
@@ -56,6 +68,7 @@ class ADC:
             self.writeregb(0x0, rstcmd) 
 
     def testpattern(self, on, pattern=0x0, bank=None):
+        """Set bank(s)'s test pattern and en/disable it."""
         pattern = pattern & 0xfff
         msb = 0x0
         if on:
@@ -63,13 +76,14 @@ class ADC:
         msb |= ((pattern & 0xf) >> 8)
         lsb = pattern & 0xff
         if bank is None or bank == "A":
-            self.writerega(0x3, msb)
             self.writerega(0x4, lsb)
+            self.writerega(0x3, msb)
         if bank is None or bank == "B":
-            self.writeregb(0x3, msb)
             self.writeregb(0x4, lsb)
+            self.writeregb(0x3, msb)
 
     def setoutputmode(self, lvdscurrent, lvdstermination, outenable, lanes, bits, bank=None):
+        """Conifgure bank(s)'s output mode."""
         mode = 0x0
         assert lanes in [1, 2] and bits in [12, 14, 16]
         if lanes == 1:
@@ -97,6 +111,7 @@ class ADC:
             self.writerega(0x2, mode)
 
     def setformat(self, randomiser, twoscomp, stabliser=True, bank=None):
+        """Configure bank(s)'s output format."""
         if bank is None or bank == "A":
             data = self.readrega(0x1)
             if twoscomp:
@@ -129,6 +144,7 @@ class ADC:
             self.writeregb(0x1, data)
 
     def setsleep(self, sleep, bank=None):
+        """Put ADC bank(s) to sleep."""
         if bank is None or bank == "A":
             data = self.readrega(0x1)
             if:
@@ -145,27 +161,16 @@ class ADC:
             self.writeregb(0x1, data)
 
     def nap(self, channels):
+        """Provide a list of channels to put down for a nap, all others will be not napping."""
         dataa = self.readrega(0x1)
         dataa &= 0xf0
         datab = self.readregb(0x1)
         datab &= 0xf0
         for chan in channels:
             assert chan < 9 and chan > 0
-            if chan == 1:
-                dataa |= 0b0001
-            if chan == 2:
-                datab |= 0b0001
-            if chan == 3:
-                datab |= 0b0010
-            if chan == 4:
-                dataa |= 0b0010
-            if chan == 5:
-                dataa |= 0b0100
-            if chan == 6:
-                datab |= 0b0100
-            if chan == 7:
-                datab |= 0b1000
-            if chan == 8:
-                dataa |= 0b1000
+            if chan in [1, 4, 5, 8]:
+                dataa |= napchannels[chan]
+            else:
+                datab |= napchannels[chan]
         self.writerega(0x1, dataa)
         self.writeregb(0x1, datab)
