@@ -69,11 +69,11 @@ class ADC:
 
     def testpattern(self, on, pattern=0x0, bank=None):
         """Set bank(s)'s test pattern and en/disable it."""
-        pattern = pattern & 0xfff
+        pattern = pattern & 0x3fff
         msb = 0x0
         if on:
             msb = 0x1 << 7
-        msb |= ((pattern & 0xf) >> 8)
+        msb |= ((pattern & 0x3f00) >> 8)
         lsb = pattern & 0xff
         if bank is None or bank == "A":
             self.writerega(0x4, lsb)
@@ -83,7 +83,7 @@ class ADC:
             self.writeregb(0x3, msb)
 
     def setoutputmode(self, lvdscurrent, lvdstermination, outenable, lanes, bits, bank=None):
-        """Conifgure bank(s)'s output mode."""
+        """Configure bank(s)'s output mode."""
         mode = 0x0
         assert lanes in [1, 2] and bits in [12, 14, 16]
         if lanes == 1:
@@ -102,7 +102,7 @@ class ADC:
                 mode |= 0b111
         if not outenable:
             mode |= 0b1000
-        if termon:
+        if lvdstermination:
             mode |= (0x1 << 4)
         mode |= (lvdscurrents[lvdscurrent] << 5)
         if bank is None or bank == "A":
