@@ -12,6 +12,115 @@ If the ADC.cehckwrite flag is True then all write commands will immediately
 be confirmed by a read command to the same address.
 """
 
+class SoLidFPGA:
+
+    def __init__(self, verbose=False):
+        cm = uhal.ConnectionManager("file://solidfpga.xml")
+        self.device = cm.getDevice("SoLidFPGA")
+        self.verbose = verbose
+        self.config()
+        self.offsets = TimingOffsets(self.device)
+        self.trigger = Trigger(self.device)
+        self.databuffer = OutputBuffer(self.device)
+        self.spi = SPICore(self.device)
+        self.i2c = I2CCore(self.device)
+        self.adcs = [ADCLTM9007(self.spi, 0, 1, True)]
+        self.analogid = IDXXXChip(self.i2c)
+        self.voltagetrimdac = DACXXXChip(self.i2c)
+
+        self.firmwareversion = None
+
+    def config(self):
+        val = self.device.getNode("id.magic").read()
+        self.device.dispatch()
+        assert val == 0xdeadbeef, "Incorrect firmware?"
+        self.firmwareversion = self.device.getNode("id.version").read()
+        self.device.dispatch()
+        if self.verbose:
+            print "SoLid FPGA: Firmware version = %d." % self.firmwareversion
+
+
+
+# IPbus blocks
+class TimingOffsets:
+    """Timing offsets for the ADC data deserialisation."""
+
+    def __init__(self, device):
+        self.device = device
+
+class Trigger:
+    """Trigger configuration block."""
+    
+    def __init__(self, device):
+        self.device = device
+
+class OutputBuffer:
+    """Output data block."""
+    
+    def __init__(self, device):
+        self.device = device
+        
+class I2CCore:
+    """I2C communication block."""
+
+    def __init__(self, device):
+        self.device = device
+
+
+"""
+SPI core XML:
+
+<node description="SPI master controller" fwinfo="endpoint;width=3">
+    <node id="d0" address="0x0" description="Data reg 0"/>
+    <node id="d1" address="0x1" description="Data reg 1"/>
+    <node id="d2" address="0x2" description="Data reg 2"/>
+    <node id="d3" address="0x3" description="Data reg 3"/>
+    <node id="ctrl" address="0x4" description="Control reg"/>
+    <node id="divider" address="0x5" description="Clock divider reg"/>
+    <node id="ss" address="0x6" description="Slave select reg"/>
+</node>
+"""
+class SPICore:
+
+    def __init__(self, device):
+        self.device = device
+        self.data= device.getNode("spi.d0")
+        self.control = device.getNode("spi.ctrl")
+        self.divider = device.getNode("spi.divider")
+        self.slaveselect = device.getNode("spi.ss")
+        self.configured = False
+
+    def config(self):
+        "Configure SPI interace for communicating with ADCs."
+        value = 0x0
+        value |= 0x1 << 13 # Automitic slave select
+        # I think we want MSB first (ie R/notW in the MSB)
+        # Need to check on the phase
+        value |= 0x0f # 16 bit transfers
+        self.control.write(value)
+        self.device.dispatch()
+        # Need to configure the divider to run at X MHz
+        self.configured = True
+
+    def transmit(self, chip, value):
+        assert chip >= 0 and chip < 8
+        if not self.configured:
+            self.config()
+        self.data.write(value & 0xff)
+        self.slaveselect.write(0x1 << chip)
+        self.control.rmwbits(0xffffffff, 0x1 << 8)
+        self.device.dispatch()
+        finished = False
+        while not finished:
+            ctrl = self.control.read()
+            data = self.data.read()
+            self.device.dispatch()
+            # Check if transfer is complete by reading the GO_BSY bit of CTRL
+            finished = ctrl & (0x1 << 8) > 0
+        return data
+
+# External chips
+
 lvdscurrents = {
         3.5: 0b000,
         4.0: 0b001,
@@ -33,16 +142,29 @@ napchannels = {
         8: 0b1000
 }
 
-class ADC:
+class ADCLTM9007:
 
-    def __init__(self, checkwrite=False):
+    def __init__(self, spicore, csA, csB, checkwrite=False):
         self.checkwrite = checkwrite
-        pass
+        self.spicore = spicore
+        self.csA = csA
+        self.csB = csB
 
     def writereg(self, bank, addr, data):
+        value = 0x0
+        value |= 0x1 << 15
+        value |= (addr & 0x7f) << 8
+        value |= data & 0xff
+        assert bank in ["A", "B"]
+        if bank == "A":
+            reply = self.spicore.transmit(self.csA, value)
+        else:
+            reply = self.spicore.transmit(self.csB, value)
         if self.checkwrite:
             readdata = self.readreg(bank, addr)
-            assert readdata == data, "Incorrect data from bank %s register 0x%x: after writing 0x%x, read 0x%x.\n" % (bank, addr, data, readdata)
+            msg = "Incorrect data from bank %s register 0x%x: " (bank, addr)
+            msg += " after writing 0x%x, read 0x%x.\n" % (data, readdata)
+            assert readdata == data, msg
 
     def writerega(self, addr, data):
         self.writereg("A", addr, data)
@@ -51,7 +173,15 @@ class ADC:
         self.writereg("B", addr, data)
 
     def readreg(self, bank, addr):
-        return 0x0
+        value = 0x0
+        value |= 0x1 << 15
+        value |= (addr & 0x7f) << 8
+        assert bank in ["A", "B"]
+        if bank == "A":
+            reply = self.spicore.transmit(self.csA, value)
+        else:
+            reply = self.spicore.transmit(self.csB, value)
+        return reply & 0xff
 
     def readrega(self, addr):
         return self.readreg("A", addr)
@@ -174,3 +304,13 @@ class ADC:
                 datab |= napchannels[chan]
         self.writerega(0x1, dataa)
         self.writeregb(0x1, datab)
+
+class DACXXXChip:
+
+    def __init__(self, i2ccore):
+        self.i2ccore = i2ccore
+
+class IDXXXChip:
+
+    def __init__(self, i2ccore):
+        self.i2ccore = i2ccore
