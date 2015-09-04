@@ -2,17 +2,20 @@
 functionalitytest.py checks the SPI interface to the LTM9007.
 """
 
-import adc
+import solidfpa
 
+fpga = SoLidFPGA(1)
+fpga.adcs[0].checkwrite=True
+fpga.config()
 
-dev = adc.ADC(True) # Enforce write check
+dut = fpga.adcs[0]
 # Perform each configuration fuction
-dev.reset()
-dev.testpattern(True, 0x2b0b) 
-dev.testpattern(False)
-dev.setoutputmode(3.0, False, True, 1, 14)
-dev.setformat(True, False)
-dev.setsleep(True)
-dev.setsleep(False)
-dev.nap([1, 4, 7, 8])
-dev.reset()
+dut.reset()
+dut.testpattern(True, 0x2b0b) 
+dut.testpattern(False)
+dut.setoutputmode(3.0, False, True, 1, 14)
+dut.setformat(True, False)
+dut.setsleep(True)
+dut.setsleep(False)
+dut.nap([1, 4, 7, 8])
+dut.reset()

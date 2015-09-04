@@ -1,20 +1,25 @@
 """
-adc.py provides functionality to control one or more LTM9007 ADCs via IPbus.
-Each chip is really two four channel ADCs, with each controlled with a separate
-chip select line. Bank A is channels 1, 4, 5, 8. Bank B is 2, 3, 6, 7.
+solidfpa.py provides functionality to control the front end boards currently
+being prototyped.
 
-Control is via a simple SPI interface where 16 bits are transferred.
-b0 is read/!write
-b7:1 are the register address
-b15:b8 are the data sent to/from the ADC
+For the ADC:
+    One or more LTM9007 ADCs can be controlled via the IPbus SPI block.
+    Each chip is really two four channel ADCs, with each controlled with a 
+    separate chip select line. Bank A is channels 1, 4, 5, 8. 
+    Bank B is 2, 3, 6, 7.
 
-If the ADC.cehckwrite flag is True then all write commands will immediately
-be confirmed by a read command to the same address.
+    Control is via a simple SPI interface where 16 bits are transferred.
+    b0 is read/!write
+    b7:1 are the register address
+    b15:b8 are the data sent to/from the ADC
+
+    If the ADC.cehckwrite flag is True then all write commands will immediately
+    be confirmed by a read command to the same address.
 """
 
 class SoLidFPGA:
 
-    def __init__(self, verbose=False):
+    def __init__(self, nadc=4, verbose=False):
         cm = uhal.ConnectionManager("file://solidfpga.xml")
         self.device = cm.getDevice("SoLidFPGA")
         self.verbose = verbose
@@ -24,7 +29,9 @@ class SoLidFPGA:
         self.databuffer = OutputBuffer(self.device)
         self.spi = SPICore(self.device)
         self.i2c = I2CCore(self.device)
-        self.adcs = [ADCLTM9007(self.spi, 0, 1, True)]
+        self.adcs = []
+        for i in range(1):
+            self.adcs.append(ADCLTM9007(self.spi, 2 * i, 2 * i + 1))
         self.analogid = IDXXXChip(self.i2c)
         self.voltagetrimdac = DACXXXChip(self.i2c)
 
@@ -84,6 +91,8 @@ class SPICore:
 
     def __init__(self, device):
         self.device = device
+        # Only a single data register is required since all transfers are
+        # 16 bit long
         self.data= device.getNode("spi.d0")
         self.control = device.getNode("spi.ctrl")
         self.divider = device.getNode("spi.divider")
@@ -93,9 +102,13 @@ class SPICore:
     def config(self):
         "Configure SPI interace for communicating with ADCs."
         value = 0x0
-        value |= 0x1 << 13 # Automitic slave select
-        # I think we want MSB first (ie R/notW in the MSB)
-        # Need to check on the phase
+        value |= 0x1 << 13 # Automatic slave select
+        value |= 0x0 << 12 # No interrupt
+        value |= 0x0 << 11 # MSB first
+        # ADC samples data on rising edge of SCK
+        value |= 0x1 << 10 # change ouput on falling edge of SCK
+        # ADC changes output shortly after falling edge of SCK
+        value |= 0x0 << 9 # read input on rising edge
         value |= 0x0f # 16 bit transfers
         self.control.write(value)
         self.device.dispatch()
