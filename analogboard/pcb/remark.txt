@@ -1,0 +1,10 @@
+The last sheet in the schematic is the amplifier 8x 
+
+vin+  is the + of the amplifier , but the signal is negative
+vout+ corresponse with vin+  so this has to connected to the ADC board Vin- pin 
+
+resistors are 805 size because these I have 
+for the final layout 603 is possible.
+Smaller values will be a problem because we need precision. 
+Also the cost of the resitors is big  on average > 0.2 Euro  for the matched resistors. 
+No solution to match the capacitors.But these are not so critical except the integration resistor. 
