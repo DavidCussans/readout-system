@@ -8,3 +8,15 @@ for the final layout 603 is possible.
 Smaller values will be a problem because we need precision. 
 Also the cost of the resitors is big  on average > 0.2 Euro  for the matched resistors. 
 No solution to match the capacitors.But these are not so critical except the integration resistor. 
+
+
+Output order of channels is not as input order on the ADC board) 
+( so  in 0   doesn't corresponds to in 0 on the ADC board). 
+Didn't anticipate to have a socket out. Proposal was a VME kind system. So logic is that the front end card is pins. 
+( and the ADC / FPGA card  socket at the left component side and pins at the right component side ) .
+
+Position of the DIN 61412 connector not optimal in respect to ADC board.
+
+Full functionality for the final design as now known. Except the nr of channels. 
+
+
