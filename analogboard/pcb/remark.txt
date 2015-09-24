@@ -20,3 +20,12 @@ Position of the DIN 61412 connector not optimal in respect to ADC board.
 Full functionality for the final design as now known. Except the nr of channels. 
 
 
+
+Bugs  :
+- no solder resist on middle pad  ADL5317   corrected for this run by PCB manufacure
+
+
+Improvements / suggestions :
+- input filters for the LV power supplies and HV power supply .
+
+
