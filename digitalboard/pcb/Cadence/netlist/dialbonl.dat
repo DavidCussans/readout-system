@@ -1,0 +1,1011 @@
+BODY ORDERED NET LIST - 1  
+C1               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        P3V3                    
+C1_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C1_1_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<7>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B
+C1_2_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<0>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_1
+C1_3_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<1>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_2
+C1_4_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<2>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_3
+C1_5_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<3>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_4
+C1_6_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<4>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_5
+C1_7_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<5>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_6
+C1_8_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN+<6>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_7
+C2               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        P2V5                    
+C2_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C2_1_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<7>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B
+C2_2_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<0>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_1
+C2_3_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<1>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_2
+C2_4_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<2>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_3
+C2_5_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<3>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_4
+C2_6_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<4>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_5
+C2_7_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<5>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_6
+C2_8_1           CAPCERSMDCL1_1812-470NF,50V 1        ANA_IN-<6>              
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_7
+C3               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        P1V8                    
+C3_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8                    
+C3_1_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_2_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_3_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_4_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_5_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_6_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_7_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C3_8_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C4               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        P3V3                    
+C4_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8                    
+C4_1_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_2_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_3_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_4_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_5_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_6_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_7_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C4_8_1           CAPCERSMDCL2_0603-100NF,16V 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C5               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        P2V5                    
+C5_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C5_1_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<1>_1               
+C5_2_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<8>_1               
+C5_3_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<7>_1               
+C5_4_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<6>_1               
+C5_5_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<5>_1               
+C5_6_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<4>_1               
+C5_7_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<3>_1               
+C5_8_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN+<2>_1               
+C6               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        P1V8                    
+C6_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C6_1_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<1>_1               
+C6_2_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<8>_1               
+C6_3_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<7>_1               
+C6_4_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<6>_1               
+C6_5_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<5>_1               
+C6_6_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<4>_1               
+C6_7_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<3>_1               
+C6_8_1           CAPCERSMDCL1_0603-180PF,50V 1        GND_SIGNAL              
+                                  2        AIN-<2>_1               
+C7               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I26_B
+C7_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C8               CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I33_B
+C8_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C9               CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I29_B
+C9_1             CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C10              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I44_B
+C10_1            CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        P1V8A                   
+C11              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I26_B
+C11_1            CAPCERSMDCL2_0603-100NF,16V 1        CLK40_ADC0              
+                                  2        CLK+_1                  
+C12              CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        VBIAS-                  
+C12_1            CAPCERSMDCL2_0603-100NF,16V 1        CLK40_ADC0_N            
+                                  2        CLK-_1                  
+C13              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I33_B
+C14              CAPCERSMDCL2_0805-22UF_X7R,10VA 1        GND_SIGNAL              
+                                  2        VBIAS+                  
+C15              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I26_B
+C16              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I33_B
+C17              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        P3V3                    
+C18              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        P3V3                    
+C19              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I17_B
+C20              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I17_B
+C21              CAPCERSMDCL2_0603-22UF,4V 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I17_B
+C22              CAPCERSMDCL2_0402-100NF,16V_GEN 1        UNNAMED_7_CAPCERSMDCL2_I11_A
+                                  2        MGT_TX_N<2>             
+C23              CAPCERSMDCL2_0402-100NF,16V_GEN 1        UNNAMED_7_CAPCERSMDCL2_I3_A
+                                  2        MGT_TX<3>               
+C24              CAPCERSMDCL2_0402-100NF,16V_GEN 1        UNNAMED_7_CAPCERSMDCL2_I12_A
+                                  2        MGT_TX<2>               
+C25              CAPCERSMDCL2_0402-100NF,16V_GEN 1        UNNAMED_7_CAPCERSMDCL2_I5_A
+                                  2        MGT_TX_N<3>             
+C26              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I16_B
+C27              CAPCERSMDCL2_0603-22UF,4V 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I16_B
+C28              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        P3V3                    
+C29              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        P3V3                    
+C30              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I31_B
+C31              CAPCERSMDCL2_0402-1UF,16V 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I31_B
+C32              CAPCERSMDCL2_0603-22UF,4V 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I31_B
+C33              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I27_B
+C34              CAPCERSMDCL2_0603-22UF,4V 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I27_B
+C35              CAPCERSMDCL2_0603-10UF,6.3V 1        GND_SIGNAL              
+                                  2        P3V3                    
+C36              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        VCC_CLK_40              
+C37              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        VCC_CLK_40              
+C38              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        VCC_CLK_40              
+C39              CAPCERSMDCL2_0603-10UF,6.3V 1        GND_SIGNAL              
+                                  2        VCC_CLK_40              
+C40              CAPCERSMDCL2_0603-10UF,6.3V 1        GND_SIGNAL              
+                                  2        P3V3                    
+C41              CAPCERSMDCL2_0603-100NF,16V 1        UNNAMED_9_CAPCERSMDCL2_I82_A
+                                  2        CLK40_IN                
+C42              CAPCERSMDCL2_0603-100NF,16V 1        UNNAMED_9_CAPCERSMDCL2_I83_A
+                                  2        CLK40_IN_N              
+C43              CAPCERSMDCL2_0402-100NF,16V_GEN 1        GND_SIGNAL              
+                                  2        VCC_REFOSC              
+C44              CAPCERSMDCL2_0603-10UF,6.3V 1        GND_SIGNAL              
+                                  2        VCC_REFOSC              
+C45              CAPCERSMDCL2_0603-100NF,16V 1        XA                      
+                                  2        UNNAMED_9_CAPCERSMDCL2_I111_B
+C46              CAPCERSMDCL2_0603-100NF,16V 1        XB                      
+                                  2        UNNAMED_9_CAPCERSMDCL2_I112_B
+C47              CAPCERSMDCL2_1210-10UF,25V 1        P5V                     
+                                  2        GND_SIGNAL              
+C48              CAPCERSMDCL2_1210-10UF,25V 1        VIN_DCDC                
+                                  2        GND_SIGNAL              
+IC1              TPS5200DRCT-GND=GND_SIGNAL 1        VREF_BIAS-              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I26_B
+                                  3        VBIAS-                  
+                                  4        GND_SIGNAL              
+                                  5        VBIAS-                  
+                                  6        UNNAMED_3_CAPCERSMDCL2_I29_B
+                                  7        UNNAMED_3_CAPCERSMDCL2_I26_B
+                                  9        UNNAMED_3_RSMD0603_I25_A
+                                  10       UNNAMED_3_CAPCERSMDCL2_I26_B
+IC2              TPS5200DRCT-GND=GND_SIGNAL 1        VREF_BIAS+              
+                                  2        UNNAMED_3_CAPCERSMDCL2_I33_B
+                                  3        VBIAS+                  
+                                  4        GND_SIGNAL              
+                                  5        VBIAS+                  
+                                  6        UNNAMED_3_CAPCERSMDCL2_I44_B
+                                  7        UNNAMED_3_CAPCERSMDCL2_I33_B
+                                  9        UNNAMED_3_RSMD0603_I39_A
+                                  10       UNNAMED_3_CAPCERSMDCL2_I33_B
+IC3              SI5326A-C-GM-GND=GND_SIGNAL,VDA 1        CLK40_RST_N             
+                                  3        CLK40_CLK1_VALID_N      
+                                  4        CLK40_CLK2_VALID_N      
+                                  6        XA                      
+                                  7        XB                      
+                                  11       CLK40_RATE0             
+                                  12       CLK_40_FROM_FPGA        
+                                  13       CLK_40_FROM_FPGA_N      
+                                  15       CLK40_RATE1             
+                                  16       UNNAMED_9_CAPCERSMDCL2_I83_A
+                                  17       UNNAMED_9_CAPCERSMDCL2_I82_A
+                                  18       CLK40_LOL               
+                                  19       CLK40_PHASE_DEC         
+                                  20       CLK40_PHASE_INC         
+                                  21       CLK40_CLK_SEL           
+                                  22       CLK40_I2C_SCL           
+                                  23       CLK40_I2C_SDA           
+                                  24       GND_SIGNAL              
+                                  25       GND_SIGNAL              
+                                  26       GND_SIGNAL              
+                                  28       CLK40_ADC0              
+                                  29       CLK40_ADC0_N            
+                                  34       CLK_40_FPGA_N           
+                                  35       CLK_40_FPGA             
+                                  36       GND_SIGNAL              
+IC4              SN74LVC1G07DCK-GND=GND_SIGNAL,A 2        PGOOD                   
+                                  4        PGOOD_5V                
+J1               CON14P-MOLEX_87831 2        JTAG_VREF               
+                                  3        GND_SIGNAL              
+                                  4        FPGA_TMS                
+                                  5        GND_SIGNAL              
+                                  6        FPGA_TCK                
+                                  7        GND_SIGNAL              
+                                  8        FPGA_TDO                
+                                  9        GND_SIGNAL              
+                                  10       FPGA_TDI                
+                                  11       GND_SIGNAL              
+J2               CON2P-MSTBVA2.5-2 1        P5V                     
+                                  2        GND_SIGNAL              
+J3               CON3P-SIL254D    1        GND_SIGNAL              
+                                  2        UNNAMED_3_CON3P_I71_A_1 
+                                  3        UNNAMED_3_CON3P_I71_A   
+J4               CON3P-SIL254D    1        GND_SIGNAL              
+                                  2        UNNAMED_3_CON3P_I62_A_1 
+                                  3        UNNAMED_3_CON3P_I62_A   
+J5               CON3P-SIL254D    1        GND_SIGNAL              
+                                  2        UNNAMED_3_CON3P_I55_A_1 
+                                  3        UNNAMED_3_CON3P_I55_A   
+J6               CONABC96-09 03 196 6921 A1       GND_SIGNAL              
+                                  A2       ANA_IN+<0>              
+                                  A3       ANA_IN-<0>              
+                                  A4       GND_SIGNAL              
+                                  A5       ANA_IN+<2>              
+                                  A6       ANA_IN-<2>              
+                                  A7       GND_SIGNAL              
+                                  A8       ANA_IN+<4>              
+                                  A9       ANA_IN-<4>              
+                                  A10      GND_SIGNAL              
+                                  A11      ANA_IN+<6>              
+                                  A12      ANA_IN-<6>              
+                                  A13      GND_SIGNAL              
+                                  A16      GND_SIGNAL              
+                                  A19      GND_SIGNAL              
+                                  A22      GND_SIGNAL              
+                                  A25      GND_SIGNAL              
+                                  A28      GND_SIGNAL              
+                                  A29      EXTERNAL_SDA            
+                                  A30      DGND                    
+                                  A31      P2V5                    
+                                  A32      P5V                     
+                                  B1       GND_SIGNAL              
+                                  B2       GND_SIGNAL              
+                                  B3       GND_SIGNAL              
+                                  B4       GND_SIGNAL              
+                                  B5       GND_SIGNAL              
+                                  B6       GND_SIGNAL              
+                                  B7       GND_SIGNAL              
+                                  B8       GND_SIGNAL              
+                                  B9       GND_SIGNAL              
+                                  B10      GND_SIGNAL              
+                                  B11      GND_SIGNAL              
+                                  B12      GND_SIGNAL              
+                                  B13      GND_SIGNAL              
+                                  B14      GND_SIGNAL              
+                                  B15      GND_SIGNAL              
+                                  B16      GND_SIGNAL              
+                                  B17      GND_SIGNAL              
+                                  B18      GND_SIGNAL              
+                                  B19      GND_SIGNAL              
+                                  B20      GND_SIGNAL              
+                                  B21      GND_SIGNAL              
+                                  B22      GND_SIGNAL              
+                                  B23      GND_SIGNAL              
+                                  B24      GND_SIGNAL              
+                                  B25      GND_SIGNAL              
+                                  B26      GND_SIGNAL              
+                                  B27      GND_SIGNAL              
+                                  B28      GND_SIGNAL              
+                                  B29      P3V3                    
+                                  B30      DGND                    
+                                  B31      P2V5                    
+                                  B32      P5V                     
+                                  C1       GND_SIGNAL              
+                                  C2       ANA_IN+<1>              
+                                  C3       ANA_IN-<1>              
+                                  C4       GND_SIGNAL              
+                                  C5       ANA_IN+<3>              
+                                  C6       ANA_IN-<3>              
+                                  C7       GND_SIGNAL              
+                                  C8       ANA_IN+<5>              
+                                  C9       ANA_IN-<5>              
+                                  C10      GND_SIGNAL              
+                                  C11      ANA_IN+<7>              
+                                  C12      ANA_IN-<7>              
+                                  C13      GND_SIGNAL              
+                                  C16      GND_SIGNAL              
+                                  C19      GND_SIGNAL              
+                                  C22      GND_SIGNAL              
+                                  C25      GND_SIGNAL              
+                                  C28      GND_SIGNAL              
+                                  C29      EXTERNAL_SCL            
+                                  C30      DGND                    
+                                  C31      P2V5                    
+                                  C32      P5V                     
+J7               CON20P_SFP-1367073-1 1        GND_SIGNAL              
+                                  2        SFP0_TX_FAULT           
+                                  3        SFP0_TX_DISABLE         
+                                  4        SFP0_MOD_DEF2           
+                                  5        SFP0_MOD_DEF1           
+                                  6        SFP0_MOD_DEF0           
+                                  7        SFP0_RATE_SELECT        
+                                  8        SFP0_LOS                
+                                  9        GND_SIGNAL              
+                                  10       GND_SIGNAL              
+                                  11       GND_SIGNAL              
+                                  12       MGT_RX_N<0>             
+                                  13       MGT_RX<0>               
+                                  14       GND_SIGNAL              
+                                  15       UNNAMED_7_CAPCERSMDCL2_I17_B
+                                  16       UNNAMED_7_CAPCERSMDCL2_I16_B
+                                  17       GND_SIGNAL              
+                                  18       MGT_TX<0>               
+                                  19       MGT_TX_N<0>             
+                                  20       GND_SIGNAL              
+J8               CON20P_SFP-1367073-1 1        GND_SIGNAL              
+                                  2        SFP1_TX_FAULT           
+                                  3        SFP1_TX_DISABLE         
+                                  4        SFP1_MOD_DEF2           
+                                  5        SFP1_MOD_DEF1           
+                                  6        SFP1_MOD_DEF0           
+                                  7        SFP1_RATE_SELECT        
+                                  8        SFP1_LOS                
+                                  9        GND_SIGNAL              
+                                  10       GND_SIGNAL              
+                                  11       GND_SIGNAL              
+                                  12       MGT_RX_N<1>             
+                                  13       MGT_RX<1>               
+                                  14       GND_SIGNAL              
+                                  15       UNNAMED_7_CAPCERSMDCL2_I31_B
+                                  16       UNNAMED_7_CAPCERSMDCL2_I27_B
+                                  17       GND_SIGNAL              
+                                  18       MGT_TX<1>               
+                                  19       MGT_TX_N<1>             
+                                  20       GND_SIGNAL              
+J9               CON34P-3M_2534_60 1        B15_N<8>                
+                                  2        B15<8>                  
+                                  3        GND_SIGNAL              
+                                  4        GND_SIGNAL              
+                                  5        B15_N<7>                
+                                  6        B15<7>                  
+                                  7        GND_SIGNAL              
+                                  8        GND_SIGNAL              
+                                  9        B15_N<14>               
+                                  10       B15<14>                 
+                                  11       GND_SIGNAL              
+                                  12       GND_SIGNAL              
+                                  13       B15_N<11>               
+                                  14       B15<11>                 
+                                  15       GND_SIGNAL              
+                                  16       GND_SIGNAL              
+                                  17       B15_N<12>               
+                                  18       B15<12>                 
+                                  19       GND_SIGNAL              
+                                  20       GND_SIGNAL              
+                                  21       B15_N<3>                
+                                  22       B15<3>                  
+                                  23       GND_SIGNAL              
+                                  24       GND_SIGNAL              
+                                  25       B15_N<10>               
+                                  26       B15<10>                 
+                                  27       GND_SIGNAL              
+                                  28       GND_SIGNAL              
+                                  29       B15_N<17>               
+                                  30       B15<17>                 
+                                  31       GND_SIGNAL              
+                                  32       GND_SIGNAL              
+                                  33       B15_N<13>               
+                                  34       B15<13>                 
+J10              CON3P-SIL254D    1        UNNAMED_2_CON3P_I232_A  
+                                  2        GND_SIGNAL              
+                                  3        UNNAMED_2_CON3P_I232_A_1
+J11              CON19P-HDMI-19-01-X-SM-GND=GNDA 1        BUSY_OUT                
+                                  2        GND_SIGNAL              
+                                  3        BUSY_OUT_N              
+                                  4        TRIG_IN                 
+                                  5        GND_SIGNAL              
+                                  6        TRIG_IN_N               
+                                  7        SYNC_IN                 
+                                  8        GND_SIGNAL              
+                                  9        SYNC_IN_N               
+                                  10       CLK40_IN                
+                                  11       GND_SIGNAL              
+                                  12       CLK40_IN_N              
+J12              CON3P-SIL254D    1        GND_SIGNAL              
+                                  2        CLK40_IN_N              
+                                  3        CLK40_IN                
+J13              CON3P-SIL254D    1        GND_SIGNAL              
+                                  2        XA                      
+                                  3        XB                      
+J14              CON3P-SIL254D    1        GND_SIGNAL              
+                                  2        CLK40_ADC0_N            
+                                  3        CLK40_ADC0              
+J15              CON3P-SIL254D    1        MGT_CLK*                
+                                  2        GND_SIGNAL              
+                                  3        MGT_CLK                 
+JB1              TRENZ_TE0712_JB1 1        GND_SIGNAL              
+                                  2        VIN_DCDC                
+                                  4        VIN_DCDC                
+                                  6        VIN_DCDC                
+                                  7        GND_SIGNAL              
+                                  8        NOSEQ                   
+                                  10       P2V5                    
+                                  12       P2V5                    
+                                  13       3.3VCTREF               
+                                  14       P3V3                    
+                                  16       P3V3                    
+                                  18       ADC_SDOB                
+                                  19       GND_SIGNAL              
+                                  20       ADC_SDOA                
+                                  22       ADC_SCK                 
+                                  24       ADC_SDI                 
+                                  25       GND_SIGNAL              
+                                  26       ADC_CSA                 
+                                  27       EN1                     
+                                  28       ADC_CSB                 
+                                  29       PGOOD                   
+                                  30       GND_SIGNAL              
+                                  31       MODE                    
+                                  32       CLK_40_FROM_FPGA        
+                                  33       GND_SIGNAL              
+                                  34       CLK_40_FROM_FPGA_N      
+                                  40       1.8VOUT                 
+                                  42       B16<23>                 
+                                  43       GND_SIGNAL              
+                                  44       B16_N<23>               
+                                  49       B16_N<18>               
+                                  50       B16<20>                 
+                                  51       B16<18>                 
+                                  52       B16_N<20>               
+                                  53       GND_SIGNAL              
+                                  54       GND_SIGNAL              
+                                  55       B16_N<9>                
+                                  56       B16<21>                 
+                                  57       B16<9>                  
+                                  58       B16_N<21>               
+                                  59       B16_N<7>                
+                                  60       B16<13>                 
+                                  61       B16<7>                  
+                                  62       B16_N<13>               
+                                  63       GND_SIGNAL              
+                                  64       GND_SIGNAL              
+                                  65       B16<11>                 
+                                  66       B16<14>                 
+                                  67       B16_N<11>               
+                                  68       B16_N<14>               
+                                  69       B16_N<10>               
+                                  70       B16_N<3>                
+                                  71       B16<10>                 
+                                  72       B16<3>                  
+                                  73       GND_SIGNAL              
+                                  74       GND_SIGNAL              
+                                  76       B16<12>                 
+                                  78       B16_N<12>               
+                                  79       B16_N<2>                
+                                  81       B16<2>                  
+                                  82       B16_N<8>                
+                                  83       GND_SIGNAL              
+                                  84       B16<8>                  
+                                  85       B16_N<6>                
+                                  86       CLK40_PHASE_INC         
+                                  87       B16<6>                  
+                                  88       CLK40_PHASE_DEC         
+                                  89       GND_SIGNAL              
+                                  90       JTAGEN                  
+                                  91       CLK40_CLK1_VALID_N      
+                                  92       CLK40_LOL               
+                                  93       B16_N<4>                
+                                  94       EXTERNAL_SCL            
+                                  95       B16<4>                  
+                                  96       EXTERNAL_SDA            
+                                  98       CLK40_RATE1             
+                                  100      CLK40_CLK2_VALID_N      
+JB2              TRENZ_TE0712_JB2 1        VIN_DCDC                
+                                  2        P1V8                    
+                                  3        VIN_DCDC                
+                                  4        P1V8                    
+                                  5        VIN_DCDC                
+                                  7        VIN_DCDC                
+                                  8        P2V5                    
+                                  9        3.3VOUT                 
+                                  10       P2V5                    
+                                  11       3.3VOUT                 
+                                  12       SFP1_TX_FAULT           
+                                  13       SFP1_MOD_DEF2           
+                                  14       SFP1_TX_DISABLE         
+                                  15       SFP1_MOD_DEF1           
+                                  16       SFP1_MOD_DEF0           
+                                  17       RESIN                   
+                                  18       SFP1_RATE_SELECT        
+                                  19       GND_SIGNAL              
+                                  20       1.5VOUT                 
+                                  21       SFP0_TX_FAULT           
+                                  22       SFP1_LOS                
+                                  24       SFP0_TX_DISABLE         
+                                  25       SFP0_MOD_DEF2           
+                                  26       SFP0_MOD_DEF1           
+                                  27       SFP0_MOD_DEF0           
+                                  28       CLK40_CLK_SEL           
+                                  29       GND_SIGNAL              
+                                  32       SFP0_RATE_SELECT        
+                                  34       SFP0_LOS                
+                                  35       B15_N<8>                
+                                  37       B15<8>                  
+                                  39       GND_SIGNAL              
+                                  40       GND_SIGNAL              
+                                  41       B15_N<7>                
+                                  43       B15<7>                  
+                                  45       B15<13>                 
+                                  47       B15_N<13>               
+                                  49       GND_SIGNAL              
+                                  50       GND_SIGNAL              
+                                  51       B15<14>                 
+                                  52       B15<11>                 
+                                  53       B15_N<14>               
+                                  54       B15_N<11>               
+                                  55       B15<12>                 
+                                  56       B15<3>                  
+                                  57       B15_N<12>               
+                                  58       B15_N<3>                
+                                  59       GND_SIGNAL              
+                                  60       GND_SIGNAL              
+                                  61       B15_N<10>               
+                                  62       B15_N<17>               
+                                  63       B15<10>                 
+                                  64       B15<17>                 
+                                  69       GND_SIGNAL              
+                                  70       GND_SIGNAL              
+                                  79       GND_SIGNAL              
+                                  80       GND_SIGNAL              
+                                  81       SYNC_IN_N               
+                                  82       TRIG_IN                 
+                                  83       SYNC_IN                 
+                                  84       TRIG_IN_N               
+                                  86       BUSY_OUT_N              
+                                  88       BUSY_OUT                
+                                  89       GND_SIGNAL              
+                                  92       JTAG_VREF               
+                                  94       FPGA_TMS                
+                                  96       FPGA_TDI                
+                                  98       FPGA_TDO                
+                                  100      FPGA_TCK                
+JB3              TRENZ_TE0712_JB3 5        GND_SIGNAL              
+                                  6        GND_SIGNAL              
+                                  7        MGT_RX_N<0>             
+                                  8        MGT_TX_N<0>             
+                                  9        MGT_RX<0>               
+                                  10       MGT_TX<0>               
+                                  11       GND_SIGNAL              
+                                  12       GND_SIGNAL              
+                                  13       MGT_RX_N<1>             
+                                  14       MGT_TX_N<1>             
+                                  15       MGT_RX<1>               
+                                  16       MGT_TX<1>               
+                                  17       GND_SIGNAL              
+                                  18       GND_SIGNAL              
+                                  19       MGT_RX_N<2>             
+                                  20       MGT_TX_N<2>             
+                                  21       MGT_RX<2>               
+                                  22       MGT_TX<2>               
+                                  23       GND_SIGNAL              
+                                  24       GND_SIGNAL              
+                                  25       MGT_RX_N<3>             
+                                  26       MGT_TX_N<3>             
+                                  27       MGT_RX<3>               
+                                  28       MGT_TX<3>               
+                                  29       GND_SIGNAL              
+                                  30       GND_SIGNAL              
+                                  31       UNNAMED_2_CON3P_I232_A  
+                                  32       MGT_CLK*                
+                                  33       UNNAMED_2_CON3P_I232_A_1
+                                  34       MGT_CLK                 
+                                  35       GND_SIGNAL              
+                                  36       GND_SIGNAL              
+                                  45       GND_SIGNAL              
+                                  46       GND_SIGNAL              
+                                  48       CLK40_RATE0             
+                                  50       CLK40_RST_N             
+                                  52       CLK40_I2C_SDA           
+                                  54       CLK40_I2C_SCL           
+                                  57       CLK_40_FPGA_N           
+                                  59       CLK_40_FPGA             
+L1               FERRITE_C0805-LI0805H121R-10,LA 1        P3V3                    
+                                  2        UNNAMED_7_CAPCERSMDCL2_I17_B
+L2               FERRITE_C0805-LI0805H121R-10,LA 1        UNNAMED_7_CAPCERSMDCL2_I16_B
+                                  2        P3V3                    
+L3               FERRITE_C0805-LI0805H121R-10,LA 1        P3V3                    
+                                  2        UNNAMED_7_CAPCERSMDCL2_I31_B
+L4               FERRITE_C0805-LI0805H121R-10,LA 1        UNNAMED_7_CAPCERSMDCL2_I27_B
+                                  2        P3V3                    
+L5               FERRITE_C0805-LI0805H121R-10,LA 1        P3V3                    
+                                  2        VCC_CLK_40              
+L6               FERRITE_C0805-LI0805H121R-10,LA 1        P3V3                    
+                                  2        VCC_REFOSC              
+L7               FERRITE_SMD-7427511,WURTH 1        VIN_DCDC                
+                                  2        P5V                     
+L8               FERRITE_SMD-MPZ1608S331A,TDK 1        P1V8A                   
+                                  2        P1V8                    
+L9               FERRITE_SMD-10Z,ILBB_0603 1        UNNAMED_3_CAPCERSMDCL2_I26_B
+                                  2        P2V5                    
+L10              FERRITE_SMD-10Z,ILBB_0603 1        UNNAMED_3_CAPCERSMDCL2_I33_B
+                                  2        P2V5                    
+LD3              LED-HSMH-C150    1        B16<2>                  
+                                  2        UNNAMED_8_LED_I106_K    
+LD4              LED-HSMY-C150    1        B16_N<2>                
+                                  2        UNNAMED_8_LED_I108_K    
+LD5              LED-HSMG-C150    1        B16<8>                  
+                                  2        UNNAMED_8_LED_I107_K    
+LD6              LED-HSMH-C150    1        B16_N<8>                
+                                  2        UNNAMED_8_LED_I105_K    
+LK1              1-HOLE_1-0-BASE  1        PGOOD                   
+LK1_2            1-HOLE_M3-BASE   1        GND_SIGNAL              
+LK2              1-HOLE_1-0-BASE  1        EN1                     
+LK2_2            1-HOLE_M3-BASE   1        GND_SIGNAL              
+LK3              1-HOLE_1-0-BASE  1        JTAGEN                  
+LK3_2            1-HOLE_M3-BASE   1        GND_SIGNAL              
+LK4              1-HOLE_1-0-BASE  1        MODE                    
+LK4_2            1-HOLE_M3-BASE   1        GND_SIGNAL              
+LK5              1-HOLE_1-0-BASE  1        NOSEQ                   
+LK6              1-HOLE_1-0-BASE  1        RESIN                   
+LK7              1-HOLE_1-0-BASE  1        P3V3                    
+LK8              1-HOLE_1-0-BASE  1        GND_SIGNAL              
+LK9              1-HOLE_1-0-BASE  1        3.3VOUT                 
+LK16             1-HOLE_0-4-BASE  1        1.5VOUT                 
+LK17             1-HOLE_0-4-BASE  1        1.8VOUT                 
+LK18             1-HOLE_0-4-BASE  1        3.3VCTREF               
+LK19             1-HOLE_0-4-BASE  1        UNNAMED_3_RSMD0603_I25_A
+LK20             1-HOLE_0-4-BASE  1        UNNAMED_3_RSMD0603_I39_A
+LK21             1-HOLE_1-0-BASE  1        ADC_SDOB                
+LK22             1-HOLE_1-0-BASE  1        ADC_SDI                 
+LK23             1-HOLE_1-0-BASE  1        ADC_CSB                 
+LK24             1-HOLE_1-0-BASE  1        ADC_SDOA                
+LK25             1-HOLE_1-0-BASE  1        ADC_SCK                 
+LK26             1-HOLE_1-0-BASE  1        ADC_CSA                 
+LK27             1-HOLE_1-0-BASE  1        GND_SIGNAL              
+QZ1              FXO-LC725-125-GND=GND_SIGNAL,VA 1        VCC_REFOSC              
+                                  4        UNNAMED_9_CAPCERSMDCL2_I112_B
+                                  5        UNNAMED_9_CAPCERSMDCL2_I111_B
+R1               RSMD0603_1/10W-100,1% 1        CLK_40_FPGA             
+                                  2        CLK_40_FPGA_N           
+R1_1             RSMD0603_1/10W-100,1% 1        CLK-_1                  
+                                  2        CLK+_1                  
+R1_1_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B
+R1_2_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_1
+R1_3_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_2
+R1_4_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_3
+R1_5_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_4
+R1_6_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_5
+R1_7_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_6
+R1_8_1           RSMD0603_1/10W-51,1% 1        VBIAS+                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I1_B_7
+R2               RES_SR_LVK12-0.05,1% 1        UNNAMED_3_LT1963EQ_I12_SENSE
+                                  2        P3V3                    
+                                  3        UNNAMED_3_CON3P_I71_A   
+                                  4        UNNAMED_3_CON3P_I71_A_1 
+R2_1             RSMD0402_1/16W-0R0,1% 1        SENSE_1                 
+                                  2        P1V8A                   
+R2_1_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B
+R2_2_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_1
+R2_3_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_2
+R2_4_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_3
+R2_5_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_4
+R2_6_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_5
+R2_7_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_6
+R2_8_1           RSMD0603_1/10W-51,1% 1        VBIAS-                  
+                                  2        UNNAMED_1_CAPCERSMDCL1_I10_B_7
+R3               RES_SR_LVK12-0.05,1% 1        UNNAMED_3_LT1963EQ_I64_SENSE
+                                  2        P2V5                    
+                                  3        UNNAMED_3_CON3P_I62_A   
+                                  4        UNNAMED_3_CON3P_I62_A_1 
+R3_1             RSMD0402_0.0625W-XX,1% 1        GND_SIGNAL              
+                                  2        SENSE_1                 
+R3_1_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B
+                                  2        AIN+<1>_1               
+R3_2_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_1
+                                  2        AIN+<8>_1               
+R3_3_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_2
+                                  2        AIN+<7>_1               
+R3_4_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_3
+                                  2        AIN+<6>_1               
+R3_5_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_4
+                                  2        AIN+<5>_1               
+R3_6_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_5
+                                  2        AIN+<4>_1               
+R3_7_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_6
+                                  2        AIN+<3>_1               
+R3_8_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I1_B_7
+                                  2        AIN+<2>_1               
+R4               RES_SR_LVK12-0.05,1% 1        UNNAMED_3_LT1963EQ_I11_SENSE
+                                  2        P1V8                    
+                                  3        UNNAMED_3_CON3P_I55_A   
+                                  4        UNNAMED_3_CON3P_I55_A_1 
+R4_1_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B
+                                  2        AIN-<1>_1               
+R4_2_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_1
+                                  2        AIN-<8>_1               
+R4_3_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_2
+                                  2        AIN-<7>_1               
+R4_4_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_3
+                                  2        AIN-<6>_1               
+R4_5_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_4
+                                  2        AIN-<5>_1               
+R4_6_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_5
+                                  2        AIN-<4>_1               
+R4_7_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_6
+                                  2        AIN-<3>_1               
+R4_8_1           RSMD0603_1/10W-100,1% 1        UNNAMED_1_CAPCERSMDCL1_I10_B_7
+                                  2        AIN-<2>_1               
+R5               RSMD0603_1/10W-220,1% 1        UNNAMED_3_LM40411V2_I83_CAT
+                                  2        P2V5                    
+R6               RSMD0603_1/10W-68,1% 1        VREF_BIAS-              
+                                  2        UNNAMED_3_LM40411V2_I83_CAT
+R7               RSMD0603_1/10W-390,1% 1        VREF_BIAS+              
+                                  2        VREF_BIAS-              
+R8               RSMD0603_1/10W-510,1% 1        GND_SIGNAL              
+                                  2        VREF_BIAS+              
+R9               RSMD0603_1/10W-150,1% 1        UNNAMED_3_RSMD0603_I25_A
+                                  2        UNNAMED_3_CAPCERSMDCL2_I26_B
+R10              RSMD0603_1/10W-150,1% 1        UNNAMED_3_RSMD0603_I39_A
+                                  2        UNNAMED_3_CAPCERSMDCL2_I33_B
+R11              RSMD0603_1/10W-1K,1% 1        EXTERNAL_SDA            
+                                  2        P3V3                    
+R12              RSMD0603_1/10W-1K,1% 1        EXTERNAL_SCL            
+                                  2        P3V3                    
+R13              RSMD0603_1/10W-130,1% 1        CLK40_IN                
+                                  2        VCC_CLK_40              
+R14              RSMD0603_1/10W-82,1% 1        GND_SIGNAL              
+                                  2        CLK40_IN                
+R15              RSMD0603_1/10W-1K,1% 1        CLK40_RATE1             
+                                  2        VCC_CLK_40              
+R16              RSMD0603_1/10W-1K,1% 1        GND_SIGNAL              
+                                  2        CLK40_RATE1             
+R17              RSMD0603_1/10W-130,1% 1        CLK40_IN_N              
+                                  2        VCC_CLK_40              
+R18              RSMD0603_1/10W-82,1% 1        GND_SIGNAL              
+                                  2        CLK40_IN_N              
+R19              RSMD0603_1/10W-1K,1% 1        CLK40_RATE0             
+                                  2        VCC_CLK_40              
+R20              RSMD0603_1/10W-1K,1% 1        GND_SIGNAL              
+                                  2        CLK40_RATE0             
+R21              RSMD0603_1/10W-1K,1% 1        CLK40_I2C_SCL           
+                                  2        VCC_CLK_40              
+R22              RSMD0603_1/10W-1K,1% 1        CLK40_I2C_SDA           
+                                  2        VCC_CLK_40              
+R23              RSMD0603_1/10W-1K,1% 1        JTAGEN                  
+                                  2        GND_SIGNAL              
+R24              RSMD0603_-00,    1        P5V                     
+                                  2        UNNAMED_3_LT1963EQ_I12_SHDN
+R25              RSMD0603_-00,    1        PGOOD_5V                
+                                  2        UNNAMED_3_LT1963EQ_I64_SHDN
+R26              RSMD0603_-00,    1        PGOOD_5V                
+                                  2        UNNAMED_3_LT1963EQ_I11_SHDN
+R27              RSMD0603_1/10W-1K,1% 1        ADC_SDOA                
+                                  2        P1V8                    
+R28              RSMD0603_1/10W-1K,1% 1        ADC_SDOB                
+                                  2        P1V8                    
+R29              RSMD0603_1/10W-1K,1% 1        PGOOD_5V                
+                                  2        P5V                     
+REG1             LT1963EQ-3.3V-GND=GND_SIGNAL 1        UNNAMED_3_LT1963EQ_I12_SHDN
+                                  2        P5V                     
+                                  3        GND_SIGNAL              
+                                  4        UNNAMED_3_LT1963EQ_I12_SENSE
+                                  5        UNNAMED_3_LT1963EQ_I12_SENSE
+REG2             LT1963EQ-2.5V-GND=GND_SIGNAL 1        UNNAMED_3_LT1963EQ_I64_SHDN
+                                  2        P5V                     
+                                  3        GND_SIGNAL              
+                                  4        UNNAMED_3_LT1963EQ_I64_SENSE
+                                  5        UNNAMED_3_LT1963EQ_I64_SENSE
+REG3             LT1963EQ-1.8V-GND=GND_SIGNAL 1        UNNAMED_3_LT1963EQ_I11_SHDN
+                                  2        P5V                     
+                                  3        GND_SIGNAL              
+                                  4        UNNAMED_3_LT1963EQ_I11_SENSE
+                                  5        UNNAMED_3_LT1963EQ_I11_SENSE
+RZ1              R4ISMD_1206-33   1        GND_SIGNAL              
+                                  2        GND_SIGNAL              
+                                  3        GND_SIGNAL              
+                                  4        GND_SIGNAL              
+                                  5        UNNAMED_8_LED_I106_K    
+                                  6        UNNAMED_8_LED_I108_K    
+                                  7        UNNAMED_8_LED_I107_K    
+                                  8        UNNAMED_8_LED_I105_K    
+RZ2              R4ISMD_1206-4.7K 1        GND_SIGNAL              
+                                  2        GND_SIGNAL              
+                                  3        GND_SIGNAL              
+                                  4        GND_SIGNAL              
+                                  5        B16<6>                  
+                                  6        B16_N<6>                
+                                  7        B16<4>                  
+                                  8        B16_N<4>                
+SW1              SW4INT-1571983-4 1        P2V5                    
+                                  2        B16<6>                  
+                                  3        P2V5                    
+                                  4        B16_N<6>                
+                                  5        P2V5                    
+                                  6        B16<4>                  
+                                  7        P2V5                    
+                                  8        B16_N<4>                
+U1               SK_SATA_SMD_STR-MOLEX 1        GND_SIGNAL              
+                                  2        UNNAMED_7_CAPCERSMDCL2_I12_A
+                                  3        UNNAMED_7_CAPCERSMDCL2_I11_A
+                                  4        GND_SIGNAL              
+                                  5        MGT_RX_N<2>             
+                                  6        MGT_RX<2>               
+                                  7        GND_SIGNAL              
+U1_1             LTM9007_CY_BGA-LINEAR A1       GND_SIGNAL              
+                                  A2       GND_SIGNAL              
+                                  A3       GND_SIGNAL              
+                                  A4       GND_SIGNAL              
+                                  A5       GND_SIGNAL              
+                                  A6       GND_SIGNAL              
+                                  A7       GND_SIGNAL              
+                                  A8       B16<23>                 
+                                  A9       GND_SIGNAL              
+                                  A10      GND_SIGNAL              
+                                  B1       AIN-<1>_1               
+                                  B2       AIN+<1>_1               
+                                  B4       GND_SIGNAL              
+                                  B5       GND_SIGNAL              
+                                  B7       GND_SIGNAL              
+                                  B8       B16_N<23>               
+                                  B9       GND_SIGNAL              
+                                  B10      GND_SIGNAL              
+                                  C1       AIN-<2>_1               
+                                  C2       AIN+<2>_1               
+                                  C3       GND_SIGNAL              
+                                  C4       GND_SIGNAL              
+                                  C5       SENSE_1                 
+                                  C6       GND_SIGNAL              
+                                  C9       B16_N<20>               
+                                  C10      B16<20>                 
+                                  D1       GND_SIGNAL              
+                                  D2       GND_SIGNAL              
+                                  D3       P1V8A                   
+                                  D4       P1V8A                   
+                                  D5       GND_SIGNAL              
+                                  D6       ADC_SDOB                
+                                  D9       B16<21>                 
+                                  D10      B16_N<21>               
+                                  E1       AIN-<3>_1               
+                                  E2       AIN+<3>_1               
+                                  E3       P1V8A                   
+                                  E4       P1V8A                   
+                                  E5       GND_SIGNAL              
+                                  E6       ADC_SDOA                
+                                  E7       B16_N<18>               
+                                  E8       B16<18>                 
+                                  F1       GND_SIGNAL              
+                                  F2       GND_SIGNAL              
+                                  F4       GND_SIGNAL              
+                                  F5       GND_SIGNAL              
+                                  F6       GND_SIGNAL              
+                                  F9       B16<12>                 
+                                  F10      B16_N<12>               
+                                  G1       AIN-<4>_1               
+                                  G2       AIN+<4>_1               
+                                  G3       GND_SIGNAL              
+                                  G4       GND_SIGNAL              
+                                  G5       GND_SIGNAL              
+                                  G6       GND_SIGNAL              
+                                  G7       B16<13>                 
+                                  G8       B16_N<13>               
+                                  G9       P1V8                    
+                                  G10      P1V8                    
+                                  H1       AIN+<5>_1               
+                                  H2       AIN-<5>_1               
+                                  H3       GND_SIGNAL              
+                                  H4       GND_SIGNAL              
+                                  H5       GND_SIGNAL              
+                                  H6       GND_SIGNAL              
+                                  H7       B16_N<9>                
+                                  H8       B16<9>                  
+                                  H9       GND_SIGNAL              
+                                  H10      GND_SIGNAL              
+                                  J1       GND_SIGNAL              
+                                  J2       GND_SIGNAL              
+                                  J4       GND_SIGNAL              
+                                  J5       GND_SIGNAL              
+                                  J6       GND_SIGNAL              
+                                  J7       B16<11>                 
+                                  J8       B16_N<11>               
+                                  J9       B16_N<7>                
+                                  J10      B16<7>                  
+                                  K1       AIN+<6>_1               
+                                  K2       AIN-<6>_1               
+                                  K3       P1V8A                   
+                                  K4       P1V8A                   
+                                  K5       GND_SIGNAL              
+                                  K6       GND_SIGNAL              
+                                  K9       B16_N<14>               
+                                  K10      B16<14>                 
+                                  L1       GND_SIGNAL              
+                                  L2       GND_SIGNAL              
+                                  L3       P1V8A                   
+                                  L4       P1V8A                   
+                                  L5       ADC_CSA                 
+                                  L6       ADC_SCK                 
+                                  L7       B16<10>                 
+                                  L8       B16_N<3>                
+                                  M1       AIN+<7>_1               
+                                  M2       AIN-<7>_1               
+                                  M3       GND_SIGNAL              
+                                  M4       GND_SIGNAL              
+                                  M5       ADC_CSB                 
+                                  M6       ADC_SDI                 
+                                  M7       B16_N<10>               
+                                  M8       B16<3>                  
+                                  N1       AIN+<8>_1               
+                                  N2       AIN-<8>_1               
+                                  N4       GND_SIGNAL              
+                                  N5       GND_SIGNAL              
+                                  N6       GND_SIGNAL              
+                                  N7       GND_SIGNAL              
+                                  N9       GND_SIGNAL              
+                                  N10      GND_SIGNAL              
+                                  P1       GND_SIGNAL              
+                                  P2       GND_SIGNAL              
+                                  P3       GND_SIGNAL              
+                                  P4       GND_SIGNAL              
+                                  P5       CLK+_1                  
+                                  P6       CLK-_1                  
+                                  P7       GND_SIGNAL              
+                                  P9       GND_SIGNAL              
+                                  P10      GND_SIGNAL              
+U2               SK_SATA_SMD_STR-MOLEX 1        GND_SIGNAL              
+                                  2        MGT_RX<3>               
+                                  3        MGT_RX_N<3>             
+                                  4        GND_SIGNAL              
+                                  5        UNNAMED_7_CAPCERSMDCL2_I5_A
+                                  6        UNNAMED_7_CAPCERSMDCL2_I3_A
+                                  7        GND_SIGNAL              
+Z1               LM4041_1V2_SOT   1        UNNAMED_3_LM40411V2_I83_CAT
+                                  2        GND_SIGNAL              
+END BODY ORDERED NET LIST
