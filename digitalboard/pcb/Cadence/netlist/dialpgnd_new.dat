@@ -1,0 +1,85 @@
+POWER AND GROUND LIST - 1  
+DESIGNATOR       PART TYPE        
+IC1              TPS5200DRCT-GND=GND_SIGNAL 
+                        GND_SIGNAL 
+                        8        
+                        11       
+IC2              TPS5200DRCT-GND=GND_SIGNAL 
+                        GND_SIGNAL 
+                        8        
+                        11       
+IC3              SI5326A-C-GM-GND=GND_SIGNAL,VDA 
+                        GND_SIGNAL VCC_CLK_40 
+                        8        5        
+                        31       10       
+                        37       32       
+IC4              SN74LVC1G07DCK-GND=GND_SIGNAL,A 
+                        GND_SIGNAL P3V3     
+                        3        5        
+J11              CON19P-HDMI-19-01-X-SM-GND=GNDA 
+                        GND_SIGNAL 
+                        20       
+                        21       
+                        22       
+                        23       
+QZ1              FXO-LC725-125-GND=GND_SIGNAL,VA 
+                        GND_SIGNAL VCC_REFOSC 
+                        3        6        
+REG1             LT1963EQ-3.3V-GND=GND_SIGNAL 
+                        GND_SIGNAL 
+                        6        
+REG2             LT1963EQ-2.5V-GND=GND_SIGNAL 
+                        GND_SIGNAL 
+                        6        
+REG3             LT1963EQ-1.8V-GND=GND_SIGNAL 
+                        GND_SIGNAL 
+                        6        
+SFP1             SFP_CAGE-6367034-1-GND=GND_SIGA 
+                        GND_SIGNAL 
+                        1        
+                        2        
+                        3        
+                        4        
+                        5        
+                        6        
+                        7        
+                        8        
+                        9        
+                        10       
+                        11       
+                        12       
+                        13       
+                        14       
+                        15       
+                        16       
+                        17       
+SFP2             SFP_CAGE-6367035-1-GND=GND_SIGA 
+                        GND_SIGNAL 
+                        1        
+                        2        
+                        3        
+SFP3             SFP_CAGE-6367034-1-GND=GND_SIGA 
+                        GND_SIGNAL 
+                        1        
+                        2        
+                        3        
+                        4        
+                        5        
+                        6        
+                        7        
+                        8        
+                        9        
+                        10       
+                        11       
+                        12       
+                        13       
+                        14       
+                        15       
+                        16       
+                        17       
+SFP4             SFP_CAGE-6367035-1-GND=GND_SIGA 
+                        GND_SIGNAL 
+                        1        
+                        2        
+                        3        
+END POWER AND GROUND LIST
