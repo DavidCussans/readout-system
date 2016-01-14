@@ -46,8 +46,6 @@ class SoLidFPGA:
         if self.verbose:
             print "SoLid FPGA: Firmware version = %d." % self.firmwareversion
 
-
-
 # IPbus blocks
 class TimingOffsets:
     """Timing offsets for the ADC data deserialisation."""
@@ -67,12 +65,207 @@ class OutputBuffer:
     def __init__(self, device):
         self.device = device
         
+"""
+I2C core XML:
+
+<node description="I2C master controller" fwinfo="endpoint;width=3">
+    <node id="ps_lo" address="0x0" description="Prescale low byte"/>
+    <node id="ps_hi" address="0x1" description="Prescale low byte"/>
+    <node id="ctrl" address="0x2" description="Control"/>
+    <node id="data" address="0x3" description="Data"/>
+    <node id="cmd_stat" address="0x4" description="Command / status"/>
+</node>
+
+"""
 class I2CCore:
     """I2C communication block."""
 
-    def __init__(self, device):
+    def __init__(self, device, wclk, i2clck, name="i2c"):
         self.device = device
+        self.name = name
+        self.prescale_low = self.device.getNode("%s.ps_lo" % name)
+        self.prescale_high = self.devices.getNode("%s.ps_hi" % name)
+        self.ctrl = self.device.getNode("%s.ctrl" % name)
+        self.data = self.device.getNode("%s.data" % name)
+        self.cmd_stat = self.device.getNode("%s.cmd_stat" % name)
+        self.config(wclk, i2clck)
 
+    def config(self, wishboneclock, i2cclock):
+        self.ctrl.write(0x1 << 7)
+        self.dispatch()
+        prescale = int(wishboneclock / 5.0 / i2cclock) - 1
+        self.prescale_low.write(prescale & 0xff)
+        self.prescale_high.write((prescale & 0xff00) >> 8)
+        self.ctrl.write(0x1 << 7)
+        self.dispatch()
+
+    def write(self, addr, data):
+        """Write data to the device with the given address."""
+        # Start transfer with 7 bit address and write bit (0)
+        assert self.enabled, "I2C core at %s not enabled" % self.name
+        nwritten = -1
+        addr &= 0x7f
+        addr = addr << 1
+        startcmd = 0x1 << 7
+        stopcmd = 0x1 << 6
+        writecmd = 0x1 << 4
+        self.data.write(addr)
+        self.cmd_stat.rmwbits(0x0, startcmd << 8)
+        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.device.dispatch()
+        inprogress = True
+        ack = False
+        while inprogress:
+            cmd_stat = self.cmd_stat.read()
+            self.device.dispatch()
+            inprogress = cmd_stat & 0b10 > 0
+            ack = cmd_stat & (0x1 << 7) == 0
+        if ack:
+            nwritten += 1
+        else:
+            return nwritten
+        n = len(data)
+        for i in range(n):
+            self.data.write(b & 0xff)
+            if i == n - 1:
+                self.cmd_stat.rmwbits(0x0, stopcmd << 8)
+                self.cmd_stat.rmwbits(0xffffff, writcmd << 8)
+            else:
+                self.cmd_stat.rmwits(0x0, writecmd << 8)
+            inprogress = True
+            ack = False
+            while inprogress:
+                cmd_stat = self.cmd_stat.read()
+                self.device.dispatch()
+                inprogress = cmd_stat & 0b10 > 0
+                ack = cmd_stat & (0x1 << 7) == 0
+            if ack:
+                nwritten += 1
+            else:
+                return nwritten
+        return nwritten
+
+    def read(self, addr, n):
+        """Read n bytes of data from the device with the given address."""
+        # Start transfer with 7 bit address and read bit (1)
+        assert self.enabled, "I2C core at %s not enabled" % self.name
+        data = []
+        startcmd = 0x1 << 7
+        stopcmd = 0x1 << 6
+        readcmd = 0x1 << 5
+        writecmd = 0x1 << 4
+        nackcmd = 0x1 << 3
+        addr &= 0x7f
+        addr = addr << 1
+        addr |= 0x1 # read bit
+        self.data.write(addr)
+        self.cmd_stat.rmwbits(0x0, startcmd << 8)
+        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.device.dispatch()
+        inprogress = True
+        ack = False
+        while inprogress:
+            cmd_stat = self.cmd_stat.read()
+            self.device.dispatch()
+            inprogress = cmd_stat & 0b10 > 0
+            ack = cmd_stat & (0x1 << 7) == 0
+        if not ack:
+            return data
+        for i in range(n):
+            self.cmd_stat.rmwbits(0x0, readcmd << 8)
+            self.device.dispatch()
+            inprogress = True
+            while inprogress:
+                cmd_stat = self.cmd_stat.read()
+                self.device.dispatch()
+                inprogress = cmd_stat & 0b10 > 0
+            val = self.data.read()
+            self.device.dispatch()
+            data.append(val & 0xff)
+        self.cmd_stat.rmwbits(0xffffff, nackcmd << 8)
+        self.device.dispatch()
+        self.cmd_stat.rmwbits(0xffffff, stopcommand << 8)
+        self.device.dispatch()
+
+    def writeread(slef, addr, data, n):
+        """Write data to device, then read n bytes back from it."""
+        assert self.enabled, "I2C core at %s not enabled" % self.name
+        outdata = []
+        nwritten = -1
+        addr &= 0x7f
+        addr = addr << 1
+        startcmd = 0x1 << 7
+        stopcmd = 0x1 << 6
+        readcmd = 0x1 << 5
+        writecmd = 0x1 << 4
+        nackcmd = 0x1 << 3
+        self.data.write(addr)
+        self.cmd_stat.rmwbits(0x0, startcmd << 8)
+        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.device.dispatch()
+        inprogress = True
+        ack = False
+        while inprogress:
+            cmd_stat = self.cmd_stat.read()
+            self.device.dispatch()
+            inprogress = cmd_stat & 0b10 > 0
+            ack = cmd_stat & (0x1 << 7) == 0
+        if ack:
+            nwritten += 1
+        else:
+            return nwritten, outdata
+        nout = len(data)
+        for i in range(nout):
+            self.data.write(b & 0xff)
+            if i == nout - 1:
+                self.cmd_stat.rmwbits(0x0, stopcmd << 8)
+                self.cmd_stat.rmwbits(0xffffff, writcmd << 8)
+            else:
+                self.cmd_stat.rmwits(0x0, writecmd << 8)
+            inprogress = True
+            ack = False
+            while inprogress:
+                cmd_stat = self.cmd_stat.read()
+                self.device.dispatch()
+                inprogress = cmd_stat & 0b10 > 0
+                ack = cmd_stat & (0x1 << 7) == 0
+            if ack:
+                nwritten += 1
+            else:
+                return nwritten, outdata
+        addr |= 0x1 # read bit
+        addr |= 0x1 # read bit
+        self.data.write(addr)
+        self.cmd_stat.rmwbits(0x0, startcmd << 8)
+        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.device.dispatch()
+        inprogress = True
+        ack = False
+        while inprogress:
+            cmd_stat = self.cmd_stat.read()
+            self.device.dispatch()
+            inprogress = cmd_stat & 0b10 > 0
+            ack = cmd_stat & (0x1 << 7) == 0
+        if not ack:
+            return data
+        for i in range(n):
+            self.cmd_stat.rmwbits(0x0, readcmd << 8)
+            if i == n - 1:
+                self.cmd_stat.rmwbits(0xffffff, (nackcmd | stopcommand) << 8)
+            self.device.dispatch()
+            inprogress = True
+            while inprogress:
+                cmd_stat = self.cmd_stat.read()
+                self.device.dispatch()
+                inprogress = cmd_stat & 0b10 > 0
+            val = self.data.read()
+            self.device.dispatch()
+            data.append(val & 0xff)
+        self.cmd_stat.rmwbits(0xffffff, nackcmd << 8)
+        self.device.dispatch()
+        self.cmd_stat.rmwbits(0xffffff, stopcommand << 8)
+        self.device.dispatch()
+        return nwritten, outdata
 
 """
 SPI core XML:
@@ -89,15 +282,15 @@ SPI core XML:
 """
 class SPICore:
 
-    def __init__(self, device):
+    def __init__(self, device, basename="spi"):
         self.device = device
         # Only a single data register is required since all transfers are
         # 16 bit long
-        self.data= device.getNode("spi.d0")
-        self.control = device.getNode("spi.ctrl")
-        self.divider = device.getNode("spi.divider")
-        self.slaveselect = device.getNode("spi.ss")
-        self.configured = False
+        self.data= device.getNode("%s.d0" % basename)
+        self.control = device.getNode("%s.ctrl" % basename)
+        self.divider = device.getNode("%s.divider" % basename)
+        self.slaveselect = device.getNode("%s.ss" % basename)
+        self.config()
 
     def config(self):
         "Configure SPI interace for communicating with ADCs."
@@ -113,12 +306,9 @@ class SPICore:
         self.control.write(value)
         self.device.dispatch()
         # Need to configure the divider to run at X MHz
-        self.configured = True
 
     def transmit(self, chip, value):
         assert chip >= 0 and chip < 8
-        if not self.configured:
-            self.config()
         self.data.write(value & 0xff)
         self.slaveselect.write(0x1 << chip)
         self.control.rmwbits(0xffffffff, 0x1 << 8)
@@ -290,7 +480,7 @@ class ADCLTM9007:
         """Put ADC bank(s) to sleep."""
         if bank is None or bank == "A":
             data = self.readrega(0x1)
-            if:
+            if sleep:
                 data |= (0x1 << 4)
             else:
                 data &= 0xff & ~(0x1 << 4)
