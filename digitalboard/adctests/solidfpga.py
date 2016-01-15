@@ -17,6 +17,8 @@ For the ADC:
     be confirmed by a read command to the same address.
 """
 
+import uhal
+
 class SoLidFPGA:
 
     def __init__(self, nadc=4, verbose=False):
@@ -84,25 +86,43 @@ class I2CCore:
         self.device = device
         self.name = name
         self.prescale_low = self.device.getNode("%s.ps_lo" % name)
-        self.prescale_high = self.devices.getNode("%s.ps_hi" % name)
+        self.prescale_high = self.device.getNode("%s.ps_hi" % name)
         self.ctrl = self.device.getNode("%s.ctrl" % name)
         self.data = self.device.getNode("%s.data" % name)
         self.cmd_stat = self.device.getNode("%s.cmd_stat" % name)
         self.config(wclk, i2clck)
 
+    def state(self):
+        status = {}
+        status["ps_low"] = self.prescale_low.read()
+        status["ps_hi"] = self.prescale_high.read()
+        status["ctrl"] = self.ctrl.read()
+        status["data"] = self.data.read()
+        status["cmd_stat"] = self.cmd_stat.read()
+        self.device.dispatch()
+        status["prescale"] = status["ps_hi"] << 8
+        status["prescale"] |= status["ps_low"]
+        for reg in status:
+            val = status[reg]
+            bval = bin(int(val))
+            print "reg %s = %d, 0x%x, %s" % (reg, val, val, bval)
+
+    def clearint(self):
+        self.ctrl.write(0x1)
+        self.device.dispatch()
+
     def config(self, wishboneclock, i2cclock):
         self.ctrl.write(0x1 << 7)
-        self.dispatch()
+        self.device.dispatch()
         prescale = int(wishboneclock / 5.0 / i2cclock) - 1
         self.prescale_low.write(prescale & 0xff)
         self.prescale_high.write((prescale & 0xff00) >> 8)
         self.ctrl.write(0x1 << 7)
-        self.dispatch()
+        self.device.dispatch()
 
     def write(self, addr, data):
         """Write data to the device with the given address."""
         # Start transfer with 7 bit address and write bit (0)
-        assert self.enabled, "I2C core at %s not enabled" % self.name
         nwritten = -1
         addr &= 0x7f
         addr = addr << 1
@@ -110,14 +130,15 @@ class I2CCore:
         stopcmd = 0x1 << 6
         writecmd = 0x1 << 4
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd)
-        self.cmd_stat.rmwbits(0xffffff, writecmd)
+        self.cmd_stat.write(startcmd)
+        self.cmd_stat.write(writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
         while inprogress:
             cmd_stat = self.cmd_stat.read()
             self.device.dispatch()
+            print "cmd_stat = 0x%08x = %s" % (cmd_stat, bin(int(cmd_stat)))
             inprogress = cmd_stat & 0b10 > 0
             ack = cmd_stat & (0x1 << 7) == 0
         if ack:
@@ -128,10 +149,9 @@ class I2CCore:
         for i in range(n):
             self.data.write(b & 0xff)
             if i == n - 1:
-                self.cmd_stat.rmwbits(0x0, stopcmd)
-                self.cmd_stat.rmwbits(0xffffff, writcmd)
+                self.cmd_stat.write(stopcmd | writecmd)
             else:
-                self.cmd_stat.rmwits(0x0, writecmd)
+                self.cmd_stat.write(writecmd)
             inprogress = True
             ack = False
             while inprogress:
@@ -148,7 +168,6 @@ class I2CCore:
     def read(self, addr, n):
         """Read n bytes of data from the device with the given address."""
         # Start transfer with 7 bit address and read bit (1)
-        assert self.enabled, "I2C core at %s not enabled" % self.name
         data = []
         startcmd = 0x1 << 7
         stopcmd = 0x1 << 6
@@ -159,8 +178,7 @@ class I2CCore:
         addr = addr << 1
         addr |= 0x1 # read bit
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd)
-        self.cmd_stat.rmwbits(0xffffff, writecmd)
+        self.cmd_stat.write(startcmd | writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
@@ -172,7 +190,7 @@ class I2CCore:
         if not ack:
             return data
         for i in range(n):
-            self.cmd_stat.rmwbits(0x0, readcmd)
+            self.cmd_stat.write(readcmd)
             self.device.dispatch()
             inprogress = True
             while inprogress:
@@ -182,14 +200,13 @@ class I2CCore:
             val = self.data.read()
             self.device.dispatch()
             data.append(val & 0xff)
-        self.cmd_stat.rmwbits(0xffffff, nackcmd)
+        self.cmd_stat.write(nackcmd)
         self.device.dispatch()
-        self.cmd_stat.rmwbits(0xffffff, stopcommand)
+        self.cmd_stat.write(stopcommand)
         self.device.dispatch()
 
-    def writeread(slef, addr, data, n):
+    def writeread(self, addr, data, n):
         """Write data to device, then read n bytes back from it."""
-        assert self.enabled, "I2C core at %s not enabled" % self.name
         outdata = []
         nwritten = -1
         addr &= 0x7f
@@ -200,28 +217,31 @@ class I2CCore:
         writecmd = 0x1 << 4
         nackcmd = 0x1 << 3
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd)
-        self.cmd_stat.rmwbits(0xffffff, writecmd)
+        self.cmd_stat.write(startcmd | writecmd)
+        #self.cmd_stat.rmwbits(0x0, startcmd)
+        #self.cmd_stat.rmwbits(0xffffff, writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
         while inprogress:
             cmd_stat = self.cmd_stat.read()
             self.device.dispatch()
+            print "cmd_stat = %s" % bin(int(cmd_stat))
             inprogress = cmd_stat & 0b10 > 0
             ack = cmd_stat & (0x1 << 7) == 0
         if ack:
+            print "Write acknowledged."
             nwritten += 1
         else:
+            print "Write not acknowledged."
             return nwritten, outdata
         nout = len(data)
         for i in range(nout):
             self.data.write(b & 0xff)
             if i == nout - 1:
-                self.cmd_stat.rmwbits(0x0, stopcmd)
-                self.cmd_stat.rmwbits(0xffffff, writcmd)
+                self.cmd_stat.write(stopcmd | writecmd)
             else:
-                self.cmd_stat.rmwits(0x0, writecmd)
+                self.cmd_stat.write(writecmd)
             inprogress = True
             ack = False
             while inprogress:
@@ -236,8 +256,7 @@ class I2CCore:
         addr |= 0x1 # read bit
         addr |= 0x1 # read bit
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd)
-        self.cmd_stat.rmwbits(0xffffff, writecmd)
+        self.cmd_stat.write(startcmd | writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
@@ -249,10 +268,9 @@ class I2CCore:
         if not ack:
             return data
         for i in range(n):
-            self.cmd_stat.rmwbits(0x0, readcmd)
+            self.cmd_stat.write(readcmd)
             if i == n - 1:
-                self.cmd_stat.rmwbits(0xffffff, nackcmd)
-                self.cmd_stat.rmwbits(0xffffff, stopcommand)
+                self.cmd_stat.write(nackcmd | stopcmd)
             self.device.dispatch()
             inprogress = True
             while inprogress:
@@ -262,8 +280,7 @@ class I2CCore:
             val = self.data.read()
             self.device.dispatch()
             data.append(val & 0xff)
-        self.cmd_stat.rmwbits(0xffffff, nackcmd)
-        self.cmd_stat.rmwbits(0xffffff, stopcommand)
+        self.cmd_stat.write(nackcmd | stopcmd)
         self.device.dispatch()
         return nwritten, outdata
 
