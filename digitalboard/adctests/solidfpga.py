@@ -28,7 +28,7 @@ class SoLidFPGA:
         self.trigger = Trigger(self.device)
         self.databuffer = OutputBuffer(self.device)
         self.spi = SPICore(self.device)
-        self.i2c = I2CCore(self.device)
+        self.i2c = I2CCore(self.device, "clk_i2c")
         self.adcs = []
         for i in range(1):
             self.adcs.append(ADCLTM9007(self.spi, 2 * i, 2 * i + 1))
@@ -110,8 +110,8 @@ class I2CCore:
         stopcmd = 0x1 << 6
         writecmd = 0x1 << 4
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd << 8)
-        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.cmd_stat.rmwbits(0x0, startcmd)
+        self.cmd_stat.rmwbits(0xffffff, writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
@@ -128,10 +128,10 @@ class I2CCore:
         for i in range(n):
             self.data.write(b & 0xff)
             if i == n - 1:
-                self.cmd_stat.rmwbits(0x0, stopcmd << 8)
-                self.cmd_stat.rmwbits(0xffffff, writcmd << 8)
+                self.cmd_stat.rmwbits(0x0, stopcmd)
+                self.cmd_stat.rmwbits(0xffffff, writcmd)
             else:
-                self.cmd_stat.rmwits(0x0, writecmd << 8)
+                self.cmd_stat.rmwits(0x0, writecmd)
             inprogress = True
             ack = False
             while inprogress:
@@ -159,8 +159,8 @@ class I2CCore:
         addr = addr << 1
         addr |= 0x1 # read bit
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd << 8)
-        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.cmd_stat.rmwbits(0x0, startcmd)
+        self.cmd_stat.rmwbits(0xffffff, writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
@@ -172,7 +172,7 @@ class I2CCore:
         if not ack:
             return data
         for i in range(n):
-            self.cmd_stat.rmwbits(0x0, readcmd << 8)
+            self.cmd_stat.rmwbits(0x0, readcmd)
             self.device.dispatch()
             inprogress = True
             while inprogress:
@@ -182,9 +182,9 @@ class I2CCore:
             val = self.data.read()
             self.device.dispatch()
             data.append(val & 0xff)
-        self.cmd_stat.rmwbits(0xffffff, nackcmd << 8)
+        self.cmd_stat.rmwbits(0xffffff, nackcmd)
         self.device.dispatch()
-        self.cmd_stat.rmwbits(0xffffff, stopcommand << 8)
+        self.cmd_stat.rmwbits(0xffffff, stopcommand)
         self.device.dispatch()
 
     def writeread(slef, addr, data, n):
@@ -200,8 +200,8 @@ class I2CCore:
         writecmd = 0x1 << 4
         nackcmd = 0x1 << 3
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd << 8)
-        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.cmd_stat.rmwbits(0x0, startcmd)
+        self.cmd_stat.rmwbits(0xffffff, writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
@@ -218,10 +218,10 @@ class I2CCore:
         for i in range(nout):
             self.data.write(b & 0xff)
             if i == nout - 1:
-                self.cmd_stat.rmwbits(0x0, stopcmd << 8)
-                self.cmd_stat.rmwbits(0xffffff, writcmd << 8)
+                self.cmd_stat.rmwbits(0x0, stopcmd)
+                self.cmd_stat.rmwbits(0xffffff, writcmd)
             else:
-                self.cmd_stat.rmwits(0x0, writecmd << 8)
+                self.cmd_stat.rmwits(0x0, writecmd)
             inprogress = True
             ack = False
             while inprogress:
@@ -236,8 +236,8 @@ class I2CCore:
         addr |= 0x1 # read bit
         addr |= 0x1 # read bit
         self.data.write(addr)
-        self.cmd_stat.rmwbits(0x0, startcmd << 8)
-        self.cmd_stat.rmwbits(0xffffff, writecmd << 8)
+        self.cmd_stat.rmwbits(0x0, startcmd)
+        self.cmd_stat.rmwbits(0xffffff, writecmd)
         self.device.dispatch()
         inprogress = True
         ack = False
@@ -249,9 +249,10 @@ class I2CCore:
         if not ack:
             return data
         for i in range(n):
-            self.cmd_stat.rmwbits(0x0, readcmd << 8)
+            self.cmd_stat.rmwbits(0x0, readcmd)
             if i == n - 1:
-                self.cmd_stat.rmwbits(0xffffff, (nackcmd | stopcommand) << 8)
+                self.cmd_stat.rmwbits(0xffffff, nackcmd)
+                self.cmd_stat.rmwbits(0xffffff, stopcommand)
             self.device.dispatch()
             inprogress = True
             while inprogress:
@@ -261,9 +262,8 @@ class I2CCore:
             val = self.data.read()
             self.device.dispatch()
             data.append(val & 0xff)
-        self.cmd_stat.rmwbits(0xffffff, nackcmd << 8)
-        self.device.dispatch()
-        self.cmd_stat.rmwbits(0xffffff, stopcommand << 8)
+        self.cmd_stat.rmwbits(0xffffff, nackcmd)
+        self.cmd_stat.rmwbits(0xffffff, stopcommand)
         self.device.dispatch()
         return nwritten, outdata
 
