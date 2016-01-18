@@ -147,6 +147,7 @@ class I2CCore:
             return nwritten
         n = len(data)
         for i in range(n):
+            b = data[i]
             self.data.write(b & 0xff)
             if i == n - 1:
                 self.cmd_stat.write(stopcmd | writecmd)
