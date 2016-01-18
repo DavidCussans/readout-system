@@ -24,6 +24,11 @@ print "\n\n"
 i2c.state()
 print "\n\n"
 
+# To read registers from the chip first write the address of the register
+# that you want to read, then read the number of bytes. The pointer will
+# increment each read.
+
+# Read the first three registers (0 - 2)
 n = i2c.write(slaveaddr, [0x0])
 data = i2c.read(slaveaddr, 3)
 
