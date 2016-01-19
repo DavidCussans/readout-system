@@ -205,6 +205,7 @@ class I2CCore:
         self.device.dispatch()
         self.cmd_stat.write(stopcmd)
         self.device.dispatch()
+        return data
 
     def writeread(self, addr, data, n):
         """Write data to device, then read n bytes back from it."""
