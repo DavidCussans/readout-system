@@ -203,7 +203,7 @@ class I2CCore:
             data.append(val & 0xff)
         self.cmd_stat.write(nackcmd)
         self.device.dispatch()
-        self.cmd_stat.write(stopcommand)
+        self.cmd_stat.write(stopcmd)
         self.device.dispatch()
 
     def writeread(self, addr, data, n):
