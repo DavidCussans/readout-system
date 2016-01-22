@@ -31,5 +31,18 @@ print "\n\n"
 # Read the first three registers (0 - 2)
 n = i2c.write(slaveaddr, [0x0])
 data = i2c.read(slaveaddr, 3)
-
 print n, data
+
+reg0 = data[0]
+# Toggle the FREE_RUN bit
+if reg0 & (0x1<<6) == 1:
+    reg0 = reg0 ^ (0x1 << 6)
+print "Writing %s to register 0." % bin(reg0)
+i2c.write(slaveaddr, [0x0, reg0])
+
+n = i2c.write(slaveaddr, [0x0])
+data = i2c.read(slaveaddr, 3)
+print n, data
+
+clk = solidfpga.Si5326(i2c)
+clk.load("clockconfig/default.txt")

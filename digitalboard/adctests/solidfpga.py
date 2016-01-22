@@ -31,6 +31,7 @@ class SoLidFPGA:
         self.databuffer = OutputBuffer(self.device)
         self.spi = SPICore(self.device)
         self.i2c = I2CCore(self.device, "clk_i2c")
+        self.clockchip = Si5326(self.i2c)
         self.adcs = []
         for i in range(1):
             self.adcs.append(ADCLTM9007(self.spi, 2 * i, 2 * i + 1))
@@ -342,6 +343,36 @@ class SPICore:
         return data
 
 # External chips
+
+class Si5326:
+
+    def __init__(self, i2c, slaveaddr=0b1101000):
+        self.i2c = i2c
+        self.slaveaddr = slaveaddr
+
+    def load(self, fn):
+        print "Loading Si5326 configuration from %s" % fn
+        inp = open(fn, "r")
+        inmap = False
+        regvals = {}
+        for line in inp:
+            if inmap:
+                if "END_REGISTER_MAP" in line:
+                    inmap = False
+                    continue
+                line = line.split(",")
+                reg = int(line[0])
+                val = line[1].strip().replace("h", "")
+                val = int(val, 16)
+                regvals[reg] = val
+            if "#REGISTER_MAP" in line:
+                inmap = True
+        inp.close()
+        print "Register map: %s" % str(regvals)
+        for reg in regvals:
+            n = self.i2c.write(self.slaveaddr, [reg, regvals[reg]])
+            assert n == 2
+        print "Clock configured"
 
 lvdscurrents = {
         3.5: 0b000,
