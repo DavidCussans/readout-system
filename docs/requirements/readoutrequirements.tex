@@ -59,7 +59,9 @@ The budget requirements cover the time and cost constraints on the system.
 
 \subsection{Physics requirements}
 
-\begin{itemize}
+\renewcommand*{\theenumi}{\thesubsection.\arabic{enumi}}
+\renewcommand*{\theenumii}{\thesubsection.\arabic{enumii}}
+\begin{enumerate}
 \item Neutron trigger - The system must be able to trigger on neutron signals coming from one vertical and one horizontal fibre in the same plane. 
     The neutron trigger should be x \% efficient for neutrons captured in the $^6$LiF:ZnS(Ag) layer. 
     For each neutron trigger the system must be able to store at least 0.5 ms of data from relevant channels around the neutron ID. 
@@ -95,45 +97,45 @@ The budget requirements cover the time and cost constraints on the system.
     \item The start/end times and the trigger conditions for any data run.   
     \end{itemize}
     This will provide enough information to perform an oscillation analysis.
-\end{itemize}
+\end{enumerate}
 
 \subsection{Infrastructure requirements}
 
-\begin{itemize}
+\begin{enumerate}
 \item A single optical Ethernet connection can be used to transfer data from the detector to the computing room at BR2.
 \item x is provided to power the read out system.
 \item The total bandwidth of data transmitted out of SCK should be limited to x GB/day.
 \item x, y, z are not allowed within the containment building.
-\end{itemize}
+\end{enumerate}
 
 \subsection{Operational requirements}
 
-\begin{itemize}
+\begin{enumerate}
 \item Operators must be able to set a uniform over voltage on a set of channels. 
 \item Operators must be able to set a uniform bias voltage on a set of channels.
 \item Updating the bias voltage of all channels should take less than 30 s.
 \item Operators must be able to start and stop a data taking run defining:
-    \begin{itemize}
+    \begin{enumerate}
     \item The trigger conditions for the run
     \item The duration of the run
     \item The channels included in the run
-    \end{itemize}
+    \end{enumerate}
 \item Operators must be able to view the current state of the detector and any ongoing run.
 \item Operators must be able to view the historic state of the detector and any previous runs. 
 \item The system must not require constant supervision.
 \item The system should run autonomously, sending out alerts to operators when failures occur.
 \item The system should be operable from outside of SCK.
-\end{itemize}
+\end{enumerate}
 
 \subsection{Budget requirements}
 
 This section currently covers the budget requirements for the first phase of the detector deployment, funded by the Belgian research council. 
 The total costs below should include the purchase of parts and any workshop time required to assemble the electronics.
-\begin{itemize}
+\begin{enumerate}
 \item The first phase of the experiment must be deployed by x (date) and should be deployed by y (date). 
 \item The total cost of the read out system for the first phase must be less than x euro and should be less than y euro.
 \item The read out system must cost less than x euro per channel and should cost less than y euro per channel.
-\end{itemize}
+\end{enumerate}
 
 
 \end{document}

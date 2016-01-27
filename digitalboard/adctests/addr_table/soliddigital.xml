@@ -1,0 +1,30 @@
+<!-- Default microHAL address table for	example	designs	-->
+
+<node id="solid">
+	<node id="ctrl_reg" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
+		<node id="rst" address="0x0"/>
+		<node id="id" address="0x1"/>
+	</node>
+	<node id="reg" address="0x2" description="read-write register" fwinfo="endpoint;width=0"/>
+	<node id="ram" address="0x1000" mode="block" size="0x400" description="1kword RAM" fwinfo="endpoint;width=10"/>
+	<node id="pram" address="0x2000" description="1kword peephole RAM" fwinfo="endpoint;width=1">
+		<node id="addr" address="0x0"/>
+		<node id="data" mode="port" size="0x400" address="0x1"/>
+	</node>
+<!-- I2C Bus-->
+	<node id="clk_i2c" description="I2C master controller" address="0x300" fwinfo="endpoint;width=3">
+		<node id="ps_lo" address="0x0" description="Prescale low byte"/>
+		<node id="ps_hi" address="0x1" description="Prescale low byte"/>
+		<node id="ctrl" address="0x2" description="Control"/>
+		<node id="data" address="0x3" description="Data"/>
+		<node id="cmd_stat" address="0x4" description="Command / status"/>
+    	</node>
+</node>
+
+<!-- Original I2C
+	<node id="ps_lo" address="0x0" description="Prescale low byte"/>
+	<node id="ps_hi" address="0x1" description="Prescale low byte"/>
+	<node id="ctrl" address="0x2" description="Control"/>
+	<node id="data" address="0x3" description="Data"/>
+	<node id="cmd_stat" address="0x4" description="Command / status"/>
+-->
