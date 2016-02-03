@@ -4,6 +4,7 @@ from time import sleep
 import sys
 import random
 import datetime
+import StringIO
 
 #Initialize board
 def init_board(library,deviceaddress,xmlfile):
@@ -35,6 +36,7 @@ def init_board(library,deviceaddress,xmlfile):
 	#nodeslist=[nodeslist[i] for i in keeplist]
 	return nodeslist
 
+#Define global standard variables
 def std_address():
 	global library,deviceaddress,xmlfile
 	library="glib"
@@ -91,19 +93,25 @@ def bitfield(n,arraylength):
 	print bitarray
 	return bitarray 
 
+#Parse DSPLLsim output
 def parse_clk(filename):
-	with open(filename, 'rb') as csvfile:
-		cvr= csv.reader(csvfile, delimiter=',', quotechar='|')
-		addr_list=[]
-		data_list=[]
-		for row in cvr:
-			print row
-			addr_list.append(int(row[0]))
-			data_unformatted=str(row[1])
-			data_unformatted=data_unformatted.replace(" ", "")
-			data_hex="0x"+data_unformatted[0:-1]
-			data_list.append(int(data_hex,0))
-		return [addr_list,data_list]
+	deletedcomments=""""""
+	with open(filename, 'rb') as configfile:
+		for i, line in enumerate(configfile):
+		    if not line.startswith('#'):
+			deletedcomments+=line
+	csvfile = StringIO.StringIO(deletedcomments)
+	cvr= csv.reader(csvfile, delimiter=',', quotechar='|')
+	addr_list=[]
+	data_list=[]
+	for row in cvr:
+		print row
+		addr_list.append(int(row[0]))
+		data_unformatted=str(row[1])
+		data_unformatted=data_unformatted.replace(" ", "")
+		data_hex="0x"+data_unformatted[0:-1]
+		data_list.append(int(data_hex,0))
+	return [addr_list,data_list]
 	
 
 def main_reliability():
@@ -162,7 +170,7 @@ def main_reliability():
 
 
 def main_clockconfig():
-	clockconfig=parse_clk("si5326_012016.txt")
+	clockconfig=parse_clk("si5326.txt")
 	std_address()
 	init_board(library,deviceaddress,xmlfile)
 	# initialize registers
@@ -200,33 +208,33 @@ def main_clockconfig():
 	addr_list=clockconfig[0]
 	data_list=clockconfig[1]
 	i=0
-	a="""for byteaddress in addr_list[0:-1]:
-		if i%2==0:
-			writeregandwait(cmd_stat,0x90) #start
-			writeregandwait(data,0xD0) #slave address
-			board.dispatch()
-			sleep(sleeptime)
+	#for byteaddress in addr_list[0:-1]:
+	#	if i%2==0:
+	#		writeregandwait(cmd_stat,0x90) #start
+	#		writeregandwait(data,0xD0) #slave address
+	#		board.dispatch()
+	#		sleep(sleeptime)
 
-			writeregandwait(data,byteaddress) #byte address
-			writeregandwait(cmd_stat,0x10)
-			board.dispatch()
-			sleep(sleeptime)
+	#		writeregandwait(data,byteaddress) #byte address
+	#		writeregandwait(cmd_stat,0x10)
+	#		board.dispatch()
+	#		sleep(sleeptime)
 
-			writeregandwait(data,data_list[i]) #data 0
-			writeregandwait(cmd_stat,0x10)
-			board.dispatch()
-			sleep(sleeptime)
+	#		writeregandwait(data,data_list[i]) #data 0
+	#		writeregandwait(cmd_stat,0x10)
+	#		board.dispatch()
+	#		sleep(sleeptime)
 
-			writeregandwait(data,data_list[i+1]) #data 1
-			writeregandwait(cmd_stat,0x10)
-			board.dispatch()
-			sleep(sleeptime)
+	#		writeregandwait(data,data_list[i+1]) #data 1
+	#		writeregandwait(cmd_stat,0x10)
+	#		board.dispatch()
+	#		sleep(sleeptime)
 
-			writereg(cmd_stat,0x40) #stop
-			sleep(sleeptime)
-			print str(byteaddress)+" and "+str(byteaddress+1)+": "+hex(data_list[i])+ ", "+hex(data_list[i+1])
-			sleep(sleeptime)
-		i += 1"""
+	#		writereg(cmd_stat,0x40) #stop
+	#		sleep(sleeptime)
+	#		print str(byteaddress)+" and "+str(byteaddress+1)+": "+hex(data_list[i])+ ", "+hex(data_list[i+1])
+	#		sleep(sleeptime)
+	#	i += 1
 	writeregandwait(cmd_stat,0x90) #start
 	writeregandwait(data,0xD0) #slave address
 	board.dispatch()
@@ -255,7 +263,6 @@ def main_clockconfig():
 	sleep(sleeptime)
 	sleep(sleeptime)
 
-	#writereg(cmd_stat,0x40) #stop
 	addr_list_read=[]
 	data_list_read=[]
 	for byteaddress in range(0,143):
