@@ -174,11 +174,11 @@ def main_clockconfig():
 	std_address()
 	init_board(library,deviceaddress,xmlfile)
 	# initialize registers
-	ctrl=init_node("clk_i2c.ctrl")	
-	ps_lo=init_node("clk_i2c.ps_lo")	
-	ps_hi=init_node("clk_i2c.ps_hi")	
-	data=init_node("clk_i2c.data")	
-	cmd_stat=init_node("clk_i2c.cmd_stat")	
+	ctrl=init_node("i2c.ctrl")	
+	ps_lo=init_node("i2c.ps_lo")	
+	ps_hi=init_node("i2c.ps_hi")	
+	data=init_node("i2c.data")	
+	cmd_stat=init_node("i2c.cmd_stat")	
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
 	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
 	id=init_node("ctrl_reg.id")	
@@ -309,7 +309,7 @@ def main_clockconfig():
 def main_freq():
 	std_address()
 	init_board(library,deviceaddress,xmlfile)
-	cnt=init_node("freq_ctrl.freq.count")	
+	cnt=init_node("freq_ctr.freq.count")	
 	print "Frequency: "+str(int(readreg(cnt))/8388.608)+" MHz"
 
 def main_reset():
@@ -319,7 +319,7 @@ def main_reset():
 	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
 	print "Soft reset"
 	writereg(soft_rst,0x1)
-	print "Resetting SI5326"
+	print "Resetting Si5326"
 	writereg(si5326_rst,0x1)
 	writereg(si5326_rst,0x0)
 
