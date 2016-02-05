@@ -168,6 +168,9 @@ def main_reliability():
 						logfile.write(status)
 		del reg
 
+def revbit(n):
+	return int(bin(n)[:1:-1], 2)
+
 
 def main_clockconfig():
 	clockconfig=parse_clk("si5326.txt")
@@ -323,7 +326,73 @@ def main_reset():
 	writereg(si5326_rst,0x1)
 	writereg(si5326_rst,0x0)
 
+def main_adcconfig():
+	std_address()
+	init_board(library,deviceaddress,xmlfile)
+	d0=init_node("spi.d0")	
+	d1=init_node("spi.d1")	
+	d2=init_node("spi.d2")	
+	d3=init_node("spi.d3")	
+	ctrl=init_node("spi.ctrl")	
+	divider=init_node("spi.divider")	
+	cs_reg=init_node("spi.ss")	
+	print "D0:   "+hex(readreg(d0))
+	print "D1:   "+hex(readreg(d1))
+	print "D2:   "+hex(readreg(d2))
+	print "D3:   "+hex(readreg(d3))
+	print "CTRL: "+hex(readreg(ctrl))
+	print "DIV:  "+hex(readreg(divider))
+	print "SS:   "+hex(readreg(cs_reg))
+	#Datalength
+	datalength=16
+	#CS register parameters
+	low=0
+	csa=1
+	csb=2 
+	allhigh=0xFFFF
+	#Divider parameter
+	divider_val=10
+
+	sleepingtime=0.1
+
+	writereg(divider,divider_val)
+	print "Divider set to "+hex(readreg(divider))
+	writereg(cs_reg,low) 
+	writereg(ctrl,16)
+	print "Control reg set to "+hex(readreg(ctrl))
+	def adc(address,data,cs,read):
+		#writereg(d0,(((read<<7)|address)<<8)|data) 
+		writeregandwait(d0,((data)<<8)|(((address)<<1)|read)) 
+		print "Address "+str(address)+":"
+		print "Sending "+hex(readreg(d0))
+		writeregandwait(ctrl,(0b1001<<8)|datalength)
+		board.dispatch()
+		#writereg(ctrl,(0b0001<<8)|datalength)
+		writereg(cs_reg,cs) 
+		sleep(sleepingtime)
+		writereg(cs_reg,low)
+		print "Received "+hex(readreg(d0))
+
+	adc(0x0,0x80,csa,0) #Reset
+	sleep(sleepingtime)
+	#writeadc(0x0,0x80,csb) #Reset
+	#writeadc(0x1,0x00,csa)
+	adc(0x2,0x05,csa,0)
+	sleep(sleepingtime)
+	adc(0x3,0x80,csa,0)
+	sleep(sleepingtime)
+	adc(0x4,0x7F,csa,0)
+	sleep(sleepingtime)
+	for address in range (0,5):
+		adc(address,0,csa,1)
+		sleep(sleepingtime)
+
+	#for address in range (0,5):
+	#	readadc(address,csb)
+
+		
 if __name__ == "__main__":
 	main_reset()
-	main_clockconfig()
-	main_freq()
+	main_adcconfig()
+#	main_clockconfig()
+#	main_freq()
