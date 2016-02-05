@@ -169,6 +169,7 @@ def main_reliability():
 		del reg
 
 def revbit(n):
+	bitlength=len(bin(n))
 	return int(bin(n)[:1:-1], 2)
 
 
@@ -351,7 +352,7 @@ def main_adcconfig():
 	csb=2 
 	allhigh=0xFFFF
 	#Divider parameter
-	divider_val=10
+	divider_val=6249
 
 	sleepingtime=0.1
 
@@ -361,31 +362,32 @@ def main_adcconfig():
 	writereg(ctrl,16)
 	print "Control reg set to "+hex(readreg(ctrl))
 	def adc(address,data,cs,read):
-		#writereg(d0,(((read<<7)|address)<<8)|data) 
-		writeregandwait(d0,((data)<<8)|(((address)<<1)|read)) 
+		writeregandwait(d0,(((read<<7)|address)<<8)|data) 
+		#writeregandwait(d0,((data)<<8)|(((address)<<1)|read)) 
 		print "Address "+str(address)+":"
-		print "Sending "+hex(readreg(d0))
-		writeregandwait(ctrl,(0b1001<<8)|datalength)
+		d0_val=readreg(d0)
+		print "Sending "+hex(d0_val)#+" "+"{0:b}".format(d0_val)
+		writeregandwait(ctrl,(0b0001<<8)|datalength)
 		board.dispatch()
 		#writereg(ctrl,(0b0001<<8)|datalength)
 		writereg(cs_reg,cs) 
 		sleep(sleepingtime)
 		writereg(cs_reg,low)
 		print "Received "+hex(readreg(d0))
-
-	adc(0x0,0x80,csa,0) #Reset
-	sleep(sleepingtime)
-	#writeadc(0x0,0x80,csb) #Reset
-	#writeadc(0x1,0x00,csa)
-	adc(0x2,0x05,csa,0)
-	sleep(sleepingtime)
-	adc(0x3,0x80,csa,0)
-	sleep(sleepingtime)
-	adc(0x4,0x7F,csa,0)
-	sleep(sleepingtime)
-	for address in range (0,5):
-		adc(address,0,csa,1)
+	while True:
+		adc(0x0,0x80,csa,0) #Reset
 		sleep(sleepingtime)
+		#writeadc(0x0,0x80,csb) #Reset
+		#writeadc(0x1,0x00,csa)
+		adc(0x2,0x05,csa,0)
+		sleep(sleepingtime)
+		adc(0x3,0x80,csa,0)
+		sleep(sleepingtime)
+		adc(0x4,0x7F,csa,0)
+		sleep(sleepingtime)
+		for address in range (0,5):
+			adc(address,0,csa,1)
+			sleep(sleepingtime)
 
 	#for address in range (0,5):
 	#	readadc(address,csb)
