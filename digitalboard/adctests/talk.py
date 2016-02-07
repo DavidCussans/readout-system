@@ -347,12 +347,12 @@ def main_adcconfig():
 	#Datalength
 	datalength=16
 	#CS register parameters
-	low=0
-	csa=1
-	csb=2 
+	low=0xFFFF
+	csa=0xFFFE
+	csb=0xFFFD 
 	allhigh=0xFFFF
 	#Divider parameter
-	divider_val=6249
+	divider_val=0x7F
 
 	sleepingtime=0.1
 
@@ -366,35 +366,32 @@ def main_adcconfig():
 		#writeregandwait(d0,((data)<<8)|(((address)<<1)|read)) 
 		print "Address "+str(address)+":"
 		d0_val=readreg(d0)
+		print "Data "+hex(data)#+" "+"{0:b}".format(d0_val)
 		print "Sending "+hex(d0_val)#+" "+"{0:b}".format(d0_val)
-		writeregandwait(ctrl,(0b0001<<8)|datalength)
+		writeregandwait(ctrl,(0b0100<<8)|datalength)
+		writeregandwait(cs_reg,cs) 
 		board.dispatch()
 		#writereg(ctrl,(0b0001<<8)|datalength)
-		writereg(cs_reg,cs) 
+		writereg(ctrl,(0b0101<<8)|datalength)
 		sleep(sleepingtime)
 		writereg(cs_reg,low)
-		print "Received "+hex(readreg(d0))
-	while True:
-		adc(0x0,0x80,csa,0) #Reset
+		print "Received "+hex(readreg(d0)&0x00FF)+"\n"
 		sleep(sleepingtime)
-		#writeadc(0x0,0x80,csb) #Reset
-		#writeadc(0x1,0x00,csa)
-		adc(0x2,0x05,csa,0)
-		sleep(sleepingtime)
-		adc(0x3,0x80,csa,0)
-		sleep(sleepingtime)
-		adc(0x4,0x7F,csa,0)
-		sleep(sleepingtime)
-		for address in range (0,5):
-			adc(address,0,csa,1)
-			sleep(sleepingtime)
 
-	#for address in range (0,5):
-	#	readadc(address,csb)
+	adc(0x0,0x80,csa,0) #Reset
+	#adc(0x0,0x80,csb,0) #Reset
+	adc(0x1,0x00,csb,0)
+	adc(0x2,0x05,csa,0)
+	adc(0x3,0x80,csa,0)
+	adc(0x3,0x80,csa,0)
+	adc(0x4,0x7F,csa,0)
+	for address in range (0,5):
+		adc(address,0,csa,1)
+		sleep(sleepingtime)
 
 		
 if __name__ == "__main__":
 	main_reset()
 	main_adcconfig()
-#	main_clockconfig()
-#	main_freq()
+	main_clockconfig()
+	main_freq()
