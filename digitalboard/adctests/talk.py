@@ -119,7 +119,7 @@ def main_reliability():
 	std_address()
 	totaltests=100000
 	loggingperiod=100000/10
-	nodes=["reg","clk_i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
+	nodes=["reg","io.i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
 
 	#Logfile
 	logfile = open("talk.log","w")
@@ -178,11 +178,11 @@ def main_clockconfig():
 	std_address()
 	init_board(library,deviceaddress,xmlfile)
 	# initialize registers
-	ctrl=init_node("i2c.ctrl")	
-	ps_lo=init_node("i2c.ps_lo")	
-	ps_hi=init_node("i2c.ps_hi")	
-	data=init_node("i2c.data")	
-	cmd_stat=init_node("i2c.cmd_stat")	
+	ctrl=init_node("io.i2c.ctrl")	
+	ps_lo=init_node("io.i2c.ps_lo")	
+	ps_hi=init_node("io.i2c.ps_hi")	
+	data=init_node("io.i2c.data")	
+	cmd_stat=init_node("io.i2c.cmd_stat")	
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
 	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
 	id=init_node("ctrl_reg.id")	
@@ -330,13 +330,13 @@ def main_reset():
 def main_adcconfig():
 	std_address()
 	init_board(library,deviceaddress,xmlfile)
-	d0=init_node("spi.d0")	
-	d1=init_node("spi.d1")	
-	d2=init_node("spi.d2")	
-	d3=init_node("spi.d3")	
-	ctrl=init_node("spi.ctrl")	
-	divider=init_node("spi.divider")	
-	cs_reg=init_node("spi.ss")	
+	d0=init_node("io.spi.d0")	
+	d1=init_node("io.spi.d1")	
+	d2=init_node("io.spi.d2")	
+	d3=init_node("io.spi.d3")	
+	ctrl=init_node("io.spi.ctrl")	
+	divider=init_node("io.spi.divider")	
+	cs_reg=init_node("io.spi.ss")	
 	print "D0:   "+hex(readreg(d0))
 	print "D1:   "+hex(readreg(d1))
 	print "D2:   "+hex(readreg(d2))
