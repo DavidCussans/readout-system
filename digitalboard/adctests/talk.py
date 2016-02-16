@@ -37,10 +37,10 @@ def init_board(library,deviceaddress,xmlfile):
 	return nodeslist
 
 #Define global standard variables
-def std_address():
+def std_address(addr="192.168.235.0"):
 	global library,deviceaddress,xmlfile
 	library="glib"
-	deviceaddress="192.168.235.0"
+	deviceaddress=addr
 	xmlfile="ipbus_example.xml"
 	
 
@@ -116,10 +116,9 @@ def parse_clk(filename):
 
 def main_reliability():
 	#Parameters
-	std_address()
 	totaltests=100000
 	loggingperiod=100000/10
-	nodes=["reg","clk_i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
+	nodes=["reg","io.i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
 
 	#Logfile
 	logfile = open("talk.log","w")
@@ -175,14 +174,13 @@ def revbit(n):
 
 def main_clockconfig():
 	clockconfig=parse_clk("si5326.txt")
-	std_address()
 	init_board(library,deviceaddress,xmlfile)
 	# initialize registers
-	ctrl=init_node("i2c.ctrl")	
-	ps_lo=init_node("i2c.ps_lo")	
-	ps_hi=init_node("i2c.ps_hi")	
-	data=init_node("i2c.data")	
-	cmd_stat=init_node("i2c.cmd_stat")	
+	ctrl=init_node("io.i2c.ctrl")	
+	ps_lo=init_node("io.i2c.ps_lo")	
+	ps_hi=init_node("io.i2c.ps_hi")	
+	data=init_node("io.i2c.data")	
+	cmd_stat=init_node("io.i2c.cmd_stat")	
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
 	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
 	id=init_node("ctrl_reg.id")	
@@ -311,13 +309,11 @@ def main_clockconfig():
 			j+=1
 		i+=1
 def main_freq():
-	std_address()
 	init_board(library,deviceaddress,xmlfile)
 	cnt=init_node("freq_ctr.freq.count")	
 	print "Frequency: "+str(int(readreg(cnt))/8388.608)+" MHz"
 
 def main_reset():
-	std_address()
 	init_board(library,deviceaddress,xmlfile)
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
 	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
@@ -328,15 +324,14 @@ def main_reset():
 	writereg(si5326_rst,0x0)
 
 def main_adcconfig():
-	std_address()
 	init_board(library,deviceaddress,xmlfile)
-	d0=init_node("spi.d0")	
-	d1=init_node("spi.d1")	
-	d2=init_node("spi.d2")	
-	d3=init_node("spi.d3")	
-	ctrl=init_node("spi.ctrl")	
-	divider=init_node("spi.divider")	
-	cs_reg=init_node("spi.ss")	
+	d0=init_node("io.spi.d0")	
+	d1=init_node("io.spi.d1")	
+	d2=init_node("io.spi.d2")	
+	d3=init_node("io.spi.d3")	
+	ctrl=init_node("io.spi.ctrl")	
+	divider=init_node("io.spi.divider")	
+	cs_reg=init_node("io.spi.ss")	
 	print "D0:   "+hex(readreg(d0))
 	print "D1:   "+hex(readreg(d1))
 	print "D2:   "+hex(readreg(d2))
@@ -391,7 +386,9 @@ def main_adcconfig():
 
 		
 if __name__ == "__main__":
-	main_reset()
-	main_adcconfig()
-	main_clockconfig()
-	main_freq()
+	for address in ["192.168.235.0","192.168.235.1"]:
+		std_address(address)
+		main_reset()
+		main_adcconfig()
+		main_clockconfig()
+		main_freq()
