@@ -41,7 +41,7 @@ def std_address(addr="192.168.235.0"):
 	global library,deviceaddress,xmlfile
 	library="glib"
 	deviceaddress=addr
-	xmlfile="ipbus_example.xml"
+	xmlfile="addr_table/top.xml"
 	
 
 #Initialize node
@@ -182,7 +182,7 @@ def main_clockconfig():
 	data=init_node("io.i2c.data")	
 	cmd_stat=init_node("io.i2c.cmd_stat")	
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
-	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
+	si5326_rst=init_node("io.csr.ctrl.si5326_rst")	
 	id=init_node("ctrl_reg.id")	
 	# soft reset
 	#writereg(soft_rst,0x1)
@@ -310,13 +310,13 @@ def main_clockconfig():
 		i+=1
 def main_freq():
 	init_board(library,deviceaddress,xmlfile)
-	cnt=init_node("freq_ctr.freq.count")	
+	cnt=init_node("io.freq_ctr.freq.count")	
 	print "Frequency: "+str(int(readreg(cnt))/8388.608)+" MHz"
 
 def main_reset():
 	init_board(library,deviceaddress,xmlfile)
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
-	si5326_rst=init_node("ctrl_reg.ctrl.si5326_rst")	
+	si5326_rst=init_node("io.csr.ctrl.si5326_rst")	
 	print "Soft reset"
 	writereg(soft_rst,0x1)
 	print "Resetting Si5326"
@@ -386,7 +386,7 @@ def main_adcconfig():
 
 		
 if __name__ == "__main__":
-	for address in ["192.168.235.0","192.168.235.1"]:
+	for address in ["192.168.235.0"]:#["192.168.235.0","192.168.235.1"]:
 		std_address(address)
 		main_reset()
 		main_adcconfig()
