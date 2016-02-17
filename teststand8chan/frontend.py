@@ -83,9 +83,24 @@ I2C core XML:
 class I2CCore:
     """I2C communication block."""
 
-    def __init__(self, device, wclk, i2clck, name="i2c"):
+    # Define bits in cmd_stat register
+    startcmd = 0x1 << 7
+    stopcmd = 0x1 << 6
+    readcmd = 0x1 << 5
+    writecmd = 0x1 << 4
+    ack = 0x1 << 3
+    intack = 0x1
+
+    recvdack = 0x1 << 7
+    busy = 0x1 << 6
+    arblost = 0x1 << 5
+    inprogress = 0x1 << 1
+    interrupt = 0x1
+
+    def __init__(self, device, wclk, i2clck, name="i2c", delay=None):
         self.device = device
         self.name = name
+        self.delay = delay
         self.prescale_low = self.device.getNode("%s.ps_lo" % name)
         self.prescale_high = self.device.getNode("%s.ps_hi" % name)
         self.ctrl = self.device.getNode("%s.ctrl" % name)
@@ -121,7 +136,25 @@ class I2CCore:
         self.ctrl.write(0x1 << 7)
         self.device.dispatch()
 
-    def write(self, addr, data):
+    def checkack(self):
+        inprogress = True
+        ack = False
+        while inprogress:
+            cmd_stat = self.cmd_stat.read()
+            self.device.dispatch()
+            inprogress = (cmd_stat & I2CCore.inprogress) > 0
+            ack = (cmd_stat & I2CCore.recvdack) == 0
+        return ack
+
+    def delayorcheckack(self):
+        ack = True
+        if self.delay is None:
+            ack = self.checkack()
+        else:
+            time.sleep(self.delay)
+        return ack
+
+    def write(self, addr, data, stop=True):
         """Write data to the device with the given address."""
         # Start transfer with 7 bit address and write bit (0)
         nwritten = -1
@@ -131,161 +164,63 @@ class I2CCore:
         stopcmd = 0x1 << 6
         writecmd = 0x1 << 4
         self.data.write(addr)
-        self.cmd_stat.write(startcmd)
-        self.cmd_stat.write(writecmd)
+        self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.device.dispatch()
-        inprogress = True
-        ack = False
-        while inprogress:
-            cmd_stat = self.cmd_stat.read()
+        ack = self.delayorcheckack()
+        if not ack:
+            self.cmd_stat.write(I2CCore.stopcmd)
             self.device.dispatch()
-            print "cmd_stat = 0x%08x = %s" % (cmd_stat, bin(int(cmd_stat)))
-            inprogress = cmd_stat & 0b10 > 0
-            ack = cmd_stat & (0x1 << 7) == 0
-        if ack:
-            nwritten += 1
-        else:
             return nwritten
-        n = len(data)
-        for i in range(n):
-            b = data[i]
-            self.data.write(b & 0xff)
-            if i == n - 1:
-                self.cmd_stat.write(stopcmd | writecmd)
-            else:
-                self.cmd_stat.write(writecmd)
-            inprogress = True
-            ack = False
-            while inprogress:
-                cmd_stat = self.cmd_stat.read()
+        nwritten += 1
+        for val in data:
+            val &= 0xff
+            self.data.write(val)
+            self.cmd_stat.write(I2CCore.writecmd)
+            self.device.dispatch()
+            ack = self.delayorcheckack()
+            if not ack:
+                self.cmd_stat.write(I2CCore.stopcmd)
                 self.device.dispatch()
-                inprogress = cmd_stat & 0b10 > 0
-                ack = cmd_stat & (0x1 << 7) == 0
-            if ack:
-                nwritten += 1
-            else:
                 return nwritten
+            nwritten += 1
+        if stop:
+            self.cmd_stat.write(I2CCore.stopcmd)
+            self.device.dispatch()
         return nwritten
 
     def read(self, addr, n):
         """Read n bytes of data from the device with the given address."""
         # Start transfer with 7 bit address and read bit (1)
         data = []
-        startcmd = 0x1 << 7
-        stopcmd = 0x1 << 6
-        readcmd = 0x1 << 5
-        writecmd = 0x1 << 4
-        nackcmd = 0x1 << 3
         addr &= 0x7f
         addr = addr << 1
         addr |= 0x1 # read bit
         self.data.write(addr)
-        self.cmd_stat.write(startcmd | writecmd)
+        self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
         self.device.dispatch()
-        inprogress = True
-        ack = False
-        while inprogress:
-            cmd_stat = self.cmd_stat.read()
-            self.device.dispatch()
-            inprogress = cmd_stat & 0b10 > 0
-            ack = cmd_stat & (0x1 << 7) == 0
+        ack = self.delayorcheckack()
         if not ack:
+            self.cmd_stat.write(I2CCore.stopcmd)
+            self.device.dispatch()
             return data
         for i in range(n):
-            self.cmd_stat.write(readcmd)
+            self.cmd_stat.write(I2CCore.readcmd)
             self.device.dispatch()
-            inprogress = True
-            while inprogress:
-                cmd_stat = self.cmd_stat.read()
-                self.device.dispatch()
-                inprogress = cmd_stat & 0b10 > 0
+            ack = self.delayorcheckack()
             val = self.data.read()
             self.device.dispatch()
             data.append(val & 0xff)
-        self.cmd_stat.write(nackcmd)
-        self.device.dispatch()
-        self.cmd_stat.write(stopcmd)
+        self.cmd_stat.write(I2CCore.stopcmd)
         self.device.dispatch()
         return data
 
     def writeread(self, addr, data, n):
         """Write data to device, then read n bytes back from it."""
-        outdata = []
-        nwritten = -1
-        addr &= 0x7f
-        addr = addr << 1
-        startcmd = 0x1 << 7
-        stopcmd = 0x1 << 6
-        readcmd = 0x1 << 5
-        writecmd = 0x1 << 4
-        nackcmd = 0x1 << 3
-        self.data.write(addr)
-        self.cmd_stat.write(startcmd | writecmd)
-        #self.cmd_stat.rmwbits(0x0, startcmd)
-        #self.cmd_stat.rmwbits(0xffffff, writecmd)
-        self.device.dispatch()
-        inprogress = True
-        ack = False
-        while inprogress:
-            cmd_stat = self.cmd_stat.read()
-            self.device.dispatch()
-            print "cmd_stat = %s" % bin(int(cmd_stat))
-            inprogress = cmd_stat & 0b10 > 0
-            ack = cmd_stat & (0x1 << 7) == 0
-        if ack:
-            print "Write acknowledged."
-            nwritten += 1
-        else:
-            print "Write not acknowledged."
-            return nwritten, outdata
-        nout = len(data)
-        for i in range(nout):
-            self.data.write(b & 0xff)
-            if i == nout - 1:
-                self.cmd_stat.write(stopcmd | writecmd)
-            else:
-                self.cmd_stat.write(writecmd)
-            inprogress = True
-            ack = False
-            while inprogress:
-                cmd_stat = self.cmd_stat.read()
-                self.device.dispatch()
-                inprogress = cmd_stat & 0b10 > 0
-                ack = cmd_stat & (0x1 << 7) == 0
-            if ack:
-                nwritten += 1
-            else:
-                return nwritten, outdata
-        addr |= 0x1 # read bit
-        addr |= 0x1 # read bit
-        self.data.write(addr)
-        self.cmd_stat.write(startcmd | writecmd)
-        self.device.dispatch()
-        inprogress = True
-        ack = False
-        while inprogress:
-            cmd_stat = self.cmd_stat.read()
-            self.device.dispatch()
-            inprogress = cmd_stat & 0b10 > 0
-            ack = cmd_stat & (0x1 << 7) == 0
-        if not ack:
-            return data
-        for i in range(n):
-            self.cmd_stat.write(readcmd)
-            if i == n - 1:
-                self.cmd_stat.write(nackcmd | stopcmd)
-            self.device.dispatch()
-            inprogress = True
-            while inprogress:
-                cmd_stat = self.cmd_stat.read()
-                self.device.dispatch()
-                inprogress = cmd_stat & 0b10 > 0
-            val = self.data.read()
-            self.device.dispatch()
-            data.append(val & 0xff)
-        self.cmd_stat.write(nackcmd | stopcmd)
-        self.device.dispatch()
-        return nwritten, outdata
+        nwritten = self.write(addr, data, stop=False)
+        readdata = []
+        if nwritten == len(data):
+            readdata = seld.read(addr, n)
+        return nwritten, readdata
 
 """
 SPI core XML:
@@ -350,7 +285,7 @@ class Si5326:
         self.i2c = i2c
         self.slaveaddr = slaveaddr
 
-    def load(self, fn):
+    def config(self, fn):
         print "Loading Si5326 configuration from %s" % fn
         inp = open(fn, "r")
         inmap = False
@@ -371,7 +306,7 @@ class Si5326:
         print "Register map: %s" % str(regvals)
         for reg in regvals:
             n = self.i2c.write(self.slaveaddr, [reg, regvals[reg]])
-            assert n == 2
+            assert n == 2, "Only wrote %d of 2 bytes over I2C." % n
         print "Clock configured"
 
 lvdscurrents = {
@@ -558,12 +493,144 @@ class ADCLTM9007:
         self.writerega(0x1, dataa)
         self.writeregb(0x1, datab)
 
-class DACXXXChip:
+class MCP472XPowerMode:
 
-    def __init__(self, i2ccore):
+    on = 0b00
+    off1k = 0b01
+    off100k = 0b10
+    off500k = 0b11
+
+class DACMCP4725:
+    """Global trim DAC"""
+
+    # Write modes
+    fast = 0b00
+    writeDAC = 0b10
+    writeDACEEPROM = 0b11
+
+    def __init__(self, i2ccore, addr=0b1100111, vdd=5.0):
         self.i2ccore = i2ccore
+        self.slaveaddr = addr & 0x7f
+        self.vdd = float(vdd)
+    
+    def setbias(self, bias):
+        # DAC voltage goes through potential divider to HV chip, where it is scaled up
+        r1 = 1.0
+        r2 = 2.4
+        divider = r2 / (r1 + r2)
+        voltage = bias / 30.0 / divider
+        self.setvoltage(voltage)
 
-class IDXXXChip:
+    def setvoltage(self, voltage, powerdown=MCP472XPowerMode.on):
+        if voltage > self.vdd:
+            print "Overriding MCP4725 voltage: %g -> %g V (max of range)" % (voltage, self.vdd)
+            voltage = self.vdd
+        value = voltage / float(self.vdd) * 4096
+        self.setvalue(value, mode)
 
-    def __init__(self, i2ccore):
+    def setvalue(self, value, powerdown, mode):
+        value &= 0xfff
+        if mode == self.fast:
+            data = []
+            data.append((powerdown << 4) | ((value & 0xf00) >> 8))
+            data.append(value & 0x0ff)
+            self.i2core.write(self.slaveaddr, data)
+        else:
+            data = []
+            data.append((mode << 4) | (powerdown << 1))
+            data.append((value & 0xff0) >> 4)
+            data.append((value & 0x00f) << 4)
+            self.i2ccore.write(self.slaveaddr, data)
+
+    def status(self):
+        data = self.i2core.read(self.slaveaddr, 3)
+        assert len(data) == 3, "Only recieved %d of 3 expected bytes from MCP4725." % len(data)
+        ready = (data[0] & (0x1 << 7)) > 0
+        por = (data[0] & (0x1 << 6)) > 0 # power on reset?
+        powerdown = (data[0] & 0b110) >> 1
+        dacvalue = data[1] << 4 
+        dacvalue |= data[2] >> 4
+        voltage = self.vdd * dacvalue / 2**12
+        return dacvalue, voltage, ready, por, powerdown
+
+    def readvoltage(self):
+        vals = self.status()
+        return vals[1]
+
+
+class MCP4728ChanStatus:
+
+    def __init__(self, data):
+        assert len(data) == 3
+        self.ready = (data[0] & (0x1 << 7)) > 0
+        self.por = (data[0] & (0x1 << 6)) > 0
+        self.chan = (data[0] & (0b11 << 4)) >> 4
+        self.addr = data[0] & 0x0f
+        self.vref = (data[1] & (0b1 << 7)) > 0
+        self.powerdown = (data[1] & (0b11 << 5)) >> 5
+        self.gain = (data[1] & (0b1 << 4)) > 0
+        self.value = (data[1] & 0x0f) << 8
+        self.value |= data[2]
+
+class MCP4728Channel:
+
+    def __init__(self, data):
+        assert len(data) == 6
+        self.output = MCP4728ChanStatus(data[:3])
+        self.EEPROM = MCP4728ChanStatus(data[3:])
+        self.chan = self.EEPROM.chan
+
+class DACMCP4728:
+    """Channel trim DAC"""
+
+    # Commands
+    writeDACEEPROM = 0b010
+
+    # write functions
+    multiwrite = 0b00
+    sequentialwrite = 0b10
+    singlewrite = 0b11
+
+    # stuff 
+    vref = 0b0 << 7 # Uses external reference, ie Vdd
+
+    def __init__(self, i2ccore, addr, vdd=5.0):
         self.i2ccore = i2ccore
+        self.slaveaddr = addr & 0x7f
+        self.vdd = float(vdd)
+
+    def setvoltage(self, channel, voltage, powerdown=MCP472XPowerMode.on):
+        value = int(voltage / self.vdd * 2**12)
+        self.setvalue(channel, value, powerdown)
+
+    def setvalue(self, channel, value, powerdown=MCP472XPowerMode.on):
+        value = int(value)
+        data = []
+        cmd = DACMCP4728.writeDACEEPROM << 5
+        cmd |= DACMPC4728.singlewrite << 3
+        cmd |= (channel & 0b11) << 1
+        data.append(cmd)
+        val = DACMPC4728.vref | (powerdown & 0b11) << 5
+        val |= (value & 0xf00) >> 8
+        data.append(val)
+        data.append(value & 0xff)
+        nwritten = self.i2ccore.write(self.slaveaddr, data)
+        assert nwritten == len(data), "Only wrote %d of %d bytes setting MCP4728." % (nwritten, len(data))
+
+    def status(self, channel):
+        data = self.i2ccore.read(self.slaveaddr, 24)
+        assert len(data) == 24, "Only read %d of 24 bytes getting MCP4728 status." % len(data)
+        chans = []
+        for chan in range(4):
+            i = chan * 6
+            chans.append(MCP4728Channel(data[i:i+6]))
+        return chans
+
+    def readvoltages(self, channel):
+        chans = self.status()
+        voltages = []
+        for chan in chans:
+            value = float(chan.output.value)
+            voltage = self.vdd * value / 2**12
+            voltages.append(voltage)
+        return voltages
