@@ -90,15 +90,19 @@ class ROOTFile:
             h.SetYTitle("samples")
             self.histos.append(h)
 
-    def conditions(self, reqbias, measbias, temp, sipms=chanmap.sipms):
+    def conditions(self, reqbias, measbias, temp, trims, sipms=chanmap.sipms):
 
         self.condstree = ROOT.TTree("conditions", "conditions")
         reqbias = array.array("d", [reqbias])
         measbias = array.array("d", [measbias])
         temp = array.array("d", [temp])
+        chantrims = ROOT.vector("double")()
+        for trim in trims:
+            chantrims.push_back(trim)
         self.condstree.Branch("reqbias", reqbias, "reqbias/D")
         self.condstree.Branch("measbias", measbias, "measbias/D")
         self.condstree.Branch("temp", temp, "temp/D")
+        self.condstree.Branch("trims", trims)
         self.condstree.Fill()
 
         self.sensortree = ROOT.TTree("sensors", "Sensors")
