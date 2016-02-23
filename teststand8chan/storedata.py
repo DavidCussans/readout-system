@@ -125,16 +125,9 @@ class ROOTFile:
             wf = self.waveforms[self.mapping[i]]
             h = self.histos[self.mapping[i]]
             wfpb = wf.push_back
-            #values = {}
             for val in wfdata:
-                #if val in values:
-                #    values[val] += 1
-                #else:
-                #    values[val] = 1
-                wfpb(float(val))
+                wfpb(float(val & 0x3fff))
                 h.Fill(val)
-            #print "Chan %d: %s" % (i, str(values))
-            #print "data length = %d, wf size = %d" % (len(wfdata), wf.size())
         self.tree.Fill()
 
     def close(self):
