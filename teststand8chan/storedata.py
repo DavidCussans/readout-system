@@ -1,4 +1,5 @@
 import array
+import optparse
 import time
 
 import uhal
@@ -79,6 +80,7 @@ class ROOTFile:
         self.tree = ROOT.TTree("waveforms", "waveforms")
         self.waveforms = []
         self.histos = []
+        self.condstree = None
         for i in range(8):
             self.waveforms.append(ROOT.vector("float")())
         for i in range(8):
@@ -91,7 +93,6 @@ class ROOTFile:
             self.histos.append(h)
 
     def conditions(self, reqbias, measbias, temp, trims, sipms=chanmap.sipms):
-
         self.condstree = ROOT.TTree("conditions", "conditions")
         reqbias = array.array("d", [reqbias])
         measbias = array.array("d", [measbias])
@@ -102,7 +103,7 @@ class ROOTFile:
         self.condstree.Branch("reqbias", reqbias, "reqbias/D")
         self.condstree.Branch("measbias", measbias, "measbias/D")
         self.condstree.Branch("temp", temp, "temp/D")
-        self.condstree.Branch("trims", trims)
+        self.condstree.Branch("trims", chantrims)
         self.condstree.Fill()
 
         self.sensortree = ROOT.TTree("sensors", "Sensors")
@@ -138,22 +139,34 @@ class ROOTFile:
         self.outp.cd()
         for h in self.histos:
             h.Write()
-        self.condstree.Write()
-        self.sensortree.Write()
+        if self.condstree is not None:
+            self.condstree.Write()
+            self.sensortree.Write()
         self.tree.Write()
         self.outp.Close()
 
 if __name__ == "__main__":
-    bias = 68.0
+    parser = optparse.OptionParser()
+    parser.add_option("-b", "--bias", default=65.0, type=float)
+    parser.add_option("-p", "--plot", default=False, action="store_true")
+    parser.add_option("-n", "--nevt", default=10, type=int)
+    (opts, args) = parser.parse_args()
+    bias = opts.bias
+    assert bias >= 0.0 and bias <= 70.0
     biascontrol = biasboard.BiasControlBoard()
     biascontrol.bias(bias)
+    trims = []
+    for i in range(8):
+        biascontrol.trim(i, 0.0)
+        trims.append(0.0)
     target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
     triggerblock = TriggerBlock(target)
     outp = ROOTFile("test.root", chanmap.fpgachans) 
-    nevt = 10
-    print "Triggering %d random events." % nevt
-    for i in range(nevt):
-        if i % (nevt / 10) == 0:
-            print "%d of %d" % (i, nevt)
+    outp.conditions(bias, 0.0, 0.0, trims)
+    print "Triggering %d random events." % opts.nevt
+    for i in range(opts.nevt):
+        if opts.nevt > 1000:
+            if i % (opts.nevt / 10) == 0:
+                print "%d of %d" % (i, opts.nevt)
         outp.fill(triggerblock.trigger())
     outp.close()
