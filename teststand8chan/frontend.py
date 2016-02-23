@@ -17,6 +17,8 @@ For the ADC:
     be confirmed by a read command to the same address.
 """
 
+import time
+
 import uhal
 
 class SoLidFPGA:
@@ -525,10 +527,12 @@ class DACMCP4725:
         if voltage > self.vdd:
             print "Overriding MCP4725 voltage: %g -> %g V (max of range)" % (voltage, self.vdd)
             voltage = self.vdd
-        value = voltage / float(self.vdd) * 4096
-        self.setvalue(value, mode)
+        value = int(voltage / float(self.vdd) * 4096)
+        print "%g -> %d" % (voltage, value)
+        self.setvalue(value, powerdown, self.writeDACEEPROM)
 
     def setvalue(self, value, powerdown, mode):
+        value = int(value)
         value &= 0xfff
         if mode == self.fast:
             data = []
@@ -537,20 +541,28 @@ class DACMCP4725:
             self.i2core.write(self.slaveaddr, data)
         else:
             data = []
-            data.append((mode << 4) | (powerdown << 1))
+            data.append((mode << 5) | (powerdown << 1))
             data.append((value & 0xff0) >> 4)
             data.append((value & 0x00f) << 4)
+            print "Writing %s" % str(data)
             self.i2ccore.write(self.slaveaddr, data)
 
     def status(self):
-        data = self.i2core.read(self.slaveaddr, 3)
-        assert len(data) == 3, "Only recieved %d of 3 expected bytes from MCP4725." % len(data)
+        data = self.i2ccore.read(self.slaveaddr, 5)
+        assert len(data) == 5, "Only recieved %d of 5 expected bytes from MCP4725." % len(data)
+        dx = "0x"
+        db = ""
+        for val in data:
+            dx += "%02x" % val
+            db += "%s " % bin(val)
+        print dx, db
         ready = (data[0] & (0x1 << 7)) > 0
         por = (data[0] & (0x1 << 6)) > 0 # power on reset?
         powerdown = (data[0] & 0b110) >> 1
         dacvalue = data[1] << 4 
-        dacvalue |= data[2] >> 4
+        dacvalue |= (data[2] & 0xf0) >> 4
         voltage = self.vdd * dacvalue / 2**12
+        print dacvalue, voltage
         return dacvalue, voltage, ready, por, powerdown
 
     def readvoltage(self):
@@ -562,6 +574,10 @@ class MCP4728ChanStatus:
 
     def __init__(self, data):
         assert len(data) == 3
+        s = "0x"
+        for val in data:
+            s += "%02x" % val
+        print data, s
         self.ready = (data[0] & (0x1 << 7)) > 0
         self.por = (data[0] & (0x1 << 6)) > 0
         self.chan = (data[0] & (0b11 << 4)) >> 4
@@ -572,6 +588,9 @@ class MCP4728ChanStatus:
         self.value = (data[1] & 0x0f) << 8
         self.value |= data[2]
 
+    def __repr__(self):
+        return "chan %d: vref = %s, powerdown = %d, value = %d" % (self.chan, str(self.vref), self.powerdown, self.value)
+
 class MCP4728Channel:
 
     def __init__(self, data):
@@ -579,6 +598,7 @@ class MCP4728Channel:
         self.output = MCP4728ChanStatus(data[:3])
         self.EEPROM = MCP4728ChanStatus(data[3:])
         self.chan = self.EEPROM.chan
+        print self.output
 
 class DACMCP4728:
     """Channel trim DAC"""
@@ -607,19 +627,27 @@ class DACMCP4728:
         value = int(value)
         data = []
         cmd = DACMCP4728.writeDACEEPROM << 5
-        cmd |= DACMPC4728.singlewrite << 3
+        cmd |= DACMCP4728.singlewrite << 3
         cmd |= (channel & 0b11) << 1
         data.append(cmd)
-        val = DACMPC4728.vref | (powerdown & 0b11) << 5
+        val = DACMCP4728.vref | ((powerdown & 0b11) << 5)
         val |= (value & 0xf00) >> 8
         data.append(val)
         data.append(value & 0xff)
+        sx = "0x"
+        sb = ""
+        for val in data:
+            sx += "%02x" % val
+            sb += "%s " % bin(val)
+        print data, sx, sb
         nwritten = self.i2ccore.write(self.slaveaddr, data)
         assert nwritten == len(data), "Only wrote %d of %d bytes setting MCP4728." % (nwritten, len(data))
+        time.sleep(0.1)
 
     def status(self, channel):
         data = self.i2ccore.read(self.slaveaddr, 24)
         assert len(data) == 24, "Only read %d of 24 bytes getting MCP4728 status." % len(data)
+        print data
         chans = []
         for chan in range(4):
             i = chan * 6
@@ -627,7 +655,7 @@ class DACMCP4728:
         return chans
 
     def readvoltages(self, channel):
-        chans = self.status()
+        chans = self.status(channel)
         voltages = []
         for chan in chans:
             value = float(chan.output.value)
