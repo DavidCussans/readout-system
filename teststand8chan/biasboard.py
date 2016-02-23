@@ -7,6 +7,7 @@ Library assumes the board is running Nick's code:
 The library sends the simply messages over a USB serial connection to set the DAC voltages.
 """
 
+import optparse
 import serial
 
 
@@ -40,3 +41,30 @@ class BiasControlBoard:
 		"""Set the global HV bias (0 - 70 V)."""
 		self.ser.write("vbias=%f\n" % voltage)
 		rep = self.readsome()
+
+if __name__ == "__main__":
+    parser = optparse.OptionParser()
+    parser.add_option("-f", "--filename", default="/dev/ttyACM0")
+    parser.add_option("-b", "--bias", default=None, type=float)
+    parser.add_option("-t", "--trim", default=None, type=float)
+    parser.add_option("-c", "--chantrim", default=[], action="append")
+    (opts, args) = parser.parse_args()
+    bcb = BiasControlBoard(opts.filename)
+    if opts.bias is not None:
+        bias = opts.bias
+        assert bias >= 0.0 and bias <= 70.0
+        bcb.bias(bias)
+    if opts.trim is not None:
+        trim = opts.trim
+        assert trim >= 0.0 and trim <= 5.0
+        for i in range(8):
+            bcb.trim(i, trim)
+    else:
+        for chantrim in opts.chantrim:
+            (chan, trim) = chantrim.split(",")
+            chan = int(chan)
+            trim = float(trim)
+            print "Setting channel %d to %g V" % (chan, trim)
+            assert chan >= 0 and chan < 8
+            assert trim >= 0.0 and trim <= 5.0
+            bcb.trim(chan, trim)
