@@ -51,7 +51,8 @@ class EnvChamber(object):
         # First write the temperature set point....
         self.setTemp(temperature)
         print "Set temperature to " , temperature
-        actualDelta = 2*delta + 1.0 # put dummy value to start
+        actualTemp = self.getTemp()[1]
+        actualDelta = actualTemp - temperature
         while ( abs(actualDelta) > delta ):
             time.sleep( pollingInterval )
             actualTemp = self.getTemp()[1]
