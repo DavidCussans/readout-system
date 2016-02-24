@@ -7,7 +7,8 @@ import biasboard
 import envchamber
 import storedata
 
-parser = optparse.OptionParser()
+usage = "python sipmcalibrationrun.py [options] <bias voltage [V]> <temperature [C]>"
+parser = optparse.OptionParser(usage=usage)
 parser.add_option("-n", "--nevt", type=int, default=10000)
 parser.add_option("-m", "--measbias", default=False, action="store_true")
 parser.add_option("-t", "--trim", default=None, type=float)
@@ -26,7 +27,7 @@ chantrims = []
 if opts.trim is not None:
     trim = opts.trim
     assert trim >= 0.0 and trim <= 5.0
-    for i in range(8)
+    for i in range(8):
         baiscontrol.trim(i, trim)
         chantrims.append(trim)
 else:

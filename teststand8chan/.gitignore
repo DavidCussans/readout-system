@@ -3,3 +3,4 @@
 *.png
 *.sh.o*
 *.sh.e*
+*.root
