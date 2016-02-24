@@ -1,3 +1,5 @@
 *.pyc
 *.eps
 *.png
+*.sh.o*
+*.sh.e*
