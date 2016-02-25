@@ -27,7 +27,7 @@ def doubleexp2SPA(vals, pars):
     val += amp2pa * math.exp(-(x - 2 * spa)**2 / width2pa)
     return val
 
-def fit(hist):
+def fit(hist, spamin=20.0, spamax=150.0):
     maxval = hist.GetMaximum()
     fndoubleexp = ROOT.TF1("doubleexp", doubleexp, 5, 400, 4)
     fndoubleexp.SetParName(0, "amp0")
@@ -59,8 +59,8 @@ def fit(hist):
     fndoubleexpspa.SetParLimits(3, 0.7 * slope1, 1.3 * slope1)
     fndoubleexpspa.SetParameter(3, slope1)
     fndoubleexpspa.SetParName(4, "SPA")
-    fndoubleexpspa.SetParLimits(4, 20.0, 150.0)
-    fndoubleexpspa.SetParameter(4, 80.0)
+    fndoubleexpspa.SetParLimits(4, spamin, spamax)
+    fndoubleexpspa.SetParameter(4, 30.0)
     fndoubleexpspa.SetParName(5, "amp1PA")
     fndoubleexpspa.SetParLimits(5, 1e3, maxval)
     fndoubleexpspa.SetParameter(5, 0.1 * maxval)
@@ -73,7 +73,7 @@ def fit(hist):
     fndoubleexpspa.SetParName(8, "width2PA")
     fndoubleexpspa.SetParLimits(8, 10.0, 200.0)
     fndoubleexpspa.SetParameter(8, 50.0)
-    hist.Fit(fndoubleexpspa, "", "", 0, 500)
+    hist.Fit(fndoubleexpspa, "", "", 20, 500)
     spa = fndoubleexpspa.GetParameter(4)
     return hist, spa
 
