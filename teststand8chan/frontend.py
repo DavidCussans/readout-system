@@ -25,50 +25,150 @@ class SoLidFPGA:
 
     def __init__(self, nadc=4, verbose=False):
         cm = uhal.ConnectionManager("file://solidfpga.xml")
-        self.device = cm.getDevice("SoLidFPGA")
+        self.target = cm.getDevice("SoLidFPGA")
         self.verbose = verbose
-        self.config()
-        self.offsets = TimingOffsets(self.device)
-        self.trigger = Trigger(self.device)
-        self.databuffer = OutputBuffer(self.device)
-        self.spi = SPICore(self.device)
-        self.i2c = I2CCore(self.device, "clk_i2c")
-        self.clockchip = Si5326(self.i2c)
+        #self.config()
+        self.offsets = TimingOffsets(self.target)
+        self.trigger = Trigger(self.target)
+        self.databuffer = OutputBuffer(self.target)
+        #self.spi = SPICore(self.target)
+        self.clock_i2c = I2CCore(self.target, 31.25e6, 40e3, "io.clock_i2c")
+        self.analog_i2c = I2CCore(self.target, 31.25e6, 40e3, "io.analog_i2c")
+        self.clockchip = Si5326(self.clock_i2c)
         self.adcs = []
-        for i in range(1):
-            self.adcs.append(ADCLTM9007(self.spi, 2 * i, 2 * i + 1))
-        self.analogid = IDXXXChip(self.i2c)
-        self.voltagetrimdac = DACXXXChip(self.i2c)
-
+        #for i in range(1):
+        #    self.adcs.append(ADCLTM9007(self.spi, 2 * i, 2 * i + 1))
+        #self.analogid = IDXXXChip(self.i2c)
+        self.gdac = DACMCP4725(self.analog_i2c)
+        self.trimdacs = [
+                DACMCP4728(self.analog_i2c, 0b1100011),
+                DACMCP4728(self.analog_i2c, 0b1100101)
+        ]
         self.firmwareversion = None
 
-    def config(self):
-        val = self.device.getNode("id.magic").read()
-        self.device.dispatch()
-        assert val == 0xdeadbeef, "Incorrect firmware?"
-        self.firmwareversion = self.device.getNode("id.version").read()
-        self.device.dispatch()
-        if self.verbose:
-            print "SoLid FPGA: Firmware version = %d." % self.firmwareversion
+#    def config(self):
+#        val = self.target.getNode("id.magic").read()
+#        self.target.dispatch()
+#        assert val == 0xdeadbeef, "Incorrect firmware?"
+#        self.firmwareversion = self.target.getNode("id.version").read()
+#        self.target.dispatch()
+#        if self.verbose:
+#            print "SoLid FPGA: Firmware version = %d." % self.firmwareversion
+
+    def reset(self):
+        print "Resetting board."
+        # Soft reset
+        soft_rst = self.target.getNode("ctrl_reg.ctrl.soft_rst")
+        soft_rst.write(1)
+        soft_rst.write(0)
+        self.target.dispatch()
+        time.sleep(1.0)
+        # check ID
+        boardid = self.target.getNode("ctrl_reg.id").read()
+        stat = self.target.getNode("ctrl_reg.stat").read()
+        self.target.dispatch()
+        print "ID = 0x%x, stat = 0x%x" % (boardid, stat)
+        self.id = (boardid & 0xffff0000) >> 16
+        self.firmwareversion = boardid & 0x0000ffff
+        # Check for 40 MHz clock lock
+        lock = self.target.getNode("ctrl_reg.stat.mmcm_locked").read()
+        self.target.dispatch()
+        assert lock == 1, "No 40 MHz clock clock, code not yet moved to frontend.py"
+        if lock != 1:
+            # Config clock chip
+            pass
+        # Reset clock
+        timing_rst = self.target.getNode("timing.csr.ctrl.rst")
+        timing_rst.write(0x1)
+        self.target.dispatch()
+        timing_rst.write(0x0)
+        self.target.dispatch()
+        # Configure trigger block
+        self.trigger.config()
+        print "Reset complete."
+
+    def readvoltages(self):
+        bias = self.gdac.readbias()
+        print "Global bias = %g V" %  bias
+        trims = "Channel trims:\n"
+        ichan = 0
+        for dac in self.trimdacs:
+            voltages = dac.readvoltages()
+            for v in voltages:
+                trims += "    Chan %d, v = %g V\n" % (ichan, v)
+                ichan += 1
+        print trims
+
+    def bias(self, bias):
+        self.gdac.setbias(bias)
+
+    def trim(self, trim):
+        for i in range(4):
+            for trimdac in self.trimdacs:
+                trimdac.setvoltage(i, trim)
+
+    def trims(self, trims):
+        for chan in trims:
+            trim = trims[chan]
+            ndac = chan / 4
+            nchan = chan % 4
+            self.trimdacs[ndac].setvoltage(nchan, trim)
 
 # IPbus blocks
 class TimingOffsets:
     """Timing offsets for the ADC data deserialisation."""
 
-    def __init__(self, device):
-        self.device = device
+    def __init__(self, target):
+        self.target = target
+
+    def set(self, slip=7, tap=16):
+        print "Setting timing offset with channel slip = %d and %d taps." % (slip, tap)
+        chan_slip = self.target.getNode("timing.csr.ctrl.chan_slip")
+        for i in range(slip):
+            chan_slip.write(1)
+            self.target.dispatch()
+        chan_slip.write(0)
+        self.target.dispatch()
+        chan_inc = self.target.getNode("timing.csr.ctrl.chan_inc")
+        for i in range(tap):
+            chan_inc.write(1)
+            self.target.dispatch()
+        chan_inc.write(0)
+        self.target.dispatch()
 
 class Trigger:
-    """Trigger configuration block."""
-    
-    def __init__(self, device):
-        self.device = device
+
+    def __init__(self, target, nsamples=0x800):
+        self.target = target
+        self.nsamples = nsamples
+        self.capture = target.getNode("timing.csr.ctrl.chan_cap")
+        self.chanselect = target.getNode("ctrl_reg.ctrl.chan")
+        self.fifo = target.getNode("chan.fifo")
+
+    def config(self):
+        # Set up channels
+        for i in range(8):
+            self.target.getNode("ctrl_reg.ctrl.chan").write(i)
+            self.target.getNode("chan.csr.ctrl.en_sync").write(1)
+        self.target.dispatch()
+
+    def trigger(self):
+        data = []
+        self.capture.write(1)
+        self.capture.write(0)
+        self.target.dispatch()
+        for i in range(8):
+            self.chanselect.write(i)
+            wf = self.fifo.readBlock(self.nsamples)
+            self.target.dispatch()
+            data.append(wf)
+        return data
 
 class OutputBuffer:
     """Output data block."""
     
-    def __init__(self, device):
-        self.device = device
+    def __init__(self, target):
+        self.target = target
         
 """
 I2C core XML:
@@ -99,15 +199,15 @@ class I2CCore:
     inprogress = 0x1 << 1
     interrupt = 0x1
 
-    def __init__(self, device, wclk, i2clck, name="i2c", delay=None):
-        self.device = device
+    def __init__(self, target, wclk, i2clck, name="i2c", delay=None):
+        self.target = target
         self.name = name
         self.delay = delay
-        self.prescale_low = self.device.getNode("%s.ps_lo" % name)
-        self.prescale_high = self.device.getNode("%s.ps_hi" % name)
-        self.ctrl = self.device.getNode("%s.ctrl" % name)
-        self.data = self.device.getNode("%s.data" % name)
-        self.cmd_stat = self.device.getNode("%s.cmd_stat" % name)
+        self.prescale_low = self.target.getNode("%s.ps_lo" % name)
+        self.prescale_high = self.target.getNode("%s.ps_hi" % name)
+        self.ctrl = self.target.getNode("%s.ctrl" % name)
+        self.data = self.target.getNode("%s.data" % name)
+        self.cmd_stat = self.target.getNode("%s.cmd_stat" % name)
         self.config(wclk, i2clck)
 
     def state(self):
@@ -117,7 +217,7 @@ class I2CCore:
         status["ctrl"] = self.ctrl.read()
         status["data"] = self.data.read()
         status["cmd_stat"] = self.cmd_stat.read()
-        self.device.dispatch()
+        self.target.dispatch()
         status["prescale"] = status["ps_hi"] << 8
         status["prescale"] |= status["ps_low"]
         for reg in status:
@@ -127,23 +227,23 @@ class I2CCore:
 
     def clearint(self):
         self.ctrl.write(0x1)
-        self.device.dispatch()
+        self.target.dispatch()
 
     def config(self, wishboneclock, i2cclock):
         self.ctrl.write(0x1 << 7)
-        self.device.dispatch()
+        self.target.dispatch()
         prescale = int(wishboneclock / 5.0 / i2cclock) - 1
         self.prescale_low.write(prescale & 0xff)
         self.prescale_high.write((prescale & 0xff00) >> 8)
         self.ctrl.write(0x1 << 7)
-        self.device.dispatch()
+        self.target.dispatch()
 
     def checkack(self):
         inprogress = True
         ack = False
         while inprogress:
             cmd_stat = self.cmd_stat.read()
-            self.device.dispatch()
+            self.target.dispatch()
             inprogress = (cmd_stat & I2CCore.inprogress) > 0
             ack = (cmd_stat & I2CCore.recvdack) == 0
         return ack
@@ -167,27 +267,27 @@ class I2CCore:
         writecmd = 0x1 << 4
         self.data.write(addr)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
-        self.device.dispatch()
+        self.target.dispatch()
         ack = self.delayorcheckack()
         if not ack:
             self.cmd_stat.write(I2CCore.stopcmd)
-            self.device.dispatch()
+            self.target.dispatch()
             return nwritten
         nwritten += 1
         for val in data:
             val &= 0xff
             self.data.write(val)
             self.cmd_stat.write(I2CCore.writecmd)
-            self.device.dispatch()
+            self.target.dispatch()
             ack = self.delayorcheckack()
             if not ack:
                 self.cmd_stat.write(I2CCore.stopcmd)
-                self.device.dispatch()
+                self.target.dispatch()
                 return nwritten
             nwritten += 1
         if stop:
             self.cmd_stat.write(I2CCore.stopcmd)
-            self.device.dispatch()
+            self.target.dispatch()
         return nwritten
 
     def read(self, addr, n):
@@ -199,21 +299,21 @@ class I2CCore:
         addr |= 0x1 # read bit
         self.data.write(addr)
         self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
-        self.device.dispatch()
+        self.target.dispatch()
         ack = self.delayorcheckack()
         if not ack:
             self.cmd_stat.write(I2CCore.stopcmd)
-            self.device.dispatch()
+            self.target.dispatch()
             return data
         for i in range(n):
             self.cmd_stat.write(I2CCore.readcmd)
-            self.device.dispatch()
+            self.target.dispatch()
             ack = self.delayorcheckack()
             val = self.data.read()
-            self.device.dispatch()
+            self.target.dispatch()
             data.append(val & 0xff)
         self.cmd_stat.write(I2CCore.stopcmd)
-        self.device.dispatch()
+        self.target.dispatch()
         return data
 
     def writeread(self, addr, data, n):
@@ -239,14 +339,14 @@ SPI core XML:
 """
 class SPICore:
 
-    def __init__(self, device, basename="spi"):
-        self.device = device
+    def __init__(self, target, basename="spi"):
+        self.target = target
         # Only a single data register is required since all transfers are
         # 16 bit long
-        self.data= device.getNode("%s.d0" % basename)
-        self.control = device.getNode("%s.ctrl" % basename)
-        self.divider = device.getNode("%s.divider" % basename)
-        self.slaveselect = device.getNode("%s.ss" % basename)
+        self.data= target.getNode("%s.d0" % basename)
+        self.control = target.getNode("%s.ctrl" % basename)
+        self.divider = target.getNode("%s.divider" % basename)
+        self.slaveselect = target.getNode("%s.ss" % basename)
         self.config()
 
     def config(self):
@@ -261,7 +361,7 @@ class SPICore:
         value |= 0x0 << 9 # read input on rising edge
         value |= 0x0f # 16 bit transfers
         self.control.write(value)
-        self.device.dispatch()
+        self.target.dispatch()
         # Need to configure the divider to run at X MHz
 
     def transmit(self, chip, value):
@@ -269,12 +369,12 @@ class SPICore:
         self.data.write(value & 0xff)
         self.slaveselect.write(0x1 << chip)
         self.control.rmwbits(0xffffffff, 0x1 << 8)
-        self.device.dispatch()
+        self.target.dispatch()
         finished = False
         while not finished:
             ctrl = self.control.read()
             data = self.data.read()
-            self.device.dispatch()
+            self.target.dispatch()
             # Check if transfer is complete by reading the GO_BSY bit of CTRL
             finished = ctrl & (0x1 << 8) > 0
         return data
@@ -569,6 +669,13 @@ class DACMCP4725:
         vals = self.status()
         return vals[1]
 
+    def readbias(self):
+        v = self.readvoltage()
+        r1 = 1.0
+        r2 = 2.4
+        divider = r2 / (r1 + r2)
+        bias = v * 30.0 * divider
+        return bias
 
 class MCP4728ChanStatus:
 
@@ -621,10 +728,11 @@ class DACMCP4728:
 
     def setvoltage(self, channel, voltage, powerdown=MCP472XPowerMode.on):
         value = int(voltage / self.vdd * 2**12)
+        print "%g V -> %d" % (voltage, value)
         self.setvalue(channel, value, powerdown)
 
     def setvalue(self, channel, value, powerdown=MCP472XPowerMode.on):
-        value = int(value)
+        value = int(value) & 0xfff
         data = []
         cmd = DACMCP4728.writeDACEEPROM << 5
         cmd |= DACMCP4728.singlewrite << 3
@@ -639,12 +747,12 @@ class DACMCP4728:
         for val in data:
             sx += "%02x" % val
             sb += "%s " % bin(val)
-        print data, sx, sb
+        print "Writing data to %s value: " % bin(self.slaveaddr), data, sx, sb
         nwritten = self.i2ccore.write(self.slaveaddr, data)
         assert nwritten == len(data), "Only wrote %d of %d bytes setting MCP4728." % (nwritten, len(data))
-        time.sleep(0.1)
+        time.sleep(0.2)
 
-    def status(self, channel):
+    def status(self):
         data = self.i2ccore.read(self.slaveaddr, 24)
         assert len(data) == 24, "Only read %d of 24 bytes getting MCP4728 status." % len(data)
         print data
@@ -654,8 +762,8 @@ class DACMCP4728:
             chans.append(MCP4728Channel(data[i:i+6]))
         return chans
 
-    def readvoltages(self, channel):
-        chans = self.status(channel)
+    def readvoltages(self):
+        chans = self.status()
         voltages = []
         for chan in chans:
             value = float(chan.output.value)

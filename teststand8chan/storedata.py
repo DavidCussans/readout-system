@@ -5,71 +5,8 @@ import time
 import uhal
 import ROOT
 
-import biasboard
 import chanmap
-
-class TriggerBlock:
-
-    def __init__(self, target, nsamples=0x800):
-        self.target = target
-        self.nsamples = nsamples
-        self.capture = target.getNode("timing.csr.ctrl.chan_cap")
-        self.chanselect = target.getNode("ctrl_reg.ctrl.chan")
-        self.fifo = target.getNode("chan.fifo")
-        self.reset()
-
-    def reset(self, slip=7, tap=16):
-        print "Resetting board."
-        # Soft reset
-        soft_rst = self.target.getNode("ctrl_reg.ctrl.soft_rst")
-        soft_rst.write(1)
-        soft_rst.write(0)
-        self.target.dispatch()
-        time.sleep(1.0)
-        # Reset clock
-        timing_rst = self.target.getNode("timing.csr.ctrl.rst")
-        timing_rst.write(0x1)
-        self.target.dispatch()
-        timing_rst.write(0x0)
-        self.target.dispatch()
-        # check ID
-        boardid = self.target.getNode("ctrl_reg.id").read()
-        stat = self.target.getNode("ctrl_reg.stat").read()
-        self.target.dispatch()
-        print "ID = 0x%x, stat = 0x%x" % (boardid, stat)
-        # Set up channels
-        for i in range(8):
-            self.target.getNode("ctrl_reg.ctrl.chan").write(i)
-            self.target.getNode("chan.csr.ctrl.en_sync").write(1)
-        self.target.dispatch()
-        # Timing offset
-        print "Setting timing offset with channel slip = %d and %d taps." % (slip, tap)
-        chan_slip = self.target.getNode("timing.csr.ctrl.chan_slip")
-        for i in range(slip):
-            chan_slip.write(1)
-            self.target.dispatch()
-        chan_slip.write(0)
-        self.target.dispatch()
-        chan_inc = self.target.getNode("timing.csr.ctrl.chan_inc")
-        for i in range(tap):
-            chan_inc.write(1)
-            self.target.dispatch()
-        chan_inc.write(0)
-        self.target.dispatch()
-        print "Reset complete."
-
-    def trigger(self):
-        data = []
-        self.capture.write(1)
-        self.capture.write(0)
-        self.target.dispatch()
-        for i in range(8):
-            self.chanselect.write(i)
-            wf = self.fifo.readBlock(self.nsamples)
-            self.target.dispatch()
-            data.append(wf)
-        return data
-
+import frontend
 
 class ROOTFile:
 
@@ -153,14 +90,15 @@ if __name__ == "__main__":
     (opts, args) = parser.parse_args()
     bias = opts.bias
     assert bias >= 0.0 and bias <= 70.0
-    biascontrol = biasboard.BiasControlBoard()
-    biascontrol.bias(bias)
+    fpga = frontend.SoLidFPGA(1)
+    fpga.reset()
+    fpga.readvoltages()
+    fpga.bias(bias)
+    fpga.trim(0.0)
+    fpga.readvoltages()
     trims = []
     for i in range(8):
-        biascontrol.trim(i, 0.0)
         trims.append(0.0)
-    target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
-    triggerblock = TriggerBlock(target)
     outp = ROOTFile("test.root", chanmap.fpgachans) 
     outp.conditions(bias, 0.0, 0.0, trims)
     print "Triggering %d random events." % opts.nevt
@@ -168,5 +106,5 @@ if __name__ == "__main__":
         if opts.nevt > 1000:
             if i % (opts.nevt / 10) == 0:
                 print "%d of %d" % (i, opts.nevt)
-        outp.fill(triggerblock.trigger())
+        outp.fill(fpga.trigger.trigger())
     outp.close()
