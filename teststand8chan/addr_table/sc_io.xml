@@ -13,6 +13,7 @@
 		</node>
 	</node>
 	<node id="freq_ctr" address="0x4" module="file://freq_ctr.xml"/>
-	<node id="i2c" address="0x8" module="file://opencores_i2c.xml"/>
+	<node id="clock_i2c" address="0x8" module="file://opencores_i2c.xml"/>
 	<node id="spi" address="0x10" module="file://opencores_spi.xml"/>
+	<node id="analog_i2c" address="0x18" module="file://opencores_i2c.xml"/>
 </node>

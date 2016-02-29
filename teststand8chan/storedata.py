@@ -1,74 +1,12 @@
 import array
+import optparse
 import time
 
 import uhal
 import ROOT
 
-import biasboard
 import chanmap
-
-class TriggerBlock:
-
-    def __init__(self, target, nsamples=0x800):
-        self.target = target
-        self.nsamples = nsamples
-        self.capture = target.getNode("timing.csr.ctrl.chan_cap")
-        self.chanselect = target.getNode("ctrl_reg.ctrl.chan")
-        self.fifo = target.getNode("chan.fifo")
-        self.reset()
-
-    def reset(self, slip=7, tap=16):
-        print "Resetting board."
-        # Soft reset
-        soft_rst = self.target.getNode("ctrl_reg.ctrl.soft_rst")
-        soft_rst.write(1)
-        soft_rst.write(0)
-        self.target.dispatch()
-        time.sleep(1.0)
-        # Reset clock
-        timing_rst = self.target.getNode("timing.csr.ctrl.rst")
-        timing_rst.write(0x1)
-        self.target.dispatch()
-        timing_rst.write(0x0)
-        self.target.dispatch()
-        # check ID
-        boardid = self.target.getNode("ctrl_reg.id").read()
-        stat = self.target.getNode("ctrl_reg.stat").read()
-        self.target.dispatch()
-        print "ID = 0x%x, stat = 0x%x" % (boardid, stat)
-        # Set up channels
-        for i in range(8):
-            self.target.getNode("ctrl_reg.ctrl.chan").write(i)
-            self.target.getNode("chan.csr.ctrl.en_sync").write(1)
-        self.target.dispatch()
-        # Timing offset
-        print "Setting timing offset with channel slip = %d and %d taps." % (slip, tap)
-        chan_slip = self.target.getNode("timing.csr.ctrl.chan_slip")
-        for i in range(slip):
-            chan_slip.write(1)
-            self.target.dispatch()
-        chan_slip.write(0)
-        self.target.dispatch()
-        chan_inc = self.target.getNode("timing.csr.ctrl.chan_inc")
-        for i in range(tap):
-            chan_inc.write(1)
-            self.target.dispatch()
-        chan_inc.write(0)
-        self.target.dispatch()
-        print "Reset complete."
-
-    def trigger(self):
-        data = []
-        self.capture.write(1)
-        self.capture.write(0)
-        self.target.dispatch()
-        for i in range(8):
-            self.chanselect.write(i)
-            wf = self.fifo.readBlock(self.nsamples)
-            self.target.dispatch()
-            data.append(wf)
-        return data
-
+import frontend
 
 class ROOTFile:
 
@@ -79,6 +17,7 @@ class ROOTFile:
         self.tree = ROOT.TTree("waveforms", "waveforms")
         self.waveforms = []
         self.histos = []
+        self.condstree = None
         for i in range(8):
             self.waveforms.append(ROOT.vector("float")())
         for i in range(8):
@@ -90,15 +29,18 @@ class ROOTFile:
             h.SetYTitle("samples")
             self.histos.append(h)
 
-    def conditions(self, reqbias, measbias, temp, sipms=chanmap.sipms):
-
+    def conditions(self, reqbias, measbias, temp, trims, sipms=chanmap.sipms):
         self.condstree = ROOT.TTree("conditions", "conditions")
         reqbias = array.array("d", [reqbias])
         measbias = array.array("d", [measbias])
         temp = array.array("d", [temp])
+        chantrims = ROOT.vector("double")()
+        for trim in trims:
+            chantrims.push_back(trim)
         self.condstree.Branch("reqbias", reqbias, "reqbias/D")
         self.condstree.Branch("measbias", measbias, "measbias/D")
         self.condstree.Branch("temp", temp, "temp/D")
+        self.condstree.Branch("trims", chantrims)
         self.condstree.Fill()
 
         self.sensortree = ROOT.TTree("sensors", "Sensors")
@@ -125,38 +67,44 @@ class ROOTFile:
             wf = self.waveforms[self.mapping[i]]
             h = self.histos[self.mapping[i]]
             wfpb = wf.push_back
-            #values = {}
             for val in wfdata:
-                #if val in values:
-                #    values[val] += 1
-                #else:
-                #    values[val] = 1
-                wfpb(float(val))
+                wfpb(float(val & 0x3fff))
                 h.Fill(val)
-            #print "Chan %d: %s" % (i, str(values))
-            #print "data length = %d, wf size = %d" % (len(wfdata), wf.size())
         self.tree.Fill()
 
     def close(self):
         self.outp.cd()
         for h in self.histos:
             h.Write()
-        self.condstree.Write()
-        self.sensortree.Write()
+        if self.condstree is not None:
+            self.condstree.Write()
+            self.sensortree.Write()
         self.tree.Write()
         self.outp.Close()
 
 if __name__ == "__main__":
-    bias = 68.0
-    biascontrol = biasboard.BiasControlBoard()
-    biascontrol.bias(bias)
-    target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
-    triggerblock = TriggerBlock(target)
+    parser = optparse.OptionParser()
+    parser.add_option("-b", "--bias", default=65.0, type=float)
+    parser.add_option("-p", "--plot", default=False, action="store_true")
+    parser.add_option("-n", "--nevt", default=10, type=int)
+    (opts, args) = parser.parse_args()
+    bias = opts.bias
+    assert bias >= 0.0 and bias <= 70.0
+    fpga = frontend.SoLidFPGA(1)
+    fpga.reset()
+    fpga.readvoltages()
+    fpga.bias(bias)
+    fpga.trim(0.0)
+    fpga.readvoltages()
+    trims = []
+    for i in range(8):
+        trims.append(0.0)
     outp = ROOTFile("test.root", chanmap.fpgachans) 
-    nevt = 10
-    print "Triggering %d random events." % nevt
-    for i in range(nevt):
-        if i % (nevt / 10) == 0:
-            print "%d of %d" % (i, nevt)
-        outp.fill(triggerblock.trigger())
+    outp.conditions(bias, 0.0, 0.0, trims)
+    print "Triggering %d random events." % opts.nevt
+    for i in range(opts.nevt):
+        if opts.nevt > 1000:
+            if i % (opts.nevt / 10) == 0:
+                print "%d of %d" % (i, opts.nevt)
+        outp.fill(fpga.trigger.trigger())
     outp.close()
