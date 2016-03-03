@@ -118,7 +118,7 @@ def main_reliability():
 	#Parameters
 	totaltests=100000
 	loggingperiod=100000/10
-	nodes=["reg","io.i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
+	nodes=["reg","io.clock_i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
 
 	#Logfile
 	logfile = open("talk.log","w")
@@ -176,11 +176,11 @@ def main_clockconfig():
 	clockconfig=parse_clk("si5326.txt")
 	init_board(library,deviceaddress,xmlfile)
 	# initialize registers
-	ctrl=init_node("io.i2c.ctrl")	
-	ps_lo=init_node("io.i2c.ps_lo")	
-	ps_hi=init_node("io.i2c.ps_hi")	
-	data=init_node("io.i2c.data")	
-	cmd_stat=init_node("io.i2c.cmd_stat")	
+	ctrl=init_node("io.clock_i2c.ctrl")	
+	ps_lo=init_node("io.clock_i2c.ps_lo")	
+	ps_hi=init_node("io.clock_i2c.ps_hi")	
+	data=init_node("io.clock_i2c.data")	
+	cmd_stat=init_node("io.clock_i2c.cmd_stat")	
 	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
 	si5326_rst=init_node("io.csr.ctrl.si5326_rst")	
 	id=init_node("ctrl_reg.id")	
