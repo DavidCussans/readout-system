@@ -87,10 +87,16 @@ if __name__ == "__main__":
     parser.add_option("-b", "--bias", default=65.0, type=float)
     parser.add_option("-p", "--plot", default=False, action="store_true")
     parser.add_option("-n", "--nevt", default=10, type=int)
+    parser.add_option("-t", "--testpattern", type=int)
     (opts, args) = parser.parse_args()
     bias = opts.bias
+    if opts.testpattern is not None:
+        bias = 0.0
     assert bias >= 0.0 and bias <= 70.0
     fpga = frontend.SoLidFPGA(1)
+    print "Initial ADC settings:"
+    for adc in fpga.adcs:
+        adc.getstatus()
     fpga.reset()
     fpga.readvoltages()
     fpga.bias(bias)
@@ -99,6 +105,14 @@ if __name__ == "__main__":
     trims = []
     for i in range(8):
         trims.append(0.0)
+    for adc in fpga.adcs:
+        adc.getstatus()
+    if opts.testpattern is not None:
+        testpattern = opts.testpattern & 0x3fff
+        for adc in fpga.adcs:
+            adc.testpattern(True, testpattern)
+            adc.gettestpattern()
+            adc.getstatus()
     outp = ROOTFile("test.root", chanmap.fpgachans) 
     outp.conditions(bias, 0.0, 0.0, trims)
     print "Triggering %d random events." % opts.nevt

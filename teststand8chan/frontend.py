@@ -401,7 +401,11 @@ class SPICore:
         self.target.dispatch()
         self.control.write(self.control_val | SPICore.go_busy)
         self.target.dispatch()
-        time.sleep(0.1)
+        busy = True
+        while busy:
+            status = self.control.read()
+            self.target.dispatch()
+            busy = status & SPICore.go_busy > 0
         self.slaveselect.write(0xff)
         data = self.data.read()
         ss = self.slaveselect.read()

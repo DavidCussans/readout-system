@@ -1,7 +1,7 @@
 import optparse
 import os
 
-parser = optparse.OptionParser()
+parser = optparse.OptionParser(usage="python voltagescan.py [options] <temperature>")
 parser.add_option("--vmin", default=62.0, type=float)
 parser.add_option("--vmax", default=68.0, type=float)
 parser.add_option("--deltav", default=0.2, type=float)
