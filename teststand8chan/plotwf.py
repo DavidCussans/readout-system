@@ -67,7 +67,10 @@ for event in tree:
            event.wf_chan4, event.wf_chan5, event.wf_chan6, event.wf_chan7]
     wf = wfs[args.channel]
     s = plotwf(wf, ped, canv, nsaved)
-    if s != "" and s != "s":
-        break
+    if s != "":
+        if s == "s":
+            nsaved += 1
+        else:
+            break
 inp.Close()
 
