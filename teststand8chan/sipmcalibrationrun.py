@@ -3,7 +3,6 @@ import time
 
 import uhal
 
-import biasboard
 import envchamber
 import frontend
 import storedata
@@ -39,7 +38,6 @@ fpga.reset()
 #trim1.readvoltages()
 #time.sleep(1.0)
 
-#biascontrol = biasboard.BiasControlBoard()
 #biascontrol.bias(bias)
 
 fpga.readvoltages()
