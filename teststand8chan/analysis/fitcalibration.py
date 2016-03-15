@@ -6,6 +6,7 @@ import os
 import ROOT
 
 import fitspa
+import remove
 
 parser = argparse.ArgumentParser()
 parser.add_argument("chan", type=int)
@@ -72,6 +73,7 @@ class Calibration:
         self.temp = temp
         self.chan = chan
         self.inp = inp
+        self.rsm = None
         self.h_amp = None
         self.SPA = None
         self.dSPA = None
@@ -83,12 +85,20 @@ class Calibration:
         self.h_amp = self.inp.Get(name)
         name = self.h_amp.GetName
         self.h_amp.SetName("%s_%0.2fV_%0.2fC" % (name, self.voltage, self.temp))
+        hname = name
+        name = os.path.split(self.inp.GetName())[1]
+        rawfile = os.path.join("/data/solid/sipmcalibration_bris/good", name.replace("calib_sipm", "sipm"))
+        inp = ROOT.TFile(rawfile, "READ")
+        inp.ls()
+        self.h_raw = inp.Get("h_val_wf_chan%d" % self.chan)
+        self.h_raw.SetDirectory(0)
+        inp.Close()
 
     def fitSPA(self, canv=ROOT.TCanvas()):
         self.h_amp = self.inp.Get("h_amp_ch%d" % self.chan)
-        rms = self.h_amp.GetRMS()
-        if rms < 5:
-            print "RMS = %g, skipping this file" % rms
+        self.rms = self.h_amp.GetRMS()
+        if self.rms < 5:
+            print "RMS = %g, skipping this file" % self.rms
             return
         #fitfn = ROOT.TF1("fn", twospa, 10, 200, 7)
         #maxval = self.h_amp.GetMaximum()
@@ -113,16 +123,31 @@ class Calibration:
         #fitfn.SetParameter(4, 20) # width 1 PA
         #fitfn.SetParameter(5, 0.10) # amp2pa
         #fitfn.SetParameter(6, 20) # width 2 PA
-        self.h_amp, self.SPA = fitspa.fit(self.h_amp)
-        #self.h_amp.Fit(fitfn, "", "", 20, 400)
-        #self.SPA = fitfn.GetParameter(2)
-        fitfn = self.h_amp.GetFunction("fnSPA")
-        self.dSPA = fitfn.GetParError(4)
-        self.h_amp.Draw()
-        canv.Update()
-        #k = raw_input("Use this? [Y/n]\n")
-        #if k != "":
-        #    self.SPA = None
+        tryfit = True
+        estimate = remove.spa(self.h_raw)
+        while tryfit:
+            if estimate is None:
+                self.h_amp, self.SPA = fitspa.fit(self.h_amp)
+            else:
+                self.h_amp, self.SPA = fitspa.fit(self.h_amp, 0.8 * estimate, 1.2 * estimate)
+            #self.h_amp.Fit(fitfn, "", "", 20, 400)
+            #self.SPA = fitfn.GetParameter(2)
+            fitfn = self.h_amp.GetFunction("fnSPA")
+            self.dSPA = fitfn.GetParError(2)
+            self.h_amp.Draw()
+            canv.Update()
+            k = raw_input("Use this? [Y/n]\n")
+            if k == "":
+                tryfit = False
+            elif k == "q":
+                self.SPA = None
+                tryfit = False
+            else:
+                estimate = float(k)
+        print "Final SPA = %s" % str(self.SPA)
+
+            
+
 
     def checkdark(self):
         if self.SPA is None:
@@ -180,7 +205,10 @@ files = os.listdir("data")
 #print files
 vfiles = {}
 for fn in files:
+    if not fn.startswith("calib_sipm"):
+        continue
     if "%02.f" % temp in fn:
+        print fn
         voltage = float(fn.split("_")[2].replace("V", ""))
         if voltage >= vmin and voltage < vmax:
             vfiles[voltage] = ROOT.TFile(os.path.join("data", fn), "READ")
@@ -197,7 +225,7 @@ for v in voltages:
     calib.add(cal)
 canv.SetLogy()
 calib.drawpeaks(canv)
-for v in vcalibs:
+for v in voltages:
     vcalibs[v].fitSPA(canv)
     vcalibs[v].checkdark()
 canv.SetLogy(0)
@@ -210,13 +238,18 @@ ySPAerr = array.array("d")
 yDCR = array.array("d")
 yCT = array.array("d")
 v0 = voltages[0]
+xRMS = array.array("d")
+yRMS = array.array("d")
 for v in voltages:
-    spa = vcalibs[v].SPA
+    calib = vcalibs[v]
+    xRMS.append(v)
+    yRMS.append(calib.rms)
+    spa = calib.SPA
     if spa is None:
         continue
-    spaerr = vcalibs[v].dSPA
-    dcr = vcalibs[v].DCR / 1e6
-    ct = vcalibs[v].CT * 100.0
+    spaerr = calib.dSPA
+    dcr = calib.DCR / 1e6
+    ct = calib.CT * 100.0
     if spa is not None:
         print "v = %g V, SPA = %g, DCR = %g MHz, CT = %g %%" % (v, spa, dcr, ct)
         x.append(v)
@@ -225,6 +258,16 @@ for v in voltages:
         ySPAerr.append(spaerr)
         yDCR.append(dcr)
         yCT.append(ct)
+
+gRMS = ROOT.TGraph(len(xRMS), xRMS, yRMS)
+gRMS.SetTitle("channel %d, T = %g C" % (chan, temp))
+gRMS.GetXaxis().SetTitle("bias voltage [V]")
+gRMS.GetYaxis().SetTitle("RMS [ADC count]")
+gRMS.Draw("AL")
+canv.Update()
+canv.SaveAs("g_RMS_ch%d_%gC.png" % (chan, temp))
+canv.SaveAs("g_RMS_ch%d_%gC.eps" % (chan, temp))
+
 gSPA = ROOT.TGraphErrors(len(x), x, ySPA, xerr, ySPAerr)
 gSPA.SetTitle("channel %d, T = %g C" % (chan, temp))
 gSPA.GetXaxis().SetTitle("bias voltage [V]")
@@ -256,7 +299,7 @@ canv.SaveAs("g_CT_ch%d_%gC.png" % (chan, temp))
 canv.SaveAs("g_CT_ch%d_%gC.eps" % (chan, temp))
 raw_input()
 
-outp = ROOT.TFile("data/fit_ch%d_%02.fC.root", "RECREATE")
+outp = ROOT.TFile("data/fit_ch%d_%02.fC.root" % (chan, temp), "RECREATE")
 
 calibtree = ROOT.TTree("calibration", "calibration")
 calibV = array.array("d", [-1])
