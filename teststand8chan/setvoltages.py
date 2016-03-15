@@ -7,7 +7,7 @@ import envchamber
 import frontend
 import storedata
 
-usage = "python sipmcalibrationrun.py [options] <bias voltage [V]> <temperature [C]>"
+usage = "python setvoltages.py [options] <bias voltage [V]>"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
