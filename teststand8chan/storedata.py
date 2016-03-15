@@ -87,13 +87,14 @@ if __name__ == "__main__":
     parser.add_option("-b", "--bias", default=65.0, type=float)
     parser.add_option("-p", "--plot", default=False, action="store_true")
     parser.add_option("-n", "--nevt", default=10, type=int)
+    parser.add_option("-v", "--fwversion")
     parser.add_option("-t", "--testpattern", type=int)
     (opts, args) = parser.parse_args()
     bias = opts.bias
     if opts.testpattern is not None:
         bias = 0.0
     assert bias >= 0.0 and bias <= 70.0
-    fpga = frontend.SoLidFPGA(1)
+    fpga = frontend.SoLidFPGA(1, minversion=args.fwversion)
     print "Initial ADC settings:"
     for adc in fpga.adcs:
         adc.getstatus()

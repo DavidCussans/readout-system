@@ -23,7 +23,7 @@ import uhal
 
 class SoLidFPGA:
 
-    def __init__(self, nadc=4, verbose=False):
+    def __init__(self, nadc=4, verbose=False, minversion=None):
         cm = uhal.ConnectionManager("file://solidfpga.xml")
         self.target = cm.getDevice("SoLidFPGA")
         self.verbose = verbose
@@ -44,6 +44,7 @@ class SoLidFPGA:
                 DACMCP4728(self.analog_i2c, 0b1100101)
         ]
         self.firmwareversion = None
+        self.minversion = minversion
         self.config()
 
     def config(self):
@@ -54,6 +55,10 @@ class SoLidFPGA:
         print "ID = 0x%x, stat = 0x%x" % (boardid, stat)
         self.id = (boardid & 0xffff0000) >> 16
         self.firmwareversion = boardid & 0x0000ffff
+        if self.minversion is not None:
+            msg = "Old version of firmware (v%d) running, require >= v%d." % (
+                    self.minversion, self.firmwareversion)
+            assert self.firmwareversion >= self.minversion, msg
         self.spi.config()
         self.clock_i2c.config()
         self.analog_i2c.config()

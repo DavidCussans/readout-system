@@ -13,6 +13,7 @@ parser.add_option("-n", "--nevt", type=int, default=10000)
 parser.add_option("-m", "--measbias", default=False, action="store_true")
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
+parser.add_option("-v", "--fwversion")
 (opts, args) = parser.parse_args()
 assert len(args) == 2, "Must provide bias voltage and temperature."
 bias = float(args[0])
@@ -24,7 +25,7 @@ assert bias > 50.0 and bias < 75.0
 ec = envchamber.EnvChamber()
 ec.setTempWait(temp)
 
-fpga = frontend.SoLidFPGA(1)
+fpga = frontend.SoLidFPGA(1, minversion=args.fwversion)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
