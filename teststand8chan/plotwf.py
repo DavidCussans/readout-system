@@ -70,7 +70,7 @@ for event in tree:
     wfs = [event.wf_chan0, event.wf_chan1, event.wf_chan2, event.wf_chan3,
            event.wf_chan4, event.wf_chan5, event.wf_chan6, event.wf_chan7]
     wf = wfs[args.channel]
-    s = plotwf(wf, ped, canv, nsaved)
+    s = plotwf(wf, canv, ped, nsaved)
     if s != "":
         if s == "s":
             nsaved += 1

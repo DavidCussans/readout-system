@@ -94,7 +94,7 @@ if __name__ == "__main__":
     if opts.testpattern is not None:
         bias = 0.0
     assert bias >= 0.0 and bias <= 70.0
-    fpga = frontend.SoLidFPGA(1, minversion=args.fwversion)
+    fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
     print "Initial ADC settings:"
     for adc in fpga.adcs:
         adc.getstatus()
