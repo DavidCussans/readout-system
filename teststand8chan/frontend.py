@@ -57,7 +57,7 @@ class SoLidFPGA:
         self.firmwareversion = boardid & 0x0000ffff
         if self.minversion is not None:
             msg = "Old version of firmware (v%d) running, require >= v%d." % (
-                    self.minversion, self.firmwareversion)
+                    self.firmwareversion, self.minversion)
             assert self.firmwareversion >= self.minversion, msg
         self.spi.config()
         self.clock_i2c.config()
