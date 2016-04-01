@@ -85,23 +85,26 @@ class ROOTFile:
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-b", "--bias", default=65.0, type=float)
+    parser.add_option("--trim", default=0.0, type=float)
     parser.add_option("-p", "--plot", default=False, action="store_true")
     parser.add_option("-n", "--nevt", default=10, type=int)
-    parser.add_option("-v", "--fwversion")
+    parser.add_option("-v", "--fwversion", type=int)
     parser.add_option("-t", "--testpattern", type=int)
     (opts, args) = parser.parse_args()
     bias = opts.bias
     if opts.testpattern is not None:
         bias = 0.0
     assert bias >= 0.0 and bias <= 70.0
-    fpga = frontend.SoLidFPGA(1, minversion=args.fwversion)
+    fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
     print "Initial ADC settings:"
     for adc in fpga.adcs:
         adc.getstatus()
     fpga.reset()
     fpga.readvoltages()
     fpga.bias(bias)
-    fpga.trim(0.0)
+    trim = opts.trim
+    assert trim >= 0.0 and trim <= 5.0
+    fpga.trim(trim)
     fpga.readvoltages()
     trims = []
     for i in range(8):
