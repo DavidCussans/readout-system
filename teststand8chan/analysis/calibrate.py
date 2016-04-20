@@ -22,7 +22,7 @@ def findpeaks(h, wf, ped):
     ped = maxval
     for val in wf:
         if prevprev is not None and prev is not None:
-            if prev > prevprev and prev < val:
+            if prev > prevprev + 5 and prev + 5 < val:
                 h.Fill(prev - ped)
         prevprev = prev
         prev = val

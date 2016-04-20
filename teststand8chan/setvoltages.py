@@ -7,25 +7,17 @@ import envchamber
 import frontend
 import storedata
 
-usage = "python sipmcalibrationrun.py [options] <bias voltage [V]> <temperature [C]>"
+usage = "python setvoltages.py [options] <bias voltage [V]>"
 parser = optparse.OptionParser(usage=usage)
-parser.add_option("-n", "--nevt", type=int, default=10000)
-parser.add_option("-m", "--measbias", default=False, action="store_true")
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
-parser.add_option("-v", "--fwversion")
 (opts, args) = parser.parse_args()
-assert len(args) == 2, "Must provide bias voltage and temperature."
+assert len(args) == 1, "Must provide global bias voltage."
 bias = float(args[0])
-temp = float(args[1])
 
-assert temp > 0.0 and temp < 30.0
-assert bias > 50.0 and bias < 75.0
+assert bias > 0.0 and bias < 75.0
 
-ec = envchamber.EnvChamber()
-ec.setTempWait(temp)
-
-fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
+fpga = frontend.SoLidFPGA(1)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
@@ -41,7 +33,9 @@ fpga.reset()
 
 #biascontrol.bias(bias)
 
+print "Previous DAC settings:"
 fpga.readvoltages()
+print "Setting bias voltage: %g V" % bias
 fpga.bias(bias)
 chantrims = []
 trims = {}
@@ -60,22 +54,7 @@ for chantrim in opts.chantrim:
     assert trim >= 0.0 and trim <= 5.0
     trims[chan] = trim
     chantrims[i] = trim
+print "Setting trim voltages: %s" % str(trims)
 fpga.trims(trims)
+print "Reading back DAC settings:"
 fpga.readvoltages()
-
-measbias = 0.0
-if opts.measbias:
-    measbias = float(raw_input("Measured bias voltage:\n"))
-
-
-#triggerblock = storedata.TriggerBlock(target)
-fn = "data/sipmcalib_%0.2fV_%0.2fC_%s.root" % (bias, temp, time.strftime("%d%b%Y_%H%M"))
-outp = storedata.ROOTFile(fn)
-outp.conditions(bias, measbias, temp, chantrims)
-print "Using %d triggers." % opts.nevt
-nevt = opts.nevt
-for i in range(nevt):
-    if i % (nevt / 10) == 0:
-        print "%d of %d" % (i, nevt)
-    outp.fill(fpga.trigger.trigger())
-outp.close()
