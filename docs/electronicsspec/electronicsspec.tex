@@ -28,7 +28,7 @@
 
 \title{Specification for the SoLid read-out electronics}
 \author[]{SoLid read-out team}
-\date{\today\\V0.1}
+\date{\today\\V0.2}
 
 \newcommand{\must}[1]{\textcolor{red}{#1}}
 \newcommand{\should}[1]{\textcolor{orange}{#1}}
@@ -47,6 +47,7 @@
 \begin{itemize}
     \item Overview of system
     \item Description of which parts of system are covered by this spec
+    \item Note on channel numbering: per plane ch0 (top most channel on analog boards) to ch63. Only complex mapping to be in the ADC->FPGA if possible.
     \item Lay out of spec
 \end{itemize}
 
@@ -81,10 +82,10 @@ One pair provides the bias voltage for the SiPM, the other acts as a ground/volt
             \hline
             Pin & Function \\
             \hline
-            1 & HV? \\
-            2 & LV? \\
-            3 & GND? \\
-            4 & GND? \\
+            1 & GND \\
+            2 & GND \\
+            3 & SiPM HV \\
+            4 & SiPM LV \\
             \hline
             \hline
         \end{tabular}
@@ -94,8 +95,9 @@ One pair provides the bias voltage for the SiPM, the other acts as a ground/volt
 \begin{enumerate}
     \item \must{The SiPM board must fit within the existing 3D printed socket design, with dimensions as shown in \cref{fig:sipmboardsize}.}
     \item \must{The SiPM board must house a single S12752-050P SiPM.}
-    \item \must{The SiPM board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket (Farnell XXXXXX).}
-    \item \must{The socket pin connections must be as detailed in \cref{tab:IDC4waySiPM}.}
+    \item \must{The SiPM board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket (RS 847-5487?, TE 2178711-4?).}
+    \item \must{The socket pin connections must be as detailed in \cref{tab:IDC4waySiPM}, where pin 1 is closest to the polarisation pin of the connector. The matching connector on the ribbon cable will be TE 7-215083-4, (Farnell 149032).}
+    \item \must{The cable used to connect to the SiPMs must be 1.27 mm pitch twist and flat ribbon cable, with coloured wires (such as 3M XXXX, Farnell XXXX).}
     \item \should{The SiPM boards should be designed to ease the production of 3000 units.}
     \item \should{The PCB silkscreen should indicate which order the ribbon cable wires (either coloured or brown) correspond to the IDC socket.}
 \end{enumerate}
@@ -119,10 +121,10 @@ Other sensors or systems such as humidity sensors or LED flashers may also be de
             \hline
             Pin & Function \\
             \hline
-            1 & 3.3 V? \\
-            2 & GND? \\
-            3 & SCL? \\
-            4 & SDA? \\
+            1 & GND \\
+            2 & SDA \\
+            3 & 3.3 V \\
+            4 & SCL \\
             \hline
             \hline
         \end{tabular}
@@ -130,10 +132,11 @@ Other sensors or systems such as humidity sensors or LED flashers may also be de
 \end{table}
 
 \begin{enumerate}
-    \item \must{The sensor board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket (Farnell XXXXXXX).}
-    \item \must{The socket pin connections must be as detailed in \cref{tab:IDC4waySensor}.}
+    \item \must{The sensor board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket (RS 847-5487?, TE 2178711-4?).}
+    \item \must{The socket pin connections must be as detailed in \cref{tab:IDC4waySensor}, where pin 1 is closest to the polarisation pin of the connector.}
     \item \must{Each sensor board should allow the selection of \I2C addresses per sensor.}
     \item \should{Sensor addresses should not clash with the temperature sensors on the analog board.}
+    \item \should{The cable used for the I2C bus should be flat ribbon cable, visibly different from the twist and flat cable used for the SiPMs.}
 \end{enumerate}
 
 \clearpage
@@ -166,15 +169,48 @@ All analog boards are identical.
     \begin{center}
         \caption{Pin mapping for the 64-way DIN41612 socket housed on the analog board for connecting to the SiPM ribbon cable. The pin pattern is repeated 16 times.}
         \label{tab:IDC64way}
+        \begin{tabular}{cc|cc}
+            \hline
+            \hline
+            Pin & Function & Pin & Function \\
+            \hline
+            A(1+2N) & SiPM$_N$ HV & A(2+2N) & GND \\
+            B(1+2N) & SiPM$_N$ LV & B(2+2N) & GND \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the 3-way low-voltage power connector.}
+        \label{tab:LVPower}
         \begin{tabular}{cc}
             \hline
             \hline
             Pin & Function \\
             \hline
-            1 + 4N & SiPM HV? \\
-            2 + 4N & SiPM LV? \\
-            3 + 4N & GND? \\
-            4 + 4N & GND? \\
+            1 & +5 V \\
+            2 & GND \\
+            3 & -3.3 V \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the 2-way high-voltage power connector.}
+        \label{tab:HVPower}
+        \begin{tabular}{cc}
+            \hline
+            \hline
+            Pin & Function \\
+            \hline
+            1 & HV $\le 80 V$ \\
+            2 & GND \\
             \hline
             \hline
         \end{tabular}
@@ -190,8 +226,8 @@ All analog boards are identical.
             \hline
             Pin & Function & Pin & Function & Pin & Function & Pin & Function & Pin & Function \\
             \hline
-            1 & 3.3 V? & 3 & SCL? & 5 & NC & 7 & 3.3 V? & 9 & SCL? \\
-            2 & GND? & 4 & SDA? & 6 & NC & 8 & GND? & 10 & SDA? \\
+            1 & GND & 3 & 3.3 V & 5 & NC & 7 & GND & 9 & 3.3 V \\
+            2 & SDA0 & 4 & SCL0 & 6 & NC & 8 & SDA1 & 10 & SDA1 \\
             \hline
             \hline
         \end{tabular}
@@ -232,13 +268,13 @@ All analog boards are identical.
             A23 & A14+ & B23 & GND & C23 & A15+ \\
             A24 & A14- & B24 & GND & C24 & A15- \\
             A25 & GND & B25 & GND & C25 & GND \\
-            A26 & A16+ & B26 & GND & C26 & A17+ \\
-            A27 & A16- & B27 & GND & C27 & A17- \\
+            A26 & GPIO0 & B26 & GPIO1 & C26 & NC \\
+            A27 & +3.3 V & B27 & NC & C27 & +1.8 V \\
             A28 & GND & B28 & GND & C28 & GND \\
-            A29 & I2C0\_SDA & B29 & GND & C29 & I2C0\_SCL \\
+            A29 & SDA0 & B29 & GND & C29 & SCL0 \\
             A30 & GND & B30 & GND & C30 & GND \\
-            A31 & +3.3 V & B31 & +5 V & C31 & +1.8 V \\
-            A32 & GPIO0 & B32 & GPIO1 & C32 & GND \\
+            A31 & GND & B31 & GND & C31 & GND \\
+            A32 & +5 V & B32 & +5 V & C32 & +5 V \\
             \hline
             \hline
         \end{tabular}
@@ -247,45 +283,45 @@ All analog boards are identical.
 
 \begin{table}[h]
     \begin{center}
-        \caption{Pin mapping for the upper 96-way DIN socket connecting the analog to the digital board.}
+        \caption{Pin mapping for the lower 96-way DIN socket connecting the analog to the digital board.}
         \label{tab:DIN96Lower}
         \begin{tabular}{cc|cc|cc}
             \hline
             \hline
             Pin & Function & Pin & Function & Pin & Function \\
             \hline
-            A1 & A18+ & B1 & GND & C1 & A19+ \\
-            A2 & A18- & B2 & GND & C2 & A19- \\
-            A3 & GND & B3 & GND & C3 & GND \\
-            A4 & A20+ & B4 & GND & C4 & A21+ \\
-            A5 & A20- & B5 & GND & C5 & A21- \\
-            A6 & GND & B6 & GND & C6 & GND \\
-            A7 & A22+ & B7 & GND & C7 & A23+ \\
-            A8 & A22- & B8 & GND & C8 & A23- \\
-            A9 & GND & B9 & GND & C9 & GND \\
-            A10 & A24+ & B10 & GND & C10 & A25+ \\
-            A11 & A24- & B11 & GND & C11 & A25- \\
-            A12 & GND & B12 & GND & C12 & GND \\
-            A13 & A26+ & B13 & GND & C13 & A27+ \\
-            A14 & A26- & B14 & GND & C14 & A27- \\
-            A15 & GND & B15 & GND & C15 & GND \\
-            A16 & A28+ & B16 & GND & C16 & A29+ \\
-            A17 & A28- & B17 & GND & C17 & A29- \\
-            A18 & GND & B18 & GND & C18 & GND \\
-            A19 & A30+ & B19 & GND & C19 & A31+ \\
-            A20 & A30- & B20 & GND & C20 & A31- \\
-            A21 & GND & B21 & GND & C21 & GND \\
-            A22 & (A32+) & B22 & GND & C22 & (A33+) \\
-            A23 & (A32-) & B23 & GND & C23 & (A33-) \\
-            A24 & GND & B24 & GND & C24 & GND \\
-            A25 & (A34+) & B25 & GND & C25 & (A35+) \\
-            A26 & (A34-) & B26 & GND & C26 & (A35-) \\
-            A27 & GND & B27 & GND & C27 & GND \\
-            A28 & (A36+) & B28 & GND & C28 & (A37+) \\
-            A29 & (A36-) & B29 & GND & C29 & (A37-) \\
+            A1 & GND & B1 & GND & C1 & GND \\
+            A2 & A16+ & B2 & GND & C2 & A17+ \\
+            A3 & A16- & B3 & GND & C3 & A17- \\
+            A4 & GND & B4 & GND & C4 & GND \\
+            A5 & A18+ & B5 & GND & C5 & A19+ \\
+            A6 & A18- & B6 & GND & C6 & A19- \\
+            A7 & GND & B7 & GND & C7 & GND \\
+            A8 & A20+ & B8 & GND & C8 & A21+ \\
+            A9 & A20- & B9 & GND & C9 & A21- \\
+            A10 & GND & B10 & GND & C10 & GND \\
+            A11 & A22+ & B11 & GND & C11 & A23+ \\
+            A12 & A22- & B12 & GND & C12 & A23- \\
+            A13 & GND & B13 & GND & C13 & GND \\
+            A14 & A24+ & B14 & GND & C14 & A25+ \\
+            A15 & A24- & B15 & GND & C15 & A25- \\
+            A16 & GND & B16 & GND & C16 & GND \\
+            A17 & A26+ & B17 & GND & C17 & A27+ \\
+            A18 & A26- & B18 & GND & C18 & A27- \\
+            A19 & GND & B19 & GND & C19 & GND \\
+            A20 & A28+ & B20 & GND & C20 & A29+ \\
+            A21 & A28- & B21 & GND & C21 & A29- \\
+            A22 & GND & B22 & GND & C22 & GND \\
+            A23 & A30+ & B23 & GND & C23 & A31+ \\
+            A24 & A30- & B24 & GND & C24 & A31- \\
+            A25 & GND & B25 & GND & C25 & GND \\
+            A26 & GPIO2 & B26 & GPIO3 & C26 & NC \\
+            A27 & +3.3 V & B27 & NC & C27 & +1.8 V \\
+            A28 & GND & B28 & GND & C28 & GND \\
+            A29 & SDA1 & B29 & GND & C29 & SCL1 \\
             A30 & GND & B30 & GND & C30 & GND \\
-            A31 & (A39+) & B31 & GND & C31 & (A39+) \\
-            A32 & (A39-) & B32 & GND & C32 & (A39-) \\
+            A31 & GND & B31 & GND & C31 & GND \\
+            A32 & +5 V & B32 & +5 V & C32 & +5 V \\
             \hline
             \hline
         \end{tabular}
@@ -302,14 +338,22 @@ All analog boards are identical.
     \item \must{The analog board must connect to the digital board using two 96-way DIN41612 socket connectors (Farnell 1096942).}
     \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}.}
     \item \must{The position of the two connectors to the digital board must be as shown in \cref{fig:analogboardsize}.}
-    \item \must{The analog board must use input power connections of -5, GND, + 7 V.}
-    \item \must{The analog board must regulate the input power to -3, GND, +5 V using linear regulators.}
+    \item \must{The analog board must use input power connections of -3.1, GND, + 4.7 V, using a Molex 22-23-2031 connector (Farnell 1462950).}
+    \item \must{The pin mapping for the low voltage connector must be as shown in \cref{tab:LVpower}, where pin 1 is defined as the left-most pin when the polarising shroud is upper-most.}
+    \item \must{The analog board must regulate the input power to -2.8, GND, +4.4 V using linear regulators.}
     \item \must{The regulators must be controllable from the digital board to enable or disable powering the analog board components.}
-    \item \must{The analog board must amplifier the signal from each of 32 SiPMs using an AD8132 amplifier, using the circuit as shown in \cref{fig:amplifiercircuit}.}
+    \item \must{The analog board must amplify the signal from each of 32 SiPMs using an AD8132 amplifier, using the circuit as shown in \cref{fig:amplifiercircuit}.}
     \item \must{The analog board must be compatible with replacing the DC connection to the digital board with an AC connection by replacing only passive components and not using the negative voltage power supply.}
+    \item \must{The analog board must use high voltage input connections using a connector that is incompatible with the low voltage connector (perhaps JST VHR-2N (RS 820-1172).}
+    \item \must{The pin mapping of the high voltage input must be as shown in \cref{fig:HVpower}, where pin 1 is defined as...}
+    \item \must{A fuse must be used to protect the board from excessive current from the HV supply, to break at $I \le 100$ mA.}
+    \item \should{The high- and low-voltage supply connectors should be clearly labelled on the PCB.}
     \item \must{The analog board must be able to produce a programmable high voltage bias supply on board, using ADL5317.}
     \item \must{The analog board must provide a per SiPM low voltage trim using programmable DACs.}
-    \item \must{The ananlog board must provide an on-board temperature measurement and unique ID using a XXX chip with an \I2C address of 0bXXXXXXX.} 
+    \item \must{The programmable DACs must be controllable by from the digital board via an \I2C bus.}
+    \item \should{The channel numbering of the DACs should map simply to the channel numbering of the SiPMs.}
+    \item \must{The analog board must provide an on-board temperature measurement and unique ID using an ATMEL AT30TSE752 chip with an \I2C address of 0b1001000 (i.e. all address pins connected to GND).} 
+    \item \should{The temperature alert line from the temperature chip should be connected to one of the GPIO pins on the 96-way DIN connectors.}
 \end{enumerate}
 
 \clearpage
@@ -336,17 +380,47 @@ The master will also receive the clock and synchronisation signals for the modul
     \end{center}
 \end{figure}
 
+
 \begin{table}[h]
     \begin{center}
-        \caption{Pin information for the Trenz FPGA board.}
-        \label{tab:TrenzPins}
+        \caption{LVDS pins available for ADC data on the Trenz 0712.}
+        \label{tab:TrenzLVDS}
+        \begin{tabular}{cccc}
+            \hline
+            \hline
+            Connector & Bank & Pairs & \# Pairs \\
+            \hline
+            JM1 & 13 & 3, 5, 6, 9, 11 & 5 \\
+            %JM1 & 16 & 16, 19, 17, 18, 9, 7, 11, 10, 5, 2, 6, 4, 1, 22, 24, 23, 15, 20, 21, 13, 14, 3, 12, 8 &  24 & 29 \\
+            JM1 & 16 & 1-24 & 24 \\
+            JM2 & 13 & 1, 2, 4, 10, 12-17 & 10 \\
+            JM3 &  15 & 1-24 & 24 \\
+            \hline
+            \multicolumn{3}{c}{Total} & 63 \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin uses for Trenz 0712 bank 14 (3.3 V).}
+        \label{tab:TrenzB14}
         \begin{tabular}{cc}
             \hline
             \hline
-            Pins & Functions \\
+            Usage & \# pins \\
             \hline
-            A & x \\
-            B & y \\
+            1 channel ADC data & 2 \\
+            CPLD \I2C/SPI device select & 5 \\
+            CPLD SPI (MOSI, MISO, CLK) & 3 \\
+            CPLD \I2C (SCL, SDAI, SDAO) & 3 \\
+            Analog board GPIO & 8 \\
+            LEDs & 4 \\
+            IP address switches & 8 \\
+            \hline
+            Total & \textcolor{red}{\bf 33 / 30} \\
             \hline
             \hline
         \end{tabular}
@@ -388,7 +462,7 @@ The master will also receive the clock and synchronisation signals for the modul
     \item \must{The ADCs must be controlled via N SPI buses, with two chip select lines per ADC chip.}
     \item \must{The master digital board must have an HDMI connector to receive a clock and synchronisation signal.}
     \item \must{The master digital board must fan out the clock and synchronisation signals to the slave digital board.}
-    \item \must{The digital board must have an on board Si5326 chip to clean the external clock signal and provide the clocks for the ADC chips and FPGA.}
+    \item \must{The digital board must have an on board Si5345 chip to clean the external clock signal and provide the clocks for the ADC chips and FPGA.}
     \item \must{The Si5326 clock chip must be controlled by an \I2C bus on the digital board.}
     \item \must{The digital board must have an SFP+ cage for a Gbps Ethernet connection.}
     \item \must{The digital board must use input power connections of GND and 48 V.}
