@@ -4,9 +4,7 @@ import array
 import ROOT
 
 
-def plotwf(wf, ped, canv, nsaved=0):
-    pedline = ROOT.TLine(0, ped, wf.size(), ped)
-    pedline.SetLineColor(ROOT.kRed)
+def plotwf(wf, canv, nsaved=0, ped=True):
     x = array.array("d", range(wf.size()))
     y = array.array("d")
     values = {}
@@ -17,17 +15,18 @@ def plotwf(wf, ped, canv, nsaved=0):
             values[val] += 1
         else:
             values[val] = 1
-    maxval = None
-    maxcount = None
-    for val in values:
-        n = values[val]
-        if maxcount is None or n > maxcount:
-            maxcount = n
-            maxval = val
-    for i in range(len(y)):
-        y[i] -= maxval
-    ped2line = ROOT.TLine(0, maxval, wf.size(), maxval)
-    ped2line.SetLineColor(ROOT.kBlue)
+    maxval = 0 
+    if ped:
+        maxcount = None
+        for val in values:
+            n = values[val]
+            if maxcount is None or n > maxcount:
+                maxcount = n
+                maxval = val
+        for i in range(len(y)):
+            y[i] -= maxval
+    pedline = ROOT.TLine(0, maxval, wf.size(), maxval)
+    pedline.SetLineColor(ROOT.kBlue)
     print ped, maxval, y[:3], y[-3:], min(y), max(y)
     g = ROOT.TGraph(len(x), x, y)
     g.SetTitle("")
@@ -48,6 +47,7 @@ def plotwf(wf, ped, canv, nsaved=0):
 parser = argparse.ArgumentParser()
 parser.add_argument("filename")
 parser.add_argument("channel", type=int)
+parser.add_argument("--noped", action="store_true")
 args = parser.parse_args()
 
 canv = ROOT.TCanvas()
@@ -60,14 +60,21 @@ x = raw_input("ped = %g" % ped)
 if x != "":
     ped = float(x)
 
+if args.noped:
+    print "Not using a pedestal"
+    ped = 0.0
+
 nsaved = 0
 tree = inp.Get("waveforms")
 for event in tree:
     wfs = [event.wf_chan0, event.wf_chan1, event.wf_chan2, event.wf_chan3,
            event.wf_chan4, event.wf_chan5, event.wf_chan6, event.wf_chan7]
     wf = wfs[args.channel]
-    s = plotwf(wf, ped, canv, nsaved)
-    if s != "" and s != "s":
-        break
+    s = plotwf(wf, canv, ped, nsaved)
+    if s != "":
+        if s == "s":
+            nsaved += 1
+        else:
+            break
 inp.Close()
 
