@@ -1,0 +1,4 @@
+directory description 
+SOL_AMP2  : directory with original 8 ch proto type design files and sub dir data sheets 
+SOL_AMP2_1_DC  : directory with the patch documentation to get the DC information
+SOL_AMP2_1_DC/brdinfo  :  files with the individual board information /results
