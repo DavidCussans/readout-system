@@ -28,7 +28,13 @@
 
 \title{Specification for the SoLid read-out electronics}
 \author[]{SoLid read-out team}
-\date{\today\\V0.2}
+\newcommand{\version}{Version 1.0 (RC0)}
+\date{\today\\\version}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{SoLid read-out electronics specification}
+\rhead{\version, \today}
 
 \newcommand{\must}[1]{\textcolor{red}{#1}}
 \newcommand{\should}[1]{\textcolor{orange}{#1}}
@@ -44,19 +50,33 @@
 
 \section{Introduction}
 
+The SoLid read-out system includes the primary optical sensors (SiPMs), the electronics to control and collect data from them, and the firmware and software used to collect and store this data.
+In addition to the SiPM data other data is collected about the temperature and humidity of the detector.
+
+This specification covers the requirements for the PCBs that form the electronic parts of the read-out system:
 \begin{itemize}
-    \item Overview of system
-    \item Description of which parts of system are covered by this spec
-    \item Note on channel numbering: per plane ch0 (top most channel on analog boards) to ch63. Only complex mapping to be in the ADC->FPGA if possible.
-    \item Lay out of spec
+    \item SiPM boards, which each house a single SiPM sensor
+    \item In-detector sensor boards, which house sensors to be deployed inside the detector frames and an in-detector sensor bus interface board, mounted on the frame.
+    \item Analog boards, which provide bias control to the sensors and amplify the signals from them.
+    \item Digital boards, which digitise the sensor data and feed it into the front-end FPGAs.
+    \item Clock distribution boards, which fan-out a global clock to all digital boards.
+    \item Power distribution boards, which fan-out power to the analog and digital boards.
+    \item FPGA programming boards, which fan out JTAG to program the FPGAs.
+\end{itemize}
+
+
+\subsection{Major versions}
+
+\begin{itemize}
+    \item Version 0.0 of this spec is the first version. Minor versions (0.x) have been produced as the system design has evolved.
+    \item Version 1.0 (XX Jun 16) of this spec should contain sufficient information to allow the design of the sensor, analog and digital read-out boards. Minor (1.x) versions may be made with the agreement of the team if changes must be made to the specification of analog and digital boards during the design and review phase.
+    \item Later major versions will add details to the specification of the other electronics boards (in-detector sensor interface board, in-detector sensor boards, clock distribution board, power distribution board, FPGA programming board).
 \end{itemize}
 
 \section{PCB specifications}
 
 The specifications for the various PCBs that will be designed are given in the following subsections.
 
-\clearpage
-\newpage
 \subsection{SiPM board}
 
 {\bf Designer: Nick Ryder}
@@ -95,49 +115,87 @@ One pair provides the bias voltage for the SiPM, the other acts as a ground/volt
 \begin{enumerate}
     \item \must{The SiPM board must fit within the existing 3D printed socket design, with dimensions as shown in \cref{fig:sipmboardsize}.}
     \item \must{The SiPM board must house a single S12752-050P SiPM.}
-    \item \must{The SiPM board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket (RS 847-5487?, TE 2178711-4?).}
+    \item \must{The SiPM board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket TE 7-188275-4 (Farnell 3784710).}
+    \item \must{The 4-way IDE socket must be on the opposite side of the PCB to the SiPM.}
     \item \must{The socket pin connections must be as detailed in \cref{tab:IDC4waySiPM}, where pin 1 is closest to the polarisation pin of the connector. The matching connector on the ribbon cable will be TE 7-215083-4, (Farnell 149032).}
     \item \must{The cable used to connect to the SiPMs must be 1.27 mm pitch twist and flat ribbon cable, with coloured wires (such as 3M XXXX, Farnell XXXX).}
+    \item \must{The PCB must be able to identify which specific SiPM sensor is soldered to it.}
     \item \should{The SiPM boards should be designed to ease the production of 3000 units.}
     \item \should{The PCB silkscreen should indicate which order the ribbon cable wires (either coloured or brown) correspond to the IDC socket.}
 \end{enumerate}
 
 \clearpage
 \newpage
-\subsection{In-detector sensors}
+\subsection{In-detector sensor bus}
 
-{\bf Designer: ???}
+{\bf Designer: Wim Beaumont (and others?)}
 
-An \I2C bus will be provided on a twisted pair ribbon cable within the detector to allow deployment of sensors within the detector frame.
-Temperature sensors will be deployed within the frame.
-Other sensors or systems such as humidity sensors or LED flashers may also be deployed.
+An \I2C bus will be provided on a pair ribbon cables within each detector frame, to allow deployment of in-detector sensors.
+Temperature and humidity sensors are expected to be deployed within the detector and other sensors or functionalities may be useful.
+The sensor bus ribbon cables will connect to a dedicated sensor bus PCB attached to the covering plate on the detector frame.
+This will be deployed below the two analog PCBs.
+The 10-way ribbon cable will be split into two in-detector sensor buses.
+On bus will have the \I2C and also two GPIO lines, the other will only have \I2C.
+The sensor board interface PCB will be connected by a ribbon cable to the digital read-out board's \I2C buses.
+
+\begin{enumerate}
+    \item \must{The sensor interface PCB must connect to the two sensor ribbon cables using a 10-way IDC connector, 3M 4610-600 (Farnell 1758627) connector.}
+    \item \must{The sensor interface PCB must connect to one 4-way and one 6-way sensor ribbon cable, each with a separate \I2C bus, as shown in \cref{tab:i2cbus}.}
+    \item \must{The sensor interface PCB must be able to enable or disable power to the \I2C buses.}
+\end{enumerate}
 
 \begin{table}[h]
     \begin{center}
-        \caption{Pin mapping for the 4-way IDC socket on the sensor board.}
-        \label{tab:IDC4waySensor}
-        \begin{tabular}{cc}
+        \caption{Pin mapping for the 10-way IDC socket on the sensor board.}
+        \label{tab:i2cbus}
+        \begin{tabular}{cc|cc}
             \hline
             \hline
-            Pin & Function \\
+            \multicolumn{2}{c}{Bus 0} & \multicolumn{2}{c}{Bus 1}\\
+            Pin & Function & Pin & Function \\
             \hline
-            1 & GND \\
-            2 & SDA \\
-            3 & 3.3 V \\
-            4 & SCL \\
+            1 & 3.3 V & 7 & 3.3 V \\
+            2 & SCL0 & 8 & SCL1 \\
+            3 & SDA0 & 9 & SDA1 \\
+            4 & GND & 10 & GND \\
+            5 & NC / GPIO0? & & \\
+            6 & NC / GPIO0? & & \\
             \hline
             \hline
         \end{tabular}
     \end{center}
 \end{table}
 
+The sensor boards themselves will potentially have multiple designs to meet the various needs.
+
 \begin{enumerate}
-    \item \must{The sensor board must connect to the SiPM ribbon cable using a 4-way 1.27 mm pitch IDC socket (RS 847-5487?, TE 2178711-4?).}
-    \item \must{The socket pin connections must be as detailed in \cref{tab:IDC4waySensor}, where pin 1 is closest to the polarisation pin of the connector.}
+    \item \must{The sensor board must connect to the SiPM ribbon cable using either a 6-way 1.27 mm pitch IDC socket (TE 7-188275-6, Farnell 1056234) or a 4-way 1.277 mm IDC socket (TE 7-188275-4, Farnell 3784710).}
+    \item \must{The socket pin connections must be as detailed in \cref{tab:indetectorpins}, where pin 1 is closest to the polarisation pin of the connector.}
     \item \must{Each sensor board should allow the selection of \I2C addresses per sensor.}
-    \item \should{Sensor addresses should not clash with the temperature sensors on the analog board.}
-    \item \should{The cable used for the I2C bus should be flat ribbon cable, visibly different from the twist and flat cable used for the SiPMs.}
+    \item \should{The cable used for the \I2C bus should be flat ribbon cable, visibly different from the twist and flat cable used for the SiPMs.}
 \end{enumerate}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the 4-way and 6-way IDC sockets on the in-detector sensor boards.}
+        \label{tab:indetectorpins}
+        \begin{tabular}{cc|cc}
+            \hline
+            \hline
+            \multicolumn{2}{c}{6-way bus} & \multicolumn{2}{c}{4-way bus}\\
+            Pin & Function & Pin & Function \\
+            \hline
+            1 & 3.3 V & 1 & 3.3 V \\
+            2 & SCL0 & 2 & SCL1 \\
+            3 & SDA0 & 3 & SDA1 \\
+            4 & GND & 4 & GND \\
+            5 & NC / GPIO0? & & \\
+            6 & NC / GPIO0? & & \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 \clearpage
 \newpage
@@ -151,11 +209,27 @@ All analog boards are identical.
 
 \begin{figure}[h]
     \begin{center}
-        \includegraphics[width=0.8\textwidth]{imgs/analogboardsize}
+        \includegraphics[width=0.8\textwidth]{imgs/Amplifier_Mod_2}
         \caption{Size of the analog board and positions of connectors.}
         \label{fig:analogboardsize}
     \end{center}
 \end{figure}
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{imgs/Amplifier_Board_Pair_2D}
+        \caption{Size and positions of both the analog and digital boards.}
+        \label{fig:analogdigitalboardsize}
+    \end{center}
+\end{figure}
+
+%\begin{figure}[h]
+%    \begin{center}
+%        \includegraphics[width=0.8\textwidth]{imgs/analogboardsize}
+%        \caption{Size of the analog board and positions of connectors.}
+%        \label{fig:analogboardsize}
+%    \end{center}
+%\end{figure}
 
 \begin{figure}[h]
     \begin{center}
@@ -217,22 +291,22 @@ All analog boards are identical.
     \end{center}
 \end{table}
 
-\begin{table}[h]
-    \begin{center}
-        \caption{Pin mapping for the 10-way IDC socket housed on the analog board for connecting to the in-detector I2C bus.}
-        \label{tab:IDC10way}
-        \begin{tabular}{cc|cc|cc|cc|cc}
-            \hline
-            \hline
-            Pin & Function & Pin & Function & Pin & Function & Pin & Function & Pin & Function \\
-            \hline
-            1 & GND & 3 & 3.3 V & 5 & NC & 7 & GND & 9 & 3.3 V \\
-            2 & SDA0 & 4 & SCL0 & 6 & NC & 8 & SDA1 & 10 & SDA1 \\
-            \hline
-            \hline
-        \end{tabular}
-    \end{center}
-\end{table}
+%\begin{table}[h]
+%    \begin{center}
+%        \caption{Pin mapping for the 10-way IDC socket housed on the analog board for connecting to the in-detector I2C bus.}
+%        \label{tab:IDC10way}
+%        \begin{tabular}{cc|cc|cc|cc|cc}
+%            \hline
+%            \hline
+%            Pin & Function & Pin & Function & Pin & Function & Pin & Function & Pin & Function \\
+%            \hline
+%            1 & GND & 3 & 3.3 V & 5 & NC & 7 & GND & 9 & 3.3 V \\
+%            2 & SDA0 & 4 & SCL0 & 6 & NC & 8 & SDA1 & 10 & SDA1 \\
+%            \hline
+%            \hline
+%        \end{tabular}
+%    \end{center}
+%\end{table}
 
 \begin{table}[h]
     \begin{center}
@@ -329,28 +403,26 @@ All analog boards are identical.
 \end{table}
 
 \begin{enumerate}
-    \item \must{The analog board height (as shown in \cref{fig:analogboardsize}) must be 270 mm.}
-    \item \should{The analog board width should be less than xx mm.}
-    \item \must{The analog board must connect two two 16-SiPM ribbon cables via a 64-way 1.27mm pitch DIN41612 plug connector each (Farnell 1096830).}
-    \item \must{The pin mapping for each IDC socket connectiong to the SiPM ribbon cables must be as described in \cref{tab:IDC64way}.}
-    \item \must{The analog board must connect to two in-detector I2C buses via a 10-way IDC socket (Farnell 1758627).}
-    \item \must{The pin mapping for the connector to the in-detector I2C bus must be as shown in \cref{tab:IDC10way}.}
+    \item \must{The analog board height (as shown in \cref{fig:analogboardsize}) must be 220 mm.}
+    \item \should{The analog board width should be 150 mm.}
+    \item \must{The analog board must connect to two 16-SiPM ribbon cables via a 64-way 1.27mm pitch DIN41612 plug connector each (Farnell 1096830).}
+    \item \must{The pin mapping for each IDC socket connectiong to the SiPM ribbon cables must be as described in \cref{tab:IDC64way}, with pin1 on the upper edge of the connector.}
     \item \must{The analog board must connect to the digital board using two 96-way DIN41612 socket connectors (Farnell 1096942).}
-    \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}.}
+    \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}, with pin 1 on the upper edge of the connector.}
     \item \must{The position of the two connectors to the digital board must be as shown in \cref{fig:analogboardsize}.}
-    \item \must{The analog board must use input power connections of -3.1, GND, + 4.7 V, using a Molex 22-23-2031 connector (Farnell 1462950).}
-    \item \must{The pin mapping for the low voltage connector must be as shown in \cref{tab:LVpower}, where pin 1 is defined as the left-most pin when the polarising shroud is upper-most.}
+    \item \must{The analog board must use input power connections of -3.1, GND, + 4.7 V (supplied by remote -3.3 V and +5 V power supplies), using a Molex 22-23-2031 connector (Farnell 1462950).}
+    \item \must{The pin mapping for the low voltage connector must be as shown in \cref{tab:LVPower}, where pin 1 is defined as the left-most pin when the polarising shroud is upper-most.}
     \item \must{The analog board must regulate the input power to -2.8, GND, +4.4 V using linear regulators.}
     \item \must{The regulators must be controllable from the digital board to enable or disable powering the analog board components.}
     \item \must{The analog board must amplify the signal from each of 32 SiPMs using an AD8132 amplifier, using the circuit as shown in \cref{fig:amplifiercircuit}.}
-    \item \must{The analog board must be compatible with replacing the DC connection to the digital board with an AC connection by replacing only passive components and not using the negative voltage power supply.}
+    \item \should{The analog board should be compatible with replacing the DC connection to the digital board with an AC connection by replacing only passive components and not using the negative voltage power supply.}
     \item \must{The analog board must use high voltage input connections using a connector that is incompatible with the low voltage connector (perhaps JST VHR-2N (RS 820-1172).}
-    \item \must{The pin mapping of the high voltage input must be as shown in \cref{fig:HVpower}, where pin 1 is defined as...}
+    \item \must{The pin mapping of the high voltage input must be as shown in \cref{fig:HVPower}, where pin 1 is defined as...}
     \item \must{A fuse must be used to protect the board from excessive current from the HV supply, to break at $I \le 100$ mA.}
     \item \should{The high- and low-voltage supply connectors should be clearly labelled on the PCB.}
     \item \must{The analog board must be able to produce a programmable high voltage bias supply on board, using ADL5317.}
     \item \must{The analog board must provide a per SiPM low voltage trim using programmable DACs.}
-    \item \must{The programmable DACs must be controllable by from the digital board via an \I2C bus.}
+    \item \must{The programmable DACs must be controllable by from the digital board via the \I2C buses on the two 96-way connectors.}
     \item \should{The channel numbering of the DACs should map simply to the channel numbering of the SiPMs.}
     \item \must{The analog board must provide an on-board temperature measurement and unique ID using an ATMEL AT30TSE752 chip with an \I2C address of 0b1001000 (i.e. all address pins connected to GND).} 
     \item \should{The temperature alert line from the temperature chip should be connected to one of the GPIO pins on the 96-way DIN connectors.}
@@ -365,20 +437,16 @@ All analog boards are identical.
 
 The digital boards house an FPGA board which does front end processing and triggering.
 They also digitise the amplified signals from the analog boards.
-There are two variants of the digital board, one of each will be deployed in each module.
-The `master' board will receive all Ethernet traffic for the two boards, with traffic passed to the `slave' via a serial link.
-The slave board will not have an Ethernet link, but will be upgradable to have one if needed.
-The master will also receive the clock and synchronisation signals for the module and fan them out to the slave board.
+Each detector plane will use a single digital board, receiving data from two analog boards, as shown in \cref{fig:analogdigitalboardsize}.
 
-{\bf Add a diagram of master/slave}
 
-\begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=0.8\textwidth]{imgs/digitalboardsize}
-        \caption{Size of the digital board and positions of connectors.}
-        \label{fig:digitalboardsize}
-    \end{center}
-\end{figure}
+%\begin{figure}[h]
+%    \begin{center}
+%        \includegraphics[width=0.8\textwidth]{imgs/digitalboardsize}
+%        \caption{Size of the digital board and positions of connectors.}
+%        \label{fig:digitalboardsize}
+%    \end{center}
+%\end{figure}
 
 
 \begin{table}[h]
@@ -414,13 +482,13 @@ The master will also receive the clock and synchronisation signals for the modul
             \hline
             1 channel ADC data & 2 \\
             CPLD \I2C/SPI device select & 5 \\
-            CPLD SPI (MOSI, MISO, CLK) & 3 \\
-            CPLD \I2C (SCL, SDAI, SDAO) & 3 \\
+            CPLD SPI (MOSI, MISO, CLK) or \I2C (SCL, SDAI, SDAO) & 3 \\
+            %CPLD \I2C (SCL, SDAI, SDAO) & 3 \\
             Analog board GPIO & 8 \\
             LEDs & 4 \\
             IP address switches & 8 \\
             \hline
-            Total & \textcolor{red}{\bf 33 / 30} \\
+            Total & 30 / 30 \\
             \hline
             \hline
         \end{tabular}
@@ -429,20 +497,20 @@ The master will also receive the clock and synchronisation signals for the modul
 
 \begin{table}[h]
     \begin{center}
-        \caption{Pin information for the eSATA connector used for the clock and synchronisation signals.}
+        \caption{Pin information for the HDMI connector used for the clock and synchronisation signals.}
         \label{tab:ClockSyncPins}
-        \begin{tabular}{cc}
+        \begin{tabular}{cc|cc|cc}
             \hline
             \hline
-            Pins & Functions \\
+            Pin & Function & Pin & Function & Pin & Function \\
             \hline
-            1 & GND? \\
-            2 & CLK+? \\
-            3 & CLK-? \\
-            4 & GND? \\
-            5 & Sync+? \\
-            6 & Sync-? \\
-            7 & GND? \\
+            1 & SYNC+ & 2 & SYNC shield  & 3 & SYNC- \\
+            4 & NC? & 5 & NC? & 6 & NC? \\
+            7 & CLK+ & 8 & CLK shield & 9 & CLK- \\
+            10 & NC? & 11 & NC? & 12 & NC? \\
+            13 & Power Enable? & 14 & NC? & 15 & NC? \\
+            16 & NC? & 17 & NC? & 18 & NC? \\
+            19 & NC? & & & & \\
             \hline
             \hline
         \end{tabular}
@@ -451,25 +519,26 @@ The master will also receive the clock and synchronisation signals for the modul
 
 
 \begin{enumerate}
-    \item \must{The digital board height (as shown in \cref{fig:digitalboardsize}) must be 270 mm.}
-    \item \should{The digital board width should be less than xx mm.}
+    \item \should{The digital board height (as shown in \cref{fig:analogdigitalboardsize}) should be 466.2 mm.}
+    \item \should{The digital board width should be 160 mm.}
     \item \must{The digital board must connect to the digital board using two 96-way DIN41612 plug connectors (Farnell 1096905).}
     \item \must{The pin mapping for the connectors to the analog board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}.}
-    \item \must{The position of the two 96-way DIN41612 connectors must be as shown in \cref{fig:digitalboardsize}.}
-    \item \must{The digital board must allow a Trenz XXX board to be plugged in using two XXXX connectors.}
-    \item \must{The pin mapping for the Trenz board connections must be as shown in \cref{tab:TrenzPins}.}
-    \item \must{The digital board must digitise 32 SiPM channels using multiple XXXX ADCs.}
-    \item \must{The ADCs must be controlled via N SPI buses, with two chip select lines per ADC chip.}
-    \item \must{The master digital board must have an HDMI connector to receive a clock and synchronisation signal.}
-    \item \must{The master digital board must fan out the clock and synchronisation signals to the slave digital board.}
-    \item \must{The digital board must have an on board Si5345 chip to clean the external clock signal and provide the clocks for the ADC chips and FPGA.}
-    \item \must{The Si5326 clock chip must be controlled by an \I2C bus on the digital board.}
+    \item \must{The position of the two 96-way DIN41612 connectors must allow the analog boards' connectors to be be as shown in \cref{fig:analogboardsize}, with the spacing between the two analog boards as shown in \cref{fig:analogdigitalboardsize}.}
+    \item \must{The digital board must allow a Trenz 0712 board to be plugged in.}
+    \item \must{The pin usage/mapping for the Trenz board connections must be as shown in \cref{tab:TrenzLVDS,tab:TrenzB14}.}
+    \item \must{The digital board must digitise 64 SiPM channels using 8 LTM9007 ADCs.}
+    \item \must{The ADCs must be controlled via a 16-channel SPI-like bus, with two chip select lines per ADC chip.}
+    \item \must{The digital board must have an HDMI connector to receive a clock and synchronisation signal, with the pin connection as shown in \cref{tab:ClockSyncPins}.}
+    \item \must{The digital board must have an on board SiXXXX chip to clean the external clock signal and provide the clocks for the ADC chips and FPGA.}
+    \item \must{The SiXXXX clock chip must be controlled by an \I2C bus on the digital board.}
     \item \must{The digital board must have an SFP+ cage for a Gbps Ethernet connection.}
-    \item \must{The digital board must use input power connections of GND and 48 V.}
-    \item \must{The digital board must convert the input power to 1.8 V, 3.3 V, x V using on-board switching DC-DC converters.}
+    \item \must{The digital board must use input power connections of GND and 5 V.}
+    \item \must{The digital board must convert the input power to 1.8 V and 3.3 V using on-board switching DC-DC converters.}
     \item \must{The DC-DC converters must be controllable from the FPGA, to enable/disable powering of the ADC.}
+    \item \must{The powering of the FPGA should be controllable remotely via a control line on the HDMI clock/sync bus.}
     \item \must{The digital board should include a temperature sensor that can power down the FPGA if the board temperature exceeds a programmable alarm threshold.}
-    \item \must{The digital board must have two eSATA sockets to allow Gbps serial communications between FPGAs.}
+    \item \must{The digital board must have two eSATA sockets to allow Gbps serial communications between FPGAs from neighbouring planes.}
+    \item \must{The digital board must have a ribbon cable socket to connect to the in-detector sensor interface board, {\bf Which socket, how many wires?}.}
 \end{enumerate}
 
 \clearpage
@@ -483,41 +552,55 @@ In addition the board is able to provide a synchronous pulsed signal to all boar
 
 \begin{enumerate}
     \item \must{The clock distribution board must provide a xxx MHz clock to all digital boards.}
-    \item \must{The clock distribution board must provide a programmable pulse signal synchronously to all digital boards.}
-    \item \must{The clock and synchronisation signals must be provided via an eSATA connector.}
+    \item \must{The clock distribution board must provide a pulse signal synchronously to ten digital boards.}
+    \item \must{It must be possible to enable or disable the synchronisation pulses from software.}
+    \item \must{The clock and synchronisation signals must be provided via an HDMI connector.}
     \item \must{The HDMI connector pin mapping must be as shown in \cref{tab:ClockSyncPins}.}
+    \item \must{The clock distribution system must have a hierarchical design. Each module of 10 detector planes should be served by a single clock distribution board, which in turn is served by a global 1:10 clock distribution board.}
     \item \should{The FPGA controlling the clock system should have a firmware tool chain compatible with the Artix-7 that will be used on the read-out board.}
 \end{enumerate}
+
+\clearpage
+\newpage
+\subsection{Power distribution board}
+
+{\bf Designer: ?}
+
+Power distribution boards should provide ten detector planes with the necessary high and low voltage power...
+
+\clearpage
+\newpage
+\subsection{FPGA programming board}
+
+{\bf Designer: Bristol electronics design group}
+
+Each module of ten detector planes will have an FPGA programming board.
+This will house a network accessible computer running the Xilinx programming software.
+The board will fan out JTAG connections to each of the ten FPGAs in the detector module.
+
 
 \clearpage
 \newpage
 
 \section{Review process}
 
-\begin{itemize}
-    \item Internal review of schematics before layout:
-    \begin{itemize}
-        \item Check connector pin compatibility, etc.
-        \item Different times for different boards.
-        \item Responsible person to sign off: Alfons?
-    \end{itemize}
-    \item Internal + external review once design done before ordering initial boards:
-    \begin{itemize}
-        \item Review to include these boards and wider system design
-        \item External reviewers with similar experience from RAL, Imperial, other?
-    \end{itemize}
-\end{itemize}
+The analog and digital schematics will be internally reviewed.
+Following completion of the lay out for the two boards they will be reviewed by internal and external reviewers.
+This review will have a larger scope, including the system level design of the read-out system.
 
 \section{Time schedule}
 
-\begin{itemize}
-    \item Design work
-    \item Review system design by {\bf DATE}
-    \item Produce O(10) test boards
-    \item Test at least full plane at Gent
-    \item Produce O(100) boards
-    \item Deploy at Gent
-    \item Relocate detector to BR2
-\end{itemize}
+This is the time schedule discussed at the collaboration meeting at Imperial in May 2016.
+It is based around designing and reviewing the design before producing sufficient electronics to instrument 5 detector planes.
+These will then be tested and validated before starting a larger production for 50 planes.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{imgs/Gantt}
+        \caption{Estimated schedule, where task 10 corresponds to the electronics described in this specification.}
+        \label{fig:gantt}
+    \end{center}
+\end{figure}
+
 
 \end{document}

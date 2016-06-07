@@ -1,4 +1,4 @@
 #!/bin/bash
-latex electronicsspec.tex
-latex electronicsspec.tex
-dvipdf electronicsspec.dvi
+pdflatex electronicsspec.tex
+pdflatex electronicsspec.tex
+#dvipdf electronicsspec.dvi
