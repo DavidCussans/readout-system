@@ -38,7 +38,10 @@ class SoLidFPGA:
         self.adcs = []
         for i in range(1):
             self.adcs.append(ADCLTM9007(self.spi, 2 * i, 2 * i + 1))
-        self.gdac = DACMCP4725(self.analog_i2c)
+        # For board Wim sent to Bristol for testing the MCP4725 address seems
+        # to be 0b1100001, whereas for the first test board the address was
+        # 0b1100111.
+        self.gdac = DACMCP4725(self.analog_i2c, 0b1100001)
         self.trimdacs = [
                 DACMCP4728(self.analog_i2c, 0b1100011),
                 DACMCP4728(self.analog_i2c, 0b1100101)

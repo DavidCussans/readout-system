@@ -112,7 +112,7 @@ if __name__ == "__main__":
     for adc in fpga.adcs:
         adc.getstatus()
     if opts.testpattern is not None:
-        testpattern = opts.testpattern & 0x3fff
+        testpattern = int(opts.testpattern) & 0x3fff
         for adc in fpga.adcs:
             adc.testpattern(True, testpattern)
             adc.gettestpattern()
