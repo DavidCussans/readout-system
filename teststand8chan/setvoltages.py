@@ -15,7 +15,7 @@ parser.add_option("-c", "--chantrim", default=[], action="append")
 assert len(args) == 1, "Must provide global bias voltage."
 bias = float(args[0])
 
-assert bias > 0.0 and bias < 75.0
+assert bias >= 0.0 and bias < 75.0
 
 fpga = frontend.SoLidFPGA(1)
 fpga.reset()
