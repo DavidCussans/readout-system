@@ -9,6 +9,7 @@ import storedata
 
 usage = "python setvoltages.py [options] <bias voltage [V]>"
 parser = optparse.OptionParser(usage=usage)
+parser.add_option("-d", "--dachv", default=None, type=float)
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
 (opts, args) = parser.parse_args()
@@ -36,7 +37,10 @@ fpga.reset()
 print "Previous DAC settings:"
 fpga.readvoltages()
 print "Setting bias voltage: %g V" % bias
-fpga.bias(bias)
+if opts.dachv is None:
+    fpga.bias(bias)
+else:
+    fpga.gdac.setvoltage(opts.dachv)
 chantrims = []
 trims = {}
 trim = opts.trim

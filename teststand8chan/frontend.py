@@ -21,12 +21,13 @@ import time
 
 import uhal
 
+verbose = True
+
 class SoLidFPGA:
 
     def __init__(self, nadc=4, verbose=False, minversion=None):
         cm = uhal.ConnectionManager("file://solidfpga.xml")
         self.target = cm.getDevice("SoLidFPGA")
-        self.verbose = verbose
         #self.config()
         self.offsets = TimingOffsets(self.target)
         self.trigger = Trigger(self.target)
@@ -41,21 +42,22 @@ class SoLidFPGA:
         # For board Wim sent to Bristol for testing the MCP4725 address seems
         # to be 0b1100001, whereas for the first test board the address was
         # 0b1100111.
-        self.gdac = DACMCP4725(self.analog_i2c, 0b1100001, 4.6)
+        self.gdac = DACMCP4725(self.analog_i2c, 0b1100001, 4.45)
         self.trimdacs = [
-                DACMCP4728(self.analog_i2c, 0b1100011, 4.6),
-                DACMCP4728(self.analog_i2c, 0b1100101, 4.6)
+                DACMCP4728(self.analog_i2c, 0b1100011, 4.45),
+                DACMCP4728(self.analog_i2c, 0b1100101, 4.45)
         ]
         self.firmwareversion = None
         self.minversion = minversion
-        self.config()
+        self.config(7, 16)
 
-    def config(self):
+    def config(self, slip, tap):
         # check ID
         boardid = self.target.getNode("ctrl_reg.id").read()
         stat = self.target.getNode("ctrl_reg.stat").read()
         self.target.dispatch()
-        print "ID = 0x%x, stat = 0x%x" % (boardid, stat)
+        if verbose:
+            print "ID = 0x%x, stat = 0x%x" % (boardid, stat)
         self.id = (boardid & 0xffff0000) >> 16
         self.firmwareversion = boardid & 0x0000ffff
         if self.minversion is not None:
@@ -89,25 +91,28 @@ class SoLidFPGA:
         clkcount = self.target.getNode("io.freq_ctr.freq.count").read()
         self.target.dispatch()
         freq = int(clkcount) / 8388.608 # not sure why, from Lukas
-        print "Frequency = %g MHz" % freq
+        if verbose:
+            print "Frequency = %g MHz" % freq
         assert freq > 39 and freq < 41
         # Configure trigger block
         self.trigger.config()
         # Set timing offset on inputs from ADC
-        self.offsets.setoffset()
+        self.offsets.setoffset(slip, tap)
         for adc in self.adcs:
             adc.config()
 
-    def reset(self):
-        print "Resetting board."
+    def reset(self, slip=7, tap=16):
+        if verbose:
+            print "Resetting board."
         # Soft reset
         soft_rst = self.target.getNode("ctrl_reg.ctrl.soft_rst")
         soft_rst.write(1)
         soft_rst.write(0)
         self.target.dispatch()
         time.sleep(1.0)
-        self.config()
-        print "Reset complete."
+        if verbose:
+            print "Reset complete."
+        self.config(slip, tap)
 
     def readvoltages(self):
         bias = self.gdac.readbias()
@@ -144,7 +149,8 @@ class TimingOffsets:
         self.target = target
 
     def setoffset(self, slip=7, tap=16):
-        print "Setting timing offset with channel slip = %d and %d taps." % (slip, tap)
+        if verbose:
+            print "Setting timing offset with channel slip = %d and %d taps." % (slip, tap)
         chan_slip = self.target.getNode("timing.csr.ctrl.chan_slip")
         for i in range(slip):
             chan_slip.write(1)
@@ -247,7 +253,8 @@ class I2CCore:
         for reg in status:
             val = status[reg]
             bval = bin(int(val))
-            print "reg %s = %d, 0x%x, %s" % (reg, val, val, bval)
+            if verbose:
+                print "reg %s = %d, 0x%x, %s" % (reg, val, val, bval)
 
     def clearint(self):
         self.ctrl.write(0x1)
@@ -384,7 +391,8 @@ class SPICore:
     def config(self):
         "Configure SPI interace for communicating with ADCs."
         self.divider_val = int(self.divider_val) % 0xffff
-        print "Configuring SPI core, divider = 0x%x" % self.divider_val
+        if verbose:
+            print "Configuring SPI core, divider = 0x%x" % self.divider_val
         self.divider.write(self.divider_val)
         self.target.dispatch()
         self.control_val = 0x0
@@ -396,7 +404,8 @@ class SPICore:
         # ADC changes output shortly after falling edge of SCK
         self.control_val |= 0x0 << 9 # read input on rising edge
         self.control_val |= 0x10 # 16 bit transfers
-        print "SPI control val = 0x%x = %s" % (self.control_val, bin(self.control_val))
+        if verbose:
+            print "SPI control val = 0x%x = %s" % (self.control_val, bin(self.control_val))
         self.configured = True
 
     def transmit(self, chip, value):
@@ -475,7 +484,8 @@ class Si5326:
         self.slaveaddr = slaveaddr
 
     def config(self, fn):
-        print "Loading Si5326 configuration from %s" % fn
+        if verbose:
+            print "Loading Si5326 configuration from %s" % fn
         inp = open(fn, "r")
         inmap = False
         regvals = {}
@@ -492,11 +502,13 @@ class Si5326:
             if "#REGISTER_MAP" in line:
                 inmap = True
         inp.close()
-        print "Register map: %s" % str(regvals)
+        if verbose:
+            print "Register map: %s" % str(regvals)
         for reg in regvals:
             n = self.i2c.write(self.slaveaddr, [reg, regvals[reg]])
             assert n == 2, "Only wrote %d of 2 bytes over I2C." % n
-        print "Clock configured"
+        if verbose:
+            print "Clock configured"
 
 lvdscurrents = {
         3.5: 0b000,
@@ -579,30 +591,35 @@ class ADCLTM9007:
 
     def reset(self, bank=None):
         """Reset ADC bank(s)."""
-        print "Resetting ADC."
+        if verbose:
+            print "Resetting ADC."
         rstcmd  = 0x1 << 7
         if bank == "A" or bank is None:
-            print "Reset A"
+            if verbose:
+                print "Reset A"
             self.writerega(0x0, rstcmd) 
             time.sleep(0.5)
         if bank == "B" or bank is None:
-            print "Reset B"
+            if verbose:
+                print "Reset B"
             self.writeregb(0x0, rstcmd) 
             time.sleep(0.5)
 
     def testpattern(self, on, pattern=0x0, bank=None):
         """Set bank(s)'s test pattern and en/disable it."""
         pattern = int(pattern) & 0x3fff
-        if on:
-            print "Setting ADC test pattern = 0x%x = %s." % (pattern, bin(pattern))
-        else:
-            print "Setting ADC test pattern off."
+        if verbose:
+            if on:
+                print "Setting ADC test pattern = 0x%x = %s." % (pattern, bin(pattern))
+            else:
+                print "Setting ADC test pattern off."
         msb = 0x0
         if on:
             msb = 0x1 << 7
         msb |= ((pattern & 0x3f00) >> 8)
         lsb = pattern & 0xff
-        print "msb = 0x%x = %s, lsb = 0x%x = %s" % (msb, bin(msb), lsb, bin(lsb))
+        if verbose:
+            print "msb = 0x%x = %s, lsb = 0x%x = %s" % (msb, bin(msb), lsb, bin(lsb))
         if bank is None or bank == "A":
             self.writerega(0x4, lsb)
             self.writerega(0x3, msb)
@@ -630,7 +647,8 @@ class ADCLTM9007:
 
     def setoutputmode(self, lvdscurrent, lvdstermination, outenable, lanes, bits, bank=None):
         """Configure bank(s)'s output mode."""
-        print "Setting ADC output mode."
+        if verbose:
+            print "Setting ADC output mode."
         mode = 0x0
         assert lanes in [1, 2] and bits in [12, 14, 16]
         if lanes == 1:
@@ -659,7 +677,8 @@ class ADCLTM9007:
 
     def setformat(self, randomiser, twoscomp, stabiliser=True, bank=None):
         """Configure bank(s)'s output format."""
-        print "Setting ADC format."
+        if verbose:
+            print "Setting ADC format."
         if bank is None or bank == "A":
             data = self.readrega(0x1)
             if twoscomp:
@@ -693,7 +712,8 @@ class ADCLTM9007:
 
     def setsleep(self, sleep, bank=None):
         """Put ADC bank(s) to sleep."""
-        print "Setting ADC sleep mode"
+        if verbose:
+            print "Setting ADC sleep mode"
         if bank is None or bank == "A":
             data = self.readrega(0x1)
             if sleep:
@@ -711,7 +731,8 @@ class ADCLTM9007:
 
     def nap(self, channels):
         """Provide a list of channels to put down for a nap, all others will be not napping."""
-        print "Setting ADC channel nap."
+        if verbose:
+            print "Setting ADC channel nap."
         dataa = self.readrega(0x1)
         dataa &= 0xf0
         datab = self.readregb(0x1)
