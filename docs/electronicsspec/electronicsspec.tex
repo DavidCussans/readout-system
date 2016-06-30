@@ -28,7 +28,7 @@
 
 \title{Specification for the SoLid read-out electronics}
 \author[]{SoLid read-out team}
-\newcommand{\version}{Version 1.0 (RC0)}
+\newcommand{\version}{Version XX (v1.0 RC1 branch)}
 \date{\today\\\version}
 
 \usepackage{fancyhdr}
@@ -241,7 +241,7 @@ All analog boards are identical.
 
 \begin{table}[h]
     \begin{center}
-        \caption{Pin mapping for the 64-way DIN41612 socket housed on the analog board for connecting to the SiPM ribbon cable. The pin pattern is repeated 16 times.}
+        \caption{Pin mapping for the 64-way DIN41612 socket housed on the analog board for connecting to the SiPM ribbon cable. The pin pattern is repeated 16 times. Note that pins A/B1 are towards the lower edge of the board.}
         \label{tab:IDC64way}
         \begin{tabular}{cc|cc}
             \hline
@@ -310,55 +310,8 @@ All analog boards are identical.
 
 \begin{table}[h]
     \begin{center}
-        \caption{Pin mapping for the upper 96-way DIN socket connecting the analog to the digital board.}
+        \caption{Pin mapping for the upper 96-way DIN socket connecting the analog to the digital board. Note that pins A/B/C1 are towards the lower edge of the board.}
         \label{tab:DIN96Upper}
-        \begin{tabular}{cc|cc|cc}
-            \hline
-            \hline
-            Pin & Function & Pin & Function & Pin & Function \\
-            \hline
-            A1 & GND & B1 & GND & C1 & GND \\
-            A2 & A0+ & B2 & GND & C2 & A1+ \\
-            A3 & A0- & B3 & GND & C3 & A1- \\
-            A4 & GND & B4 & GND & C4 & GND \\
-            A5 & A2+ & B5 & GND & C5 & A3+ \\
-            A6 & A2- & B6 & GND & C6 & A3- \\
-            A7 & GND & B7 & GND & C7 & GND \\
-            A8 & A4+ & B8 & GND & C8 & A5+ \\
-            A9 & A4- & B9 & GND & C9 & A5- \\
-            A10 & GND & B10 & GND & C10 & GND \\
-            A11 & A6+ & B11 & GND & C11 & A7+ \\
-            A12 & A6- & B12 & GND & C12 & A7- \\
-            A13 & GND & B13 & GND & C13 & GND \\
-            A14 & A8+ & B14 & GND & C14 & A9+ \\
-            A15 & A8- & B15 & GND & C15 & A9- \\
-            A16 & GND & B16 & GND & C16 & GND \\
-            A17 & A10+ & B17 & GND & C17 & A11+ \\
-            A18 & A10- & B18 & GND & C18 & A11- \\
-            A19 & GND & B19 & GND & C19 & GND \\
-            A20 & A12+ & B20 & GND & C20 & A13+ \\
-            A21 & A12- & B21 & GND & C21 & A13- \\
-            A22 & GND & B22 & GND & C22 & GND \\
-            A23 & A14+ & B23 & GND & C23 & A15+ \\
-            A24 & A14- & B24 & GND & C24 & A15- \\
-            A25 & GND & B25 & GND & C25 & GND \\
-            A26 & GPIO0 & B26 & GPIO1 & C26 & NC \\
-            A27 & +3.3 V & B27 & NC & C27 & +1.8 V \\
-            A28 & GND & B28 & GND & C28 & GND \\
-            A29 & SDA0 & B29 & GND & C29 & SCL0 \\
-            A30 & GND & B30 & GND & C30 & GND \\
-            A31 & GND & B31 & GND & C31 & GND \\
-            A32 & +5 V & B32 & +5 V & C32 & +5 V \\
-            \hline
-            \hline
-        \end{tabular}
-    \end{center}
-\end{table}
-
-\begin{table}[h]
-    \begin{center}
-        \caption{Pin mapping for the lower 96-way DIN socket connecting the analog to the digital board.}
-        \label{tab:DIN96Lower}
         \begin{tabular}{cc|cc|cc}
             \hline
             \hline
@@ -389,13 +342,60 @@ All analog boards are identical.
             A23 & A30+ & B23 & GND & C23 & A31+ \\
             A24 & A30- & B24 & GND & C24 & A31- \\
             A25 & GND & B25 & GND & C25 & GND \\
-            A26 & GPIO2 & B26 & GPIO3 & C26 & NC \\
-            A27 & +3.3 V & B27 & NC & C27 & +1.8 V \\
+            A26 & GPIO2 & B26 & GND & C26 & GPIO3 \\
+            A27 & +3.3 V & B27 & GND & C27 & +1.8 V \\
+            A28 & GND & B28 & GND & C28 & GND \\
+            A29 & SDA0 & B29 & GND & C29 & SCL0 \\
+            A30 & GND & B30 & GND & C30 & GND \\
+            A31 & GND & B31 & GND & C31 & GND \\
+            A32 & +5 V & B32 & GND & C32 & +5 V \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the lower 96-way DIN socket connecting the analog to the digital board. Note that pin A/B/C1 are towards the lower edge of the board.}
+        \label{tab:DIN96Lower}
+        \begin{tabular}{cc|cc|cc}
+            \hline
+            \hline
+            Pin & Function & Pin & Function & Pin & Function \\
+            \hline
+            A1 & GND & B1 & GND & C1 & GND \\
+            A2 & A0+ & B2 & GND & C2 & A1+ \\
+            A3 & A0 & B3 & GND & C3 & A1- \\
+            A4 & GND & B4 & GND & C4 & GND \\
+            A5 & A2+ & B5 & GND & C5 & A3+ \\
+            A6 & A2- & B6 & GND & C6 & A3- \\
+            A7 & GND & B7 & GND & C7 & GND \\
+            A8 & A4+ & B8 & GND & C8 & A5+ \\
+            A9 & A4- & B9 & GND & C9 & A5- \\
+            A10 & GND & B10 & GND & C10 & GND \\
+            A11 & A6+ & B11 & GND & C11 & A7+ \\
+            A12 & A6- & B12 & GND & C12 & A7- \\
+            A13 & GND & B13 & GND & C13 & GND \\
+            A14 & A8+ & B14 & GND & C14 & A9+ \\
+            A15 & A8- & B15 & GND & C15 & A9- \\
+            A16 & GND & B16 & GND & C16 & GND \\
+            A17 & A10+ & B17 & GND & C17 & A11+ \\
+            A18 & A10- & B18 & GND & C18 & A11- \\
+            A19 & GND & B19 & GND & C19 & GND \\
+            A20 & A12+ & B20 & GND & C20 & A13+ \\
+            A21 & A12- & B21 & GND & C21 & A13- \\
+            A22 & GND & B22 & GND & C22 & GND \\
+            A23 & A14+ & B23 & GND & C23 & A15+ \\
+            A24 & A14- & B24 & GND & C24 & A15- \\
+            A25 & GND & B25 & GND & C25 & GND \\
+            A26 & GPIO0 & B26 & GND & C26 & GPIO1 \\
+            A27 & +3.3 V & B27 & GND & C27 & +1.8 V \\
             A28 & GND & B28 & GND & C28 & GND \\
             A29 & SDA1 & B29 & GND & C29 & SCL1 \\
             A30 & GND & B30 & GND & C30 & GND \\
             A31 & GND & B31 & GND & C31 & GND \\
-            A32 & +5 V & B32 & +5 V & C32 & +5 V \\
+            A32 & +5 V & B32 & GND & C32 & +5 V \\
             \hline
             \hline
         \end{tabular}
@@ -406,9 +406,9 @@ All analog boards are identical.
     \item \must{The analog board height (as shown in \cref{fig:analogboardsize}) must be 220 mm.}
     \item \should{The analog board width should be 150 mm.}
     \item \must{The analog board must connect to two 16-SiPM ribbon cables via a 64-way 1.27mm pitch DIN41612 plug connector each (Farnell 1096830).}
-    \item \must{The pin mapping for each IDC socket connectiong to the SiPM ribbon cables must be as described in \cref{tab:IDC64way}, with pin1 on the upper edge of the connector.}
+    \item \must{The pin mapping for each IDC socket connectiong to the SiPM ribbon cables must be as described in \cref{tab:IDC64way}, with pin1 on the lower edge of the connector and row A {\bf on which side?}.}
     \item \must{The analog board must connect to the digital board using two 96-way DIN41612 socket connectors (Farnell 1096942).}
-    \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}, with pin 1 on the upper edge of the connector.}
+    \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}, with pins A/B/C1 on the lower edge of the connector and row A {\bf on which side?}}
     \item \must{The position of the two connectors to the digital board must be as shown in \cref{fig:analogboardsize}.}
     \item \must{The analog board must use input power connections of -3.1, GND, + 4.7 V (supplied by remote -3.3 V and +5 V power supplies), using a Molex 22-23-2031 connector (Farnell 1462950).}
     \item \must{The pin mapping for the low voltage connector must be as shown in \cref{tab:LVPower}, where pin 1 is defined as the left-most pin when the polarising shroud is upper-most.}
