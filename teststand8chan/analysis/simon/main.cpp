@@ -8,11 +8,12 @@
  * compile using:
  * g++ -O3 main.cpp waveforms.cpp chanHistos.cpp -o awf `root-config --cflags --glibs` -lSpectrum
  *
- * Provided as well is 'pedestals.root', a file with the pedestals and
- * the RMS values of the waveforms, this file can be used with the option
- *  -p pedestals.root
+ * A 'pedestals.root' file with the pedestals andthe RMS values
+ * of the waveforms can created using the -m option on a
+ * below breakdown file.
  *
- * A new such file can be created using the '-m' option
+ * The pedestals.root file can (should) be used via
+ *  -p pedestals.root
  *
  */
 
