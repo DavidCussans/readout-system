@@ -155,8 +155,12 @@ def fitGausExp2PA(h, gausexpfn, spaguess, rangemin, rangemax):
     fn.SetParLimits(4, 10, 100)
     fn.SetParameter(4, 50)
     fn.SetParName(5, "SPA")
-    fn.SetParLimits(5, 0.7 * spaguess, 1.3 * spaguess)
-    fn.SetParameter(5, spaguess)
+    if spaguess is not None:
+        fn.SetParLimits(5, 0.7 * spaguess, 1.3 * spaguess)
+        fn.SetParameter(5, spaguess)
+    else:
+        fn.SetParLimits(5, 15.0, 80.0)
+        fn.SetParameter(5, 40.0)
     fn.SetParName(6, "amp 1 PA")
     fn.SetParLimits(6, 0.001 * gausamp, 0.25 * gausamp)
     fn.SetParameter(6, 0.1 * gausamp)
@@ -250,6 +254,8 @@ def fit(h):
     ped = gfn.GetParameter(1)
     width = gfn.GetParameter(2)
     spa = guessspa(h, amp, ped, width)
+    if spa < 15:
+        spa = None
     fitGausExp2PA(h, gfn, spa, minrange, maxrange)
     fn = h.GetFunction("gausExp2PA")
     spa_fit= fn.GetParameter(5)
