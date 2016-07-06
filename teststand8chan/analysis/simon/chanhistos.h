@@ -26,17 +26,18 @@ private:
 
     int chan;
     float pedestal,RMS;
+    float bias;
 
 public:
     chanHistos();
-    chanHistos(int i);
+    chanHistos(int i, float bias = -1);
 
     ~chanHistos();
     void writeHistos(TFile *f);
 
     TH1F* getAmpHisto(){return h1_amp;}
     void fillHisto(vector<float> *wf);
-    float getGain();
+    TH1F* getGain(float &gain);
     void getPedestalInfo(float &val, float &RMS){
         val = h1_pdVal->GetMean();
         RMS = h1_pdRMS->GetMean();
@@ -47,5 +48,6 @@ public:
 };
 
 float getRes(vector<float> v, float t);
+float getBias(const char *fName);
 
 #endif // CHANHISTOS_H

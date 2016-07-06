@@ -5,9 +5,11 @@
 
 #include <algorithm>    // std::sort
 #include <iostream>
+#include <string>
 
 using std::cout;
 using std::endl;
+using std::string;
 
 #include "chanhistos.h"
 
@@ -15,10 +17,11 @@ chanHistos::chanHistos(){
     // empty default constructor
 }
 
-chanHistos::chanHistos(int i){
+chanHistos::chanHistos(int i, float _bias){
     chan = i;
     pedestal = -1;
     RMS = -1;
+    bias = _bias;
 
     char hName[127];
     sprintf(hName,"amp_%i",i);
@@ -83,9 +86,14 @@ void chanHistos::writeHistos(TFile *f){
 
     char hName[123];
     sprintf(hName,"gain_%i",chan);
-    TH1F *h1_g = new TH1F(hName,hName,1,0,1);
-    h1_g->SetBinContent(1,getGain());
+    TH1F *h1_gainDet, *h1_g = new TH1F(hName,hName,1,0,1);
+    float gain = 0;
+    h1_gainDet = getGain(gain);
+    h1_g->SetBinContent(1,gain);
+    f->cd();
+    h1_gainDet->Write();
     h1_g->Write();
+    delete h1_gainDet;
     delete h1_g;
 }
 
@@ -156,10 +164,19 @@ void chanHistos::fillHisto(vector<float> *wf){
     }
 }
 
-float chanHistos::getGain(){
+TH1F* chanHistos::getGain(float &gain){
+    // preparing for the return statement
+    char hName[511];
+    sprintf(hName,"gainDet_chan%i",chan);
+    float biasIG = 14.1166017434*bias - 884.642510729;
+    TH1F *hgd = new TH1F(hName ,hName,
+                         50*(int(biasIG)+1), 0.75*biasIG, 1.25*biasIG);
+
+    // creating a canvas to avoid warning printing
     char cName[12];
     sprintf(cName,"canv_%i",chan);
     TCanvas *c1 = new TCanvas(cName);
+
     TSpectrum *s = new TSpectrum(16);
     int np = s->Search(h1_amp,2,"",5e-2);
     while (np >= 9 && h1_amp->GetNbinsX() > 250){
@@ -171,7 +188,8 @@ float chanHistos::getGain(){
 
     if (np == 0 || h1_amp->GetNbinsX() < 250){
         // there's either no peak or there's not enough stats
-        return 0;
+        gain = 0;
+        return hgd;
     }
 
     char fName[120];
@@ -200,9 +218,10 @@ float chanHistos::getGain(){
         h1_amp->Fit(v_f[i],"rq");
     }
 
-    float gain = v_f[0]->GetParameter(1);
+    gain = v_f[0]->GetParameter(1);
     if (np == 1){
-        return gain;
+        // this is the currently best and only estimate
+        return hgd;
     }
 
     vector<float> nPA(1,0);
@@ -230,26 +249,20 @@ float chanHistos::getGain(){
     }
 
     sort(nPA.begin(),nPA.end());
-    gain = nPA[1] - nPA[0];
-    /*
-    for (int i = 2; i < nPA.size(); i ++){
-        if (nPA[i] - nPA[i-1] < gain){
-            gain = nPA[i] - nPA[i-1];
-        }
-    }
-    */
+    // trend established from fitting results
+    gain = 14.1166017434*bias - 884.642510729;
 
     float res, minRes = getRes(nPA,gain);
-    for (float gg = 0.55*gain; gg < 1.25*gain; gg += 0.01){
+    for (float gg = 0.75*gain; gg < 1.25*gain; gg += 0.01){
         res = getRes(nPA,gg);
+        hgd->Fill(gg,res);
         if (res < minRes){
             minRes = res;
             gain = gg;
         }
     }
 
-    delete c1;
-    return gain;
+    return hgd;
 }
 
 float getRes(vector<float> v, float t){
@@ -264,4 +277,12 @@ float getRes(vector<float> v, float t){
         }
     }
     return res;
+}
+
+float getBias(const char *fName){
+    string strFN = string(fName);
+    int fns = strFN.find("sipmcalib");
+    float hv = atof(strFN.substr(fns+10,5).c_str());
+    float trim = atof(strFN.substr(fns+21,1).c_str());
+    return hv - trim;
 }

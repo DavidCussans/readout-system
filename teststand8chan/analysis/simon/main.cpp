@@ -38,6 +38,7 @@ int main(int argc, char *argv[]){
     bool setPD = false;
     bool makePD = false;
     char PDfile[511];
+    float bias = 0;
     sprintf(PDfile,"%s","pedestals.root");
     for (int i = 1; i < argc; i ++){
         if (argv[i][0] == '-'){
@@ -59,12 +60,14 @@ int main(int argc, char *argv[]){
                 makePD = true;
                 continue;
             }
-            cerr << "unidentified option " << argv[i] << ", read the code for allowed options." << endl;
+            cerr<<"unidentified option "<<argv[i];
+            cerr<<", read the code for allowed options."<< endl;
             return -1;
-        }else{
+        } else {
             cout << argv[i] << flush;
             chain->Add(argv[i]);
-            cout<<" added"<<endl;
+            bias = getBias(argv[i]);
+            cout<<" added ("<<bias<<" V bias)"<<endl;
             filecount ++;
         }
     }
@@ -76,7 +79,7 @@ int main(int argc, char *argv[]){
 
     vector<chanHistos*> v_ch;
     for (int i = 0; i < 8; i ++){
-        v_ch.push_back(new chanHistos(i));
+        v_ch.push_back(new chanHistos(i,bias));
     }
 
 
