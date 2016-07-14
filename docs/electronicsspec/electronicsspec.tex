@@ -28,7 +28,7 @@
 
 \title{Specification for the SoLid read-out electronics}
 \author[]{SoLid read-out team}
-\newcommand{\version}{Version 1.0 (RC0)}
+\newcommand{\version}{Version XX (v1.0 RC1 branch)}
 \date{\today\\\version}
 
 \usepackage{fancyhdr}
@@ -169,7 +169,7 @@ The sensor board interface PCB will be connected by a ribbon cable to the digita
 The sensor boards themselves will potentially have multiple designs to meet the various needs.
 
 \begin{enumerate}
-    \item \must{The sensor board must connect to the SiPM ribbon cable using either a 6-way 1.27 mm pitch IDC socket (TE 7-188275-6, Farnell 1056234) or a 4-way 1.277 mm IDC socket (TE 7-188275-4, Farnell 3784710).}
+    \item \must{The sensor board must connect to the sensor ribbon cable using either a 6-way 1.27 mm pitch IDC socket (TE 7-188275-6, Farnell 1056234) or a 4-way 1.277 mm IDC socket (TE 7-188275-4, Farnell 3784710).}
     \item \must{The socket pin connections must be as detailed in \cref{tab:indetectorpins}, where pin 1 is closest to the polarisation pin of the connector.}
     \item \must{Each sensor board should allow the selection of \I2C addresses per sensor.}
     \item \should{The cable used for the \I2C bus should be flat ribbon cable, visibly different from the twist and flat cable used for the SiPMs.}
@@ -231,18 +231,10 @@ All analog boards are identical.
 %    \end{center}
 %\end{figure}
 
-\begin{figure}[h]
-    \begin{center}
-        \includegraphics[width=0.8\textwidth]{imgs/SiPM_test_dc_schematic}
-        \caption{Amplifier circuit design.}
-        \label{fig:amplifiercircuit}
-    \end{center}
-\end{figure}
-
 \begin{table}[h]
     \begin{center}
-        \caption{Pin mapping for the 64-way DIN41612 socket housed on the analog board for connecting to the SiPM ribbon cable. The pin pattern is repeated 16 times.}
-        \label{tab:IDC64way}
+        \caption{Pin mapping for the lower 64-way DIN41612 socket housed on the analog board for connecting to the SiPM ribbon cable. The pin pattern is repeated 16 times. Note that pins A/B1 are towards the lower edge of the board.}
+        \label{tab:lowerIDC64way}
         \begin{tabular}{cc|cc}
             \hline
             \hline
@@ -250,6 +242,23 @@ All analog boards are identical.
             \hline
             A(1+2N) & SiPM$_N$ HV & A(2+2N) & GND \\
             B(1+2N) & SiPM$_N$ LV & B(2+2N) & GND \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the upper 64-way DIN41612 socket housed on the analog board for connecting to the SiPM ribbon cable. The pin pattern is repeated 16 times. Note that pins A/B1 are towards the lower edge of the board.}
+        \label{tab:upperIDC64way}
+        \begin{tabular}{cc|cc}
+            \hline
+            \hline
+            Pin & Function & Pin & Function \\
+            \hline
+            A(1+2N) & SiPM$_{N+16}$ HV & A(2+2N) & GND \\
+            B(1+2N) & SiPM$_{N+16}$ LV & B(2+2N) & GND \\
             \hline
             \hline
         \end{tabular}
@@ -310,55 +319,8 @@ All analog boards are identical.
 
 \begin{table}[h]
     \begin{center}
-        \caption{Pin mapping for the upper 96-way DIN socket connecting the analog to the digital board.}
+        \caption{Pin mapping for the upper 96-way DIN socket connecting the analog to the digital board. Note that pins A/B/C1 are towards the lower edge of the board.}
         \label{tab:DIN96Upper}
-        \begin{tabular}{cc|cc|cc}
-            \hline
-            \hline
-            Pin & Function & Pin & Function & Pin & Function \\
-            \hline
-            A1 & GND & B1 & GND & C1 & GND \\
-            A2 & A0+ & B2 & GND & C2 & A1+ \\
-            A3 & A0- & B3 & GND & C3 & A1- \\
-            A4 & GND & B4 & GND & C4 & GND \\
-            A5 & A2+ & B5 & GND & C5 & A3+ \\
-            A6 & A2- & B6 & GND & C6 & A3- \\
-            A7 & GND & B7 & GND & C7 & GND \\
-            A8 & A4+ & B8 & GND & C8 & A5+ \\
-            A9 & A4- & B9 & GND & C9 & A5- \\
-            A10 & GND & B10 & GND & C10 & GND \\
-            A11 & A6+ & B11 & GND & C11 & A7+ \\
-            A12 & A6- & B12 & GND & C12 & A7- \\
-            A13 & GND & B13 & GND & C13 & GND \\
-            A14 & A8+ & B14 & GND & C14 & A9+ \\
-            A15 & A8- & B15 & GND & C15 & A9- \\
-            A16 & GND & B16 & GND & C16 & GND \\
-            A17 & A10+ & B17 & GND & C17 & A11+ \\
-            A18 & A10- & B18 & GND & C18 & A11- \\
-            A19 & GND & B19 & GND & C19 & GND \\
-            A20 & A12+ & B20 & GND & C20 & A13+ \\
-            A21 & A12- & B21 & GND & C21 & A13- \\
-            A22 & GND & B22 & GND & C22 & GND \\
-            A23 & A14+ & B23 & GND & C23 & A15+ \\
-            A24 & A14- & B24 & GND & C24 & A15- \\
-            A25 & GND & B25 & GND & C25 & GND \\
-            A26 & GPIO0 & B26 & GPIO1 & C26 & NC \\
-            A27 & +3.3 V & B27 & NC & C27 & +1.8 V \\
-            A28 & GND & B28 & GND & C28 & GND \\
-            A29 & SDA0 & B29 & GND & C29 & SCL0 \\
-            A30 & GND & B30 & GND & C30 & GND \\
-            A31 & GND & B31 & GND & C31 & GND \\
-            A32 & +5 V & B32 & +5 V & C32 & +5 V \\
-            \hline
-            \hline
-        \end{tabular}
-    \end{center}
-\end{table}
-
-\begin{table}[h]
-    \begin{center}
-        \caption{Pin mapping for the lower 96-way DIN socket connecting the analog to the digital board.}
-        \label{tab:DIN96Lower}
         \begin{tabular}{cc|cc|cc}
             \hline
             \hline
@@ -389,13 +351,60 @@ All analog boards are identical.
             A23 & A30+ & B23 & GND & C23 & A31+ \\
             A24 & A30- & B24 & GND & C24 & A31- \\
             A25 & GND & B25 & GND & C25 & GND \\
-            A26 & GPIO2 & B26 & GPIO3 & C26 & NC \\
-            A27 & +3.3 V & B27 & NC & C27 & +1.8 V \\
+            A26 & GPIO2 & B26 & GND & C26 & GPIO3 \\
+            A27 & +3.3 V & B27 & GND & C27 & +1.8 V \\
+            A28 & GND & B28 & GND & C28 & GND \\
+            A29 & SDA0 & B29 & GND & C29 & SCL0 \\
+            A30 & GND & B30 & GND & C30 & GND \\
+            A31 & GND & B31 & GND & C31 & GND \\
+            A32 & +5 V & B32 & GND & C32 & +5 V \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the lower 96-way DIN socket connecting the analog to the digital board. Note that pin A/B/C1 are towards the lower edge of the board.}
+        \label{tab:DIN96Lower}
+        \begin{tabular}{cc|cc|cc}
+            \hline
+            \hline
+            Pin & Function & Pin & Function & Pin & Function \\
+            \hline
+            A1 & GND & B1 & GND & C1 & GND \\
+            A2 & A0+ & B2 & GND & C2 & A1+ \\
+            A3 & A0 & B3 & GND & C3 & A1- \\
+            A4 & GND & B4 & GND & C4 & GND \\
+            A5 & A2+ & B5 & GND & C5 & A3+ \\
+            A6 & A2- & B6 & GND & C6 & A3- \\
+            A7 & GND & B7 & GND & C7 & GND \\
+            A8 & A4+ & B8 & GND & C8 & A5+ \\
+            A9 & A4- & B9 & GND & C9 & A5- \\
+            A10 & GND & B10 & GND & C10 & GND \\
+            A11 & A6+ & B11 & GND & C11 & A7+ \\
+            A12 & A6- & B12 & GND & C12 & A7- \\
+            A13 & GND & B13 & GND & C13 & GND \\
+            A14 & A8+ & B14 & GND & C14 & A9+ \\
+            A15 & A8- & B15 & GND & C15 & A9- \\
+            A16 & GND & B16 & GND & C16 & GND \\
+            A17 & A10+ & B17 & GND & C17 & A11+ \\
+            A18 & A10- & B18 & GND & C18 & A11- \\
+            A19 & GND & B19 & GND & C19 & GND \\
+            A20 & A12+ & B20 & GND & C20 & A13+ \\
+            A21 & A12- & B21 & GND & C21 & A13- \\
+            A22 & GND & B22 & GND & C22 & GND \\
+            A23 & A14+ & B23 & GND & C23 & A15+ \\
+            A24 & A14- & B24 & GND & C24 & A15- \\
+            A25 & GND & B25 & GND & C25 & GND \\
+            A26 & GPIO0 & B26 & GND & C26 & GPIO1 \\
+            A27 & +3.3 V & B27 & GND & C27 & +1.8 V \\
             A28 & GND & B28 & GND & C28 & GND \\
             A29 & SDA1 & B29 & GND & C29 & SCL1 \\
             A30 & GND & B30 & GND & C30 & GND \\
             A31 & GND & B31 & GND & C31 & GND \\
-            A32 & +5 V & B32 & +5 V & C32 & +5 V \\
+            A32 & +5 V & B32 & GND & C32 & +5 V \\
             \hline
             \hline
         \end{tabular}
@@ -406,22 +415,22 @@ All analog boards are identical.
     \item \must{The analog board height (as shown in \cref{fig:analogboardsize}) must be 220 mm.}
     \item \should{The analog board width should be 150 mm.}
     \item \must{The analog board must connect to two 16-SiPM ribbon cables via a 64-way 1.27mm pitch DIN41612 plug connector each (Farnell 1096830).}
-    \item \must{The pin mapping for each IDC socket connectiong to the SiPM ribbon cables must be as described in \cref{tab:IDC64way}, with pin1 on the upper edge of the connector.}
+    \item \must{The pin mapping for each IDC socket connectiong to the SiPM ribbon cables must be as described in \cref{tab:lowerIDC64way,tab:upperIDC64way}, with pin1 on the lower edge of the connector and row A {\bf on which side?}.}
     \item \must{The analog board must connect to the digital board using two 96-way DIN41612 socket connectors (Farnell 1096942).}
-    \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}, with pin 1 on the upper edge of the connector.}
+    \item \must{The pin mapping for the two connectors to the digital board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}, with pins A/B/C1 on the lower edge of the connector and row A {\bf on which side?}}
     \item \must{The position of the two connectors to the digital board must be as shown in \cref{fig:analogboardsize}.}
     \item \must{The analog board must use input power connections of -3.1, GND, + 4.7 V (supplied by remote -3.3 V and +5 V power supplies), using a Molex 22-23-2031 connector (Farnell 1462950).}
     \item \must{The pin mapping for the low voltage connector must be as shown in \cref{tab:LVPower}, where pin 1 is defined as the left-most pin when the polarising shroud is upper-most.}
     \item \must{The analog board must regulate the input power to -2.8, GND, +4.4 V using linear regulators.}
     \item \must{The regulators must be controllable from the digital board to enable or disable powering the analog board components.}
-    \item \must{The analog board must amplify the signal from each of 32 SiPMs using an AD8132 amplifier, using the circuit as shown in \cref{fig:amplifiercircuit}.}
+    \item \must{The analog board must amplify the signal from each of 32 SiPMs using an AD8132 amplifier.}
     \item \should{The analog board should be compatible with replacing the DC connection to the digital board with an AC connection by replacing only passive components and not using the negative voltage power supply.}
     \item \must{The analog board must use high voltage input connections using a connector that is incompatible with the low voltage connector (perhaps JST VHR-2N (RS 820-1172).}
     \item \must{The pin mapping of the high voltage input must be as shown in \cref{fig:HVPower}, where pin 1 is defined as...}
     \item \must{A fuse must be used to protect the board from excessive current from the HV supply, to break at $I \le 100$ mA.}
     \item \should{The high- and low-voltage supply connectors should be clearly labelled on the PCB.}
     \item \must{The analog board must be able to produce a programmable high voltage bias supply on board, using ADL5317.}
-    \item \must{The analog board must provide a per SiPM low voltage trim using programmable DACs.}
+    \item \must{The analog board must provide a per SiPM low voltage trim of up to 4 V using programmable DACs.}
     \item \must{The programmable DACs must be controllable by from the digital board via the \I2C buses on the two 96-way connectors.}
     \item \should{The channel numbering of the DACs should map simply to the channel numbering of the SiPMs.}
     \item \must{The analog board must provide an on-board temperature measurement and unique ID using an ATMEL AT30TSE752 chip with an \I2C address of 0b1001000 (i.e. all address pins connected to GND).} 
@@ -517,11 +526,30 @@ Each detector plane will use a single digital board, receiving data from two ana
     \end{center}
 \end{table}
 
+\begin{table}[h]
+    \begin{center}
+        \caption{Pin mapping for the connection between the digital board and \I2C interface board. {\bf To be defined...}}
+        \label{tab:digitalToI2CInterface}
+        \begin{tabular}{cc|cc}
+            \hline
+            \hline
+            Pin & Function & Pin & Function \\
+            \hline
+            1 & ? & 6 & ? \\
+            2 & ? & 7 & ? \\
+            3 & ? & 8 & ? \\
+            4 & ? & 9 & ? \\
+            5 & ? & 10 & ? \\
+            \hline
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
 
 \begin{enumerate}
     \item \should{The digital board height (as shown in \cref{fig:analogdigitalboardsize}) should be 466.2 mm.}
     \item \should{The digital board width should be 160 mm.}
-    \item \must{The digital board must connect to the digital board using two 96-way DIN41612 plug connectors (Farnell 1096905).}
+    \item \must{The digital board must connect to the analog boards using two 96-way DIN41612 plug connectors (Farnell 1096905).}
     \item \must{The pin mapping for the connectors to the analog board must be as described in \cref{tab:DIN96Upper,tab:DIN96Lower}.}
     \item \must{The position of the two 96-way DIN41612 connectors must allow the analog boards' connectors to be be as shown in \cref{fig:analogboardsize}, with the spacing between the two analog boards as shown in \cref{fig:analogdigitalboardsize}.}
     \item \must{The digital board must allow a Trenz 0712 board to be plugged in.}
@@ -538,7 +566,8 @@ Each detector plane will use a single digital board, receiving data from two ana
     \item \must{The powering of the FPGA should be controllable remotely via a control line on the HDMI clock/sync bus.}
     \item \must{The digital board should include a temperature sensor that can power down the FPGA if the board temperature exceeds a programmable alarm threshold.}
     \item \must{The digital board must have two eSATA sockets to allow Gbps serial communications between FPGAs from neighbouring planes.}
-    \item \must{The digital board must have a ribbon cable socket to connect to the in-detector sensor interface board, {\bf Which socket, how many wires?}.}
+    \item \must{The digital board must have a 10-way IDC ribbon cable socket to connect to the in-detector sensor \I2C interface board.}
+    \item \must{The connections to the \I2C interface board should be as defined in \cref{tab:digitalToI2CInterface}.}
 \end{enumerate}
 
 \clearpage
