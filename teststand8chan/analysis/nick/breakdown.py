@@ -10,6 +10,7 @@ import chanmap
 parser = argparse.ArgumentParser()
 parser.add_argument("-t", "--temp", type=float)
 parser.add_argument("-d", "--draw", action="store_true")
+parser.add_argument("--date")
 args = parser.parse_args()
 
 basedir = "/data/solid/sipmcalibration_bris/good"
@@ -17,7 +18,8 @@ fns = os.listdir(basedir)
 filelist = []
 for fn in fns:
     if fn.startswith("sipmcalib"):
-        filelist.append(fn)
+        if args.date is None or args.date in fn:
+            filelist.append(fn)
 
 if args.temp is not None:
     tempfiles = {}
@@ -34,12 +36,18 @@ if args.temp is not None:
     for voltage in voltages:
         fn = tempfiles[voltage]
         inp = ROOT.TFile(fn, "READ")
+        keys = inp.GetListOfKeys()
+        if keys.GetSize() < 11:
+            inp.Close()
+            continue
         rms = []
         for chan in range(8):
             h = inp.Get("h_val_wf_chan%d" % chan)
             rms.append(h.GetRMS())
         inp.Close()
         rmsvals[voltage] = rms
+    voltages = rmsvals.keys()
+    voltages.sort()
     graphs = []
     yaxes = []
     for chan in range(8):
@@ -81,21 +89,26 @@ if args.temp is not None:
         vbr_ham_err.append(0.05)
         thr = rmsthresholds[chan]
         g.SetTitle("channel %d, V_{BR} = %g V" % (chan, vbr))
-        g.Draw("AL")
-        g.GetYaxis().SetRangeUser(thr - 0.5, thr + 0.5)
-        thr = rmsthresholds[chan]
+        g.GetXaxis().SetTitle("Bias voltage [V]")
+        g.GetYaxis().SetTitle("RMS [ADC count]")
+        g.SetMarkerStyle(22)
+        g.GetYaxis().SetRangeUser(thr - 0.5, thr + 2.5)
+        g.Draw("ALP")
         l = ROOT.TLine(voltages[0], thr, voltages[-1], thr)
         l.SetLineColor(ROOT.kRed)
         l.Draw()
         canv.Update()
         if args.draw:
             raw_input()
+            canv.SaveAs("imgs/g_RMS_ch%d_%gC.png" % (chan, args.temp))
     h_vbr.Draw()
     canv.Update()
-    raw_input()
+    if args.draw:
+        raw_input()
     h_dvbr.Draw()
     canv.Update()
-    raw_input()
+    if args.draw:
+        raw_input()
     g_vbr = ROOT.TGraphErrors(len(vbr_meas), vbr_ham, vbr_meas, vbr_ham_err, vbr_meas_err)
     g_vbr.SetTitle("")
     g_vbr.GetXaxis().SetTitle("QA V_{BR} [V]")
@@ -103,11 +116,15 @@ if args.temp is not None:
     g_vbr.SetMarkerStyle(22)
     g_vbr.Draw("AP")
     canv.Update()
-    raw_input()
+    if args.draw:
+        raw_input()
     outdata = {}
     outdata["temp"] = args.temp
     outdata["vbr"] = list(vbr_meas)
-    outp = open("out_breakdown_%gC.json" % args.temp, "w")
+    outfn = "outp/out_breakdown_%gC.json" % args.temp
+    if args.date is not None:
+        outfn = outfn.replace(".json", "_%s.json" % args.date)
+    outp = open(outfn, "w")
     json.dump(outdata, outp, indent=4)
     outp.close()
 
