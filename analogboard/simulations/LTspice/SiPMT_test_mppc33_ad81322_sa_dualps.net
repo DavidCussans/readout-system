@@ -1,0 +1,72 @@
+* C:\info\tmp\readout-system\analogboard\simulations\LTspice\SiPMT_test_mppc33_ad81322_sa_dualps.asc
+Vbias N001 0 {Vk}
+R1 N009 N012 {Rbias}
+Vtrigger N007 0 PULSE(0V 1V 10n 100p 100p 100f 2.5u)
+R2 N001 N004 {Rbias}
+Cifp N004 N005 {Cif}
+Cifm N009 N010 {Cif}
+Rgp N002 N005 {Rg}
+Rgm N011 N010 {Rg}
+Vamp_vcc Vcc 0 4.6V
+Rfm N002 Vout+ {Rf}
+Cfm Vout+ fbm {Cf}
+Rfp N011 Vout- {Rf}
+Cfp Vout- fbp {Cf}
+Cof2m adc2- 0 {Cof2}
+Vtrim N013 0 {Vt}
+XU2 N009 N006 N007 SiPMT Cd=15.4f Cq=3.4f Cg=59p Rd=1k Rq=268k Nf=1600 Np=14000 Ith=30u Vbd={Vbd}
+Cparap inp 0 {Cpara}
+Cparap1 inm 0 {Cpara}
+XU3 inp inm Vcc Vee Vout+ Vout- vcom ad8132
+Volp1 fbm inp 0V AC 0.5V
+Volm1 inm fbp 0V AC 0.5V
+Vamp_vee Vee 0 -3V
+V1 N004 N006 0 AC 10m 9
+Cof1 adc2+ 0 {Cof2}
+R8 fbm N002 {Rb}
+R9 fbp N011 {Rb}
+C7 N012 0 100n
+R10 N012 N013 10K
+C2 N002 0 {Cpf}
+C3 N011 0 {Cpf}
+R3 N003 Vout+ {Rg1}
+R5 N008 Vout- {Rg1}
+C1 N008 Vout- {Cfb}
+C4 N003 Vout+ {Cfb}
+R4 N008 Vcc 830
+R14 adc2- N003 {Rad}
+R15 adc2+ N008 {Rad}
+R13 N003 0 10K
+R16 VEE N003 920
+Vcom vcom 0 0.9V
+.include SiPMT_model2.cir
+.PARAM Vk = 74
+.PARAM Vbd = 67.3
+* Parameters for MPPC-S10362-33-25c
+* Amplifier
+* ADC
+* SiPMT
+* N.B. Trigger pulse represents
+* incoming photons. Does not
+* exist as physical circuit element
+.PARAM Vt = 0.0
+.tran 400ns
+* Vfs = single-ended full-scale range. \nN.B. Differential voltage = 2 * single-ended
+.PARAM Rg1=200
+.PARAM Roffp=1000
+.PARAM Cfb=.10p
+.PARAM Cof2=1p
+.PARAM Rad=100
+;ac dec 10 1 100e6
+.PARAM Cpf =1p
+.PARAM Rbias=100K
+.PARAM Rg = 24
+.PARAM Rb = 33
+.PARAM Rf =1300
+.PARAM Cf = 47p
+.PARAM Cpara = 5fF
+.PARAM Cif = 4.7nF
+.lib ./ad8132.cir
+.lib SiPMT_model2.cir
+.backanno
+.end
