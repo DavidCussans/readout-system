@@ -1,4 +1,5 @@
 import optparse
+import sys
 import time
 
 import uhal
@@ -12,6 +13,7 @@ parser = optparse.OptionParser(usage=usage)
 parser.add_option("-d", "--dachv", default=None, type=float)
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
+parser.add_option("-r", "--readonly", default=False, action="store_true")
 (opts, args) = parser.parse_args()
 assert len(args) == 1, "Must provide global bias voltage."
 bias = float(args[0])
@@ -36,6 +38,8 @@ fpga.reset()
 
 print "Previous DAC settings:"
 fpga.readvoltages()
+if opts.readonly:
+    sys.exit()
 print "Setting bias voltage: %g V" % bias
 if opts.dachv is None:
     fpga.bias(bias)
