@@ -14,6 +14,7 @@ parser.add_option("-m", "--measbias", default=False, action="store_true")
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
 parser.add_option("-v", "--fwversion")
+parser.add_option("-u", "--notemp", default=False, action="store_true")
 (opts, args) = parser.parse_args()
 assert len(args) == 2, "Must provide bias voltage and temperature."
 bias = float(args[0])
@@ -22,8 +23,10 @@ temp = float(args[1])
 assert temp > 0.0 and temp < 30.0
 assert bias > 50.0 and bias < 75.0
 
-ec = envchamber.EnvChamber()
-ec.setTempWait(temp)
+# If the flag notemp is set then don't try to control the temperature.
+if opts.notemp is False:
+    ec = envchamber.EnvChamber()
+    ec.setTempWait(temp)
 
 fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
 fpga.reset()

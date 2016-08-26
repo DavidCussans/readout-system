@@ -5,15 +5,16 @@
  * https://bitbucket.org/solidexperiment/readout-system/issues/48#comment-28983697
  * for information on the contents of the root file)
  *
- * compile using:
- * g++ -O3 main.cpp waveforms.cpp chanHistos.cpp -o awf `root-config --cflags --glibs` -lSpectrum
+ * compile using the make file
  *
- * A 'pedestals.root' file with the pedestals andthe RMS values
+ * A 'pedestals.txt' file with the pedestals and the RMS values
  * of the waveforms can created using the -m option on a
- * below breakdown file.
+ * below-breakdown-voltage file.
  *
- * The pedestals.root file can (should) be used via
- *  -p pedestals.root
+ * use by: ./BriTes <filename> -p <pedestal file>
+ *
+ * The pedestals.txt file can (should) be used via
+ *  -p pedestals.txt
  *
  */
 
@@ -23,6 +24,7 @@
 #include <TH1F.h>
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "chanhistos.h"
@@ -84,6 +86,15 @@ int main(int argc, char *argv[]){
 
 
     if (setPD){
+        fstream pdf(PDfile, ios::in);
+        int chan=-1;
+        float pdVal=-1, pdRMS=-1;
+        while (pdf << chan << pdVal << pdRMS){
+            v_ch.at(chan)->setPedestalInfo(pdVal, pdRMS);
+        }
+        pdf.close();
+
+        /*
         TFile *pdf = new TFile(PDfile,"read");
         TH1F *h_pd = (TH1F*) pdf->Get("pdHisto");
         for (int i = 0; i < 8; i ++){
@@ -93,6 +104,7 @@ int main(int argc, char *argv[]){
         }
         delete h_pd;
         delete pdf;
+        */
     }
 
     waveforms *tree = new waveforms(chain);
@@ -110,7 +122,7 @@ int main(int argc, char *argv[]){
         v_ch.at(7)->fillHisto(tree->wf_chan7);
     }
 
-    TH1F* hpdo = new TH1F("pdHisto","pdHisto",8,0,8);
+    TH1F* hpdo = new TH1F("pdHisto","pdHisto",9,0,8);
     TFile *fOut = new TFile(outpFName,"recreate");
     float pdV,pdR;
     for (int i = 0; i < 8; i ++){
@@ -120,12 +132,23 @@ int main(int argc, char *argv[]){
         hpdo->SetBinError(i+1,pdR);
         delete v_ch.at(i);
     }
+    fOut->cd();
+    hpdo->Write();
     delete fOut;
 
     if (makePD){
+        fstream pdf("pedestals.txt",
+                    ios::out | ios::trunc);
+        for (int i = 0; i < 8; i ++){
+            pdf<<i<<" "<<hpdo->GetBinContent(i+1);
+            pdf<<" "<<hpdo->GetBinError(i+1)<<'\n';
+        }
+        pdf.close();
+        /*
         TFile *pdo = new TFile("pedestals.root","recreate");
         hpdo->Write();
         delete pdo;
+        */
     }
     delete hpdo;
 
