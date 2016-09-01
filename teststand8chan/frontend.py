@@ -25,9 +25,9 @@ verbose = True
 
 class SoLidFPGA:
 
-    def __init__(self, nadc=4, verbose=False, minversion=None):
+    def __init__(self, board, nadc=4, verbose=False, minversion=None):
         cm = uhal.ConnectionManager("file://solidfpga.xml")
-        self.target = cm.getDevice("SoLidFPGA")
+        self.target = cm.getDevice(board)
         #self.config()
         self.offsets = TimingOffsets(self.target)
         self.trigger = Trigger(self.target)
