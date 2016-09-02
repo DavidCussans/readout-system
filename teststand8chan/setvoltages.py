@@ -21,7 +21,7 @@ bias = float(args[0])
 
 assert bias >= 0.0 and bias < 75.0
 
-fpga = frontend.SoLidFPGA(args.Board, 1)
+fpga = frontend.SoLidFPGA(opts.Board, 1)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")

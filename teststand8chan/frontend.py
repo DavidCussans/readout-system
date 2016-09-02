@@ -73,7 +73,7 @@ class SoLidFPGA:
         #assert lock == 1, "No 40 MHz clock clock, code not yet moved to frontend.py"
         if lock != 1:
             # Config clock chip
-            self.clockchip.config("davesscripts/si5326.txt")
+            self.clockchip.config("siclock/si5326.txt")
             time.sleep(1.0)
         lock = self.target.getNode("ctrl_reg.stat.mmcm_locked").read()
         self.target.dispatch()
