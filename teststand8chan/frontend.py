@@ -47,6 +47,7 @@ class SoLidFPGA:
                 DACMCP4728(self.analog_i2c, 0b1100011, 4.45),
                 DACMCP4728(self.analog_i2c, 0b1100101, 4.45)
         ]
+        self.temp = TempMCP9808(self.analog_i2c)
         self.firmwareversion = None
         self.minversion = minversion
         self.config(7, 16)
@@ -100,6 +101,7 @@ class SoLidFPGA:
         self.offsets.setoffset(slip, tap)
         for adc in self.adcs:
             adc.config()
+        print "Analog board temperature = %d C." % self.temp.temp()
 
     def reset(self, slip=7, tap=16):
         if verbose:
@@ -352,7 +354,7 @@ class I2CCore:
         nwritten = self.write(addr, data, stop=False)
         readdata = []
         if nwritten == len(data):
-            readdata = seld.read(addr, n)
+            readdata = self.read(addr, n)
         return nwritten, readdata
 
 """
@@ -789,7 +791,7 @@ class DACMCP4725:
             data = []
             data.append((powerdown << 4) | ((value & 0xf00) >> 8))
             data.append(value & 0x0ff)
-            self.i2core.write(self.slaveaddr, data)
+            self.i2ccore.write(self.slaveaddr, data)
         else:
             data = []
             data.append((mode << 5) | (powerdown << 1))
@@ -921,3 +923,32 @@ class DACMCP4728:
             voltage = self.vdd * value / 2**12
             voltages.append(voltage)
         return voltages
+
+class TempMCP9808:
+    """Temperture chip on analog board."""
+
+    regTemp = 0x5
+
+    def __init__(self, i2ccore, addr=0b0011000):
+        self.i2ccore = i2ccore
+        self.slaveaddr = addr & 0x7f
+
+    def readreg(self, regaddr):
+        n, data = self.i2ccore.writeread(self.slaveaddr, [regaddr], 2)
+        assert n == 1
+        assert len(data) == 2
+        val = data[0] << 8
+        val |= data[1]
+        return val
+
+    def temp(self):
+        val = self.readreg(TempMCP9808.regTemp)
+        return self.u16todeg(val)
+
+    def u16todeg(self, val):
+        val &= 0x1fff
+        neg = val & 0x1000 > 0
+        val &= 0x0fff
+        if neg:
+            return -float(0xfff - val) / 16.0
+        return float(val) / 16.0
