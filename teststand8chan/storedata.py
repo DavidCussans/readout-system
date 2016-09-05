@@ -7,6 +7,7 @@ import ROOT
 
 import chanmap
 import frontend
+import temperature
 
 class ROOTFile:
 
@@ -18,6 +19,7 @@ class ROOTFile:
         self.waveforms = []
         self.histos = []
         self.condstree = None
+        self.temptree = None
         for i in range(8):
             self.waveforms.append(ROOT.vector("float")())
         for i in range(8):
@@ -79,8 +81,19 @@ class ROOTFile:
         if self.condstree is not None:
             self.condstree.Write()
             self.sensortree.Write()
+        if self.temptree is not None:
+            self.temptree.Write()
         self.tree.Write()
         self.outp.Close()
+
+    def storetemps(self, tempinitial, tempfinal):
+        self.outp.cd()
+        self.temptree = ROOT.TTree("temperature", "temperature")
+        self.tinitial = array.array("d", [tempinitial])
+        self.tfinal = array.array("d", [tempfinal])
+        self.temptree.Branch("initial", self.tinitial, "initial/D")
+        self.temptree.Branch("final", self.tfinal, "final/D")
+        self.temptree.Fill()
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
@@ -92,7 +105,16 @@ if __name__ == "__main__":
     parser.add_option("-t", "--testpattern", type=int)
     parser.add_option("-B", "--Board", default="SoLidFPGA")
     parser.add_option("-o", "--output", default="data/test.root")
+    parser.add_option("--temp", default=False, action="store_true")
     (opts, args) = parser.parse_args()
+    tempintial = None
+    tempfinal = None
+    tempmonitor = None
+    if opts.temp:
+        tempmonitor = temperature.TemperatureMonitor()
+        while tempmonitor.timestamp is None:
+            tempmonitor.update()
+        tempinitial = sum(tempmonitor.temps) / 4.0
     bias = opts.bias
     if opts.testpattern is not None:
         bias = 0.0
@@ -127,4 +149,7 @@ if __name__ == "__main__":
             if i % (opts.nevt / 10) == 0:
                 print "%d of %d" % (i, opts.nevt)
         outp.fill(fpga.trigger.trigger())
+    tempmonitor.update()
+    tempfinal = sum(tempmonitor.temps) / 4.0
+    outp.storetemps(tempinitial, tempfinal)
     outp.close()
