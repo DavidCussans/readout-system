@@ -120,7 +120,7 @@ if __name__ == "__main__":
             adc.gettestpattern()
             adc.getstatus()
     outp = ROOTFile(opts.output, chanmap.fpgachans) 
-    outp.conditions(bias, 0.0, 0.0, trims)
+    outp.conditions(bias, 0.0, 0.0, trims, chanmap.sipms[opts.Board])
     print "Triggering %d random events." % opts.nevt
     for i in range(opts.nevt):
         if opts.nevt > 1000:
