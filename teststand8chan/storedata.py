@@ -91,7 +91,7 @@ if __name__ == "__main__":
     parser.add_option("-v", "--fwversion", type=int)
     parser.add_option("-t", "--testpattern", type=int)
     parser.add_option("-B", "--Board", default="SoLidFPGA")
-    parser.add_option("-o", "--output", default="test.root")
+    parser.add_option("-o", "--output", default="data/test.root")
     (opts, args) = parser.parse_args()
     bias = opts.bias
     if opts.testpattern is not None:

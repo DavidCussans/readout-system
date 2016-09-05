@@ -101,7 +101,7 @@ class SoLidFPGA:
         self.offsets.setoffset(slip, tap)
         for adc in self.adcs:
             adc.config()
-        print "Analog board temperature = %d C." % self.temp.temp()
+        print "Analog board temperature = %g C." % self.temp.temp()
 
     def reset(self, slip=7, tap=16):
         if verbose:
