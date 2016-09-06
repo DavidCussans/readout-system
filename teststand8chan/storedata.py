@@ -149,7 +149,8 @@ if __name__ == "__main__":
             if i % (opts.nevt / 10) == 0:
                 print "%d of %d" % (i, opts.nevt)
         outp.fill(fpga.trigger.trigger())
-    tempmonitor.update()
-    tempfinal = sum(tempmonitor.temps) / 4.0
-    outp.storetemps(tempinitial, tempfinal)
+    if tempmonitor is not None:
+        tempmonitor.update()
+        tempfinal = sum(tempmonitor.temps) / 4.0
+        outp.storetemps(tempinitial, tempfinal)
     outp.close()
