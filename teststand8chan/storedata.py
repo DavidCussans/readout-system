@@ -26,6 +26,8 @@ class ROOTFile:
             name = "wf_chan%d" % i
             wf = self.waveforms[self.mapping[i]]
             self.tree.Branch(name, wf)
+            channumber = self.mapping[i]
+            name = "wf_chan%d" % channumber
             h = ROOT.TH1I("h_val_%s" % name, name, 2**14, 0, 2**14)
             h.SetXTitle("Value [ADC count]")
             h.SetYTitle("samples")
@@ -66,8 +68,8 @@ class ROOTFile:
             wf.clear()
         for i in range(8):
             wfdata = data[i]
-            wf = self.waveforms[self.mapping[i]]
-            h = self.histos[self.mapping[i]]
+            wf = self.waveforms[i]
+            h = self.histos[i]
             wfpb = wf.push_back
             for val in wfdata:
                 wfpb(float(val & 0x3fff))
@@ -76,8 +78,8 @@ class ROOTFile:
 
     def close(self):
         self.outp.cd()
-        for h in self.histos:
-            h.Write()
+        for i in self.mapping:
+            self.histos[i].Write()
         if self.condstree is not None:
             self.condstree.Write()
             self.sensortree.Write()
