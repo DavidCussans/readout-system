@@ -100,6 +100,7 @@ class ROOTFile:
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-b", "--bias", default=65.0, type=float)
+    parser.add_option("-c", "--chantrim", default=[], action="append")
     parser.add_option("--trim", default=0.0, type=float)
     parser.add_option("-p", "--plot", default=False, action="store_true")
     parser.add_option("-n", "--nevt", default=10, type=int)
@@ -130,11 +131,24 @@ if __name__ == "__main__":
     fpga.bias(bias)
     trim = opts.trim
     assert trim >= 0.0 and trim <= 5.0
-    fpga.trim(trim)
-    fpga.readvoltages()
-    trims = []
+    #fpga.trim(trim)
+    #fpga.readvoltages()
+    trims = {}
+    trimlist = []
     for i in range(8):
-        trims.append(0.0)
+        trims[i] = trim
+        trimlist.append(trim)
+    for chantrim in opts.chantrim:
+        chan, trim = chantrim.split(",")
+        chan = int(chan)
+        trim = float(trim)
+        assert chan >= 0 and chan < 8
+        assert trim >= 0.0 and trim <= 5.0
+        trims[chan] = trim
+        trimlist[chan] = trim
+    fpga.trims(trims)
+    fpga.readvoltages()
+
     for adc in fpga.adcs:
         adc.getstatus()
     if opts.testpattern is not None:
@@ -144,7 +158,7 @@ if __name__ == "__main__":
             adc.gettestpattern()
             adc.getstatus()
     outp = ROOTFile(opts.output, chanmap.fpgachans) 
-    outp.conditions(bias, 0.0, 0.0, trims, chanmap.sipms[opts.Board])
+    outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board])
     print "Triggering %d random events." % opts.nevt
     for i in range(opts.nevt):
         if opts.nevt > 1000:
