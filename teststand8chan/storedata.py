@@ -117,7 +117,7 @@ if __name__ == "__main__":
         tempmonitor = temperature.TemperatureMonitor()
         while tempmonitor.timestamp is None:
             tempmonitor.update()
-        tempinitial = sum(tempmonitor.temps) / 4.0
+        tempinitial = tempmonitor.temps[0]
     bias = opts.bias
     if opts.testpattern is not None:
         bias = 0.0
@@ -167,6 +167,6 @@ if __name__ == "__main__":
         outp.fill(fpga.trigger.trigger())
     if tempmonitor is not None:
         tempmonitor.update()
-        tempfinal = sum(tempmonitor.temps) / 4.0
+        tempfinal = tempmonitor.temps[0]
         outp.storetemps(tempinitial, tempfinal)
     outp.close()
