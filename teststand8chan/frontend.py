@@ -25,9 +25,9 @@ verbose = True
 
 class SoLidFPGA:
 
-    def __init__(self, nadc=4, verbose=False, minversion=None):
+    def __init__(self, board, nadc=4, verbose=False, minversion=None):
         cm = uhal.ConnectionManager("file://solidfpga.xml")
-        self.target = cm.getDevice("SoLidFPGA")
+        self.target = cm.getDevice(board)
         #self.config()
         self.offsets = TimingOffsets(self.target)
         self.trigger = Trigger(self.target)
@@ -74,7 +74,7 @@ class SoLidFPGA:
         #assert lock == 1, "No 40 MHz clock clock, code not yet moved to frontend.py"
         if lock != 1:
             # Config clock chip
-            self.clockchip.config("davesscripts/si5326.txt")
+            self.clockchip.config("siclock/si5326.txt")
             time.sleep(1.0)
         lock = self.target.getNode("ctrl_reg.stat.mmcm_locked").read()
         self.target.dispatch()
@@ -101,7 +101,7 @@ class SoLidFPGA:
         self.offsets.setoffset(slip, tap)
         for adc in self.adcs:
             adc.config()
-        print "Analog board temperature = %d C." % self.temp.temp()
+        print "Analog board temperature = %g C." % self.temp.temp()
 
     def reset(self, slip=7, tap=16):
         if verbose:
