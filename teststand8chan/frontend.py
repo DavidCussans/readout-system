@@ -44,8 +44,8 @@ class SoLidFPGA:
         # 0b1100111.
         self.gdac = DACMCP4725(self.analog_i2c, 0b1100001, 4.45)
         self.trimdacs = [
-                DACMCP4728(self.analog_i2c, 0b1100011, 4.45),
-                DACMCP4728(self.analog_i2c, 0b1100101, 4.45)
+                DACMCP4728(self.analog_i2c, 0b1100011),
+                DACMCP4728(self.analog_i2c, 0b1100101)
         ]
         self.temp = TempMCP9808(self.analog_i2c)
         self.firmwareversion = None
@@ -872,15 +872,27 @@ class DACMCP4728:
     singlewrite = 0b11
 
     # stuff 
-    vref = 0b0 << 7 # Uses external reference, ie Vdd
+    #vref = 0b0 << 7 # Uses external reference, ie Vdd
 
-    def __init__(self, i2ccore, addr, vdd=5.0):
+    def __init__(self, i2ccore, addr, vdd=None):
         self.i2ccore = i2ccore
         self.slaveaddr = addr & 0x7f
-        self.vdd = float(vdd)
+        if vdd is None:
+            self.vdd = 4.096 # Internal reference with gain = 2
+            self.vref = 0b1 << 7
+            self.gain = 0b1 << 4
+        else:
+            self.vdd = float(vdd)
+            self.vref = 0b0
+            self.gain = 0b0
 
     def setvoltage(self, channel, voltage, powerdown=MCP472XPowerMode.on):
-        value = int(voltage / self.vdd * 2**12)
+        if voltage > self.vdd:
+            print "Warning: attempt to set output = %g V, reduced to Vdd = %g V" % (voltage, self.vdd)
+            voltage = self.vdd
+        value = int(voltage / self.vdd * 2**12) - 1
+        if value < 0:
+            value = 0
         #print "%g V -> %d" % (voltage, value)
         self.setvalue(channel, value, powerdown)
 
@@ -891,7 +903,8 @@ class DACMCP4728:
         cmd |= DACMCP4728.singlewrite << 3
         cmd |= (channel & 0b11) << 1
         data.append(cmd)
-        val = DACMCP4728.vref | ((powerdown & 0b11) << 5)
+        val = self.vref | ((powerdown & 0b11) << 5) | self.gain
+        #val = DACMCP4728.vref | ((powerdown & 0b11) << 5)
         val |= (value & 0xf00) >> 8
         data.append(val)
         data.append(value & 0xff)
