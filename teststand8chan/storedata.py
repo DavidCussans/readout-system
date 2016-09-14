@@ -33,18 +33,23 @@ class ROOTFile:
             h.SetYTitle("samples")
             self.histos.append(h)
 
-    def conditions(self, reqbias, measbias, temp, trims, sipms=chanmap.sipms):
+    def conditions(self, reqbias, measbias, temp, trims, sipms=chanmap.sipms, tinitial=[], tfinal=[]):
         self.condstree = ROOT.TTree("conditions", "conditions")
         reqbias = array.array("d", [reqbias])
         measbias = array.array("d", [measbias])
-        temp = array.array("d", [temp])
+        tempinitial = ROOT.vector("double")()
+        tempfinal = ROOT.vector("double")()
+        for t in tinitial:
+            tempinitial.push_back(t)
+        for t in tfinal:
+            tempfinal.push_back(t)
         chantrims = ROOT.vector("double")()
         for trim in trims:
             chantrims.push_back(trim)
-        self.condstree.Branch("reqbias", reqbias, "reqbias/D")
-        self.condstree.Branch("measbias", measbias, "measbias/D")
-        self.condstree.Branch("temp", temp, "temp/D")
-        self.condstree.Branch("trims", chantrims)
+        self.condstree.Branch("HVbias", reqbias, "ias/D")
+        self.condstree.Branch("initialtemp", tempinitial)
+        self.condstree.Branch("finaltemp", tempfinal)
+        self.condstree.Branch("LVtrims", chantrims)
         self.condstree.Fill()
 
         self.sensortree = ROOT.TTree("sensors", "Sensors")
@@ -110,14 +115,18 @@ if __name__ == "__main__":
     parser.add_option("-o", "--output", default="data/test.root")
     parser.add_option("--temp", default=False, action="store_true")
     (opts, args) = parser.parse_args()
-    tempintial = None
+    tempinitial = None
     tempfinal = None
     tempmonitor = None
+    initialtemps = []
+    finaltemps = []
     if opts.temp:
         tempmonitor = temperature.TemperatureMonitor()
+        tempmonitor.update()
         while tempmonitor.timestamp is None:
             tempmonitor.update()
         tempinitial = tempmonitor.temps[0]
+        initialtemps = list(tempmonitor.temps[:1])
     bias = opts.bias
     if opts.testpattern is not None:
         bias = 0.0
@@ -158,7 +167,6 @@ if __name__ == "__main__":
             adc.gettestpattern()
             adc.getstatus()
     outp = ROOTFile(opts.output, chanmap.fpgachans) 
-    outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board])
     print "Triggering %d random events." % opts.nevt
     for i in range(opts.nevt):
         if opts.nevt > 1000:
@@ -168,5 +176,6 @@ if __name__ == "__main__":
     if tempmonitor is not None:
         tempmonitor.update()
         tempfinal = tempmonitor.temps[0]
-        outp.storetemps(tempinitial, tempfinal)
+        finaltemps = list(tempmonitor.temps[:1])
+    outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
     outp.close()
