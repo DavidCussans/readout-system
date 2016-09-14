@@ -3,32 +3,46 @@ import time
 
 import uhal
 
+import chanmap
 import envchamber
 import frontend
 import storedata
+import temperature
 
-usage = "python sipmcalibrationrun.py [options] <bias voltage [V]> <temperature [C]>"
+usage = "python sipmcalibrationrun.py [options] <bias voltage [V]>"
 parser = optparse.OptionParser(usage=usage)
 parser.add_option("-n", "--nevt", type=int, default=10000)
-parser.add_option("-m", "--measbias", default=False, action="store_true")
+#parser.add_option("-m", "--measbias", default=False, action="store_true")
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
 parser.add_option("-v", "--fwversion")
-parser.add_option("-u", "--notemp", default=False, action="store_true")
+parser.add_option("-B", "--Board", default="SoLidFPGA")
+parser.add_option("--settemp", default=None, type=float)
 (opts, args) = parser.parse_args()
-assert len(args) == 2, "Must provide bias voltage and temperature."
+assert len(args) == 1, "Must provide bias voltage."
 bias = float(args[0])
-temp = float(args[1])
 
-assert temp > 0.0 and temp < 30.0
 assert bias > 50.0 and bias < 75.0
 
-# If the flag notemp is set then don't try to control the temperature.
-if opts.notemp is False:
+tempmonitor = None
+initaltemps = []
+finaltemps = [] 
+temp = 0.0
+# Either the calibration run uses an environmental chamber to control
+# the temperature or temperature probes in the plane to measure it
+if opts.settemp is not None:
     ec = envchamber.EnvChamber()
+    temp = opts.settemp
+    assert temp > 0.0 and temp < 30.0
     ec.setTempWait(temp)
+else:
+    tempmonitor = temperature.TemperatureMonitor()
+    tempmonitor.update()
+    while tempmonitor.timestamp is None:
+        tempmonitor.update()
+    initialtemps = list(tempmonitor.temps[:1])
 
-fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
+fpga = frontend.SoLidFPGA(opts.Board, 1, minversion=opts.fwversion)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
@@ -67,20 +81,23 @@ fpga.trims(trims)
 fpga.readvoltages()
 
 measbias = 0.0
-if opts.measbias:
-    measbias = float(raw_input("Measured bias voltage:\n"))
+#if opts.measbias:
+#    measbias = float(raw_input("Measured bias voltage:\n"))
 
 
 #triggerblock = storedata.TriggerBlock(target)
-fn = "data/sipmcalib_%0.2fV_%0.2fC_%s.root" % (bias, temp, time.strftime("%d%b%Y_%H%M"))
+fn = "data/sipmcalib_%s_%0.2fV_%0.2fC_%s.root" % (opts.Board, bias, temp, time.strftime("%d%b%Y_%H%M"))
 if opts.trim is not None:
     fn = fn.replace("V_", "V_trim%gV_" % opts.trim)
 outp = storedata.ROOTFile(fn)
-outp.conditions(bias, measbias, temp, chantrims)
 print "Using %d triggers." % opts.nevt
 nevt = opts.nevt
 for i in range(nevt):
     if i % (nevt / 10) == 0:
         print "%d of %d" % (i, nevt)
     outp.fill(fpga.trigger.trigger())
+if opts.settemp is None:
+    tempmonitor.update()
+    finaltemps = list(tempmonitor.temps[:1])
+outp.conditions(bias, measbias, temp, chantrims, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal=finaltemps)
 outp.close()

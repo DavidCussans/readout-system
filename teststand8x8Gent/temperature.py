@@ -26,8 +26,11 @@ class TemperatureMonitor:
                 new = False
             else:
                 if verbose:
-                    print l
-                self.parse(l)
+                    print l.rstrip()
+                try:
+                    self.parse(l)
+                except:
+                    new = True
 
     def parse(self, line):
         self.timestamp = time.localtime()

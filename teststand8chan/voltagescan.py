@@ -7,12 +7,17 @@ parser.add_option("--vmax", default=66.0, type=float)
 parser.add_option("--deltav", default=0.1, type=float)
 parser.add_option("--trim", default=0.0, type=float)
 parser.add_option("-n", "--nevt", default=1000, type=int)
+parser.add_option("-B", "--Board", default="SoLidFPGA")
+parser.add_option("--settemp", default=None, type=float)
 (opts, args) = parser.parse_args()
 
-assert len(args) == 1
-temp = float(args[0])
+assert len(args) == 0
 
 v = opts.vmin
 while v < opts.vmax:
-    os.system("python sipmcalibrationrun.py %g %g -n %d -t %g" % (v, temp, opts.nevt, opts.trim))
+    cmd = "python sipmcalibrationrun.py %g -B %s -n %d -t %g"
+    cmd = cmd % (v, opts.Board, opts.nevt, opts.trim)
+    if opts.settemp is not None:
+        cmd += " --settemp %f" % opts.settemp
+    os.system(cmd)
     v += opts.deltav

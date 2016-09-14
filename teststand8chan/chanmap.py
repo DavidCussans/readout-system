@@ -49,7 +49,7 @@ sipmsGent1 = [
 
 sipms = {
         "SoLidFPGA" : sipmsBristol,
-        "Gent0": sipmsGent1,
+        "Gent0": sipmsGent0,
         "Gent1": sipmsGent1
 }
 
