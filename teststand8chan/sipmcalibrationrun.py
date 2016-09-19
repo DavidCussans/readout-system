@@ -40,7 +40,7 @@ else:
     tempmonitor.update()
     while tempmonitor.timestamp is None:
         tempmonitor.update()
-    initialtemps = list(tempmonitor.temps[:2])
+    initialtemps = list(tempmonitor.temps)
 
 fpga = frontend.SoLidFPGA(opts.Board, 1, minversion=opts.fwversion)
 fpga.reset()
@@ -98,6 +98,6 @@ for i in range(nevt):
     outp.fill(fpga.trigger.trigger())
 if opts.settemp is None:
     tempmonitor.update()
-    finaltemps = list(tempmonitor.temps[:2])
+    finaltemps = list(tempmonitor.temps)
 outp.conditions(bias, measbias, temp, chantrims, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal=finaltemps)
 outp.close()

@@ -126,7 +126,7 @@ if __name__ == "__main__":
         while tempmonitor.timestamp is None:
             tempmonitor.update()
         tempinitial = tempmonitor.temps[0]
-        initialtemps = list(tempmonitor.temps[:2])
+        initialtemps = list(tempmonitor.temps)
     bias = opts.bias
     if opts.testpattern is not None:
         bias = 0.0
@@ -176,6 +176,6 @@ if __name__ == "__main__":
     if tempmonitor is not None:
         tempmonitor.update()
         tempfinal = tempmonitor.temps[0]
-        finaltemps = list(tempmonitor.temps[:2])
+        finaltemps = list(tempmonitor.temps)
     outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
     outp.close()
