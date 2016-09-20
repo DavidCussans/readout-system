@@ -19,18 +19,17 @@ class TemperatureMonitor:
         return msg
 
     def update(self, verbose=False):
-        new = True
-        while new:
-            l = self.ser.readline()
-            if len(l) == 0:
-                new = False
-            else:
-                if verbose:
-                    print l.rstrip()
-                try:
-                    self.parse(l)
-                except:
-                    new = True
+        self.ser.write("T")
+        l = self.ser.readline()
+        if verbose:
+            print l.rstrip()
+        try:
+            self.parse(l)
+        except:
+            for i in range(4):
+                self.temps = None
+                self.timestamp = None
+            
 
     def parse(self, line):
         self.timestamp = time.localtime()
