@@ -1,0 +1,1 @@
+../teststand8chan/frontend.py
