@@ -2,4 +2,6 @@
 
 <connections>
   <connection id="SoLidFPGA"          uri="ipbusudp-2.0://192.168.235.1:50001" address_table="file://addr_table/top.xml" />
+  <connection id="BristolLab0"          uri="ipbusudp-2.0://192.168.235.1:50001" address_table="file://addr_table/top.xml" />
+  <connection id="BristolLab1"          uri="ipbusudp-2.0://192.168.235.1:50001" address_table="file://addr_table/top.xml" />
 </connections>
