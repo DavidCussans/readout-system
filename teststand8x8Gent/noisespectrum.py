@@ -1,0 +1,109 @@
+import array
+import optparse
+import time
+
+import uhal
+import ROOT
+
+import chanmap
+import frontend
+import storedata
+import temperature
+
+class NoiseSpectra:
+
+    def __init__(self):
+        self.histos = []
+
+    def draw(self):
+        "Update noise histogram plot for ~real time dispaly"
+        pass
+
+    def addwaveforms(self, data):
+        """Get noise spectrum from new waveforms, add to existing histos."""
+        for i in range(len(data)):
+            wf = data[i]
+            # FFT to create spectrum
+
+            # Add spectrum to existing histo
+
+if __name__ == "__main__":
+    parser = optparse.OptionParser()
+    parser.add_option("-b", "--bias", default=65.0, type=float)
+    parser.add_option("-c", "--chantrim", default=[], action="append")
+    parser.add_option("--trim", default=0.0, type=float)
+    parser.add_option("-p", "--plot", default=False, action="store_true")
+    parser.add_option("-n", "--nevt", default=10, type=int)
+    parser.add_option("-v", "--fwversion", type=int)
+    parser.add_option("-t", "--testpattern", type=int)
+    parser.add_option("-B", "--Board", default="SoLidFPGA")
+    parser.add_option("-o", "--output", default="data/test.root")
+    parser.add_option("--temp", default=False, action="store_true")
+    (opts, args) = parser.parse_args()
+    tempinitial = None
+    tempfinal = None
+    tempmonitor = None
+    initialtemps = []
+    finaltemps = []
+    if opts.temp:
+        tempmonitor = temperature.TemperatureMonitor()
+        tempmonitor.update()
+        while tempmonitor.timestamp is None:
+            tempmonitor.update()
+        tempinitial = tempmonitor.temps[0]
+        initialtemps = list(tempmonitor.temps)
+    bias = opts.bias
+    if opts.testpattern is not None:
+        bias = 0.0
+    assert bias >= 0.0 and bias <= 70.0
+    ns = NoiseSpectra()
+    fpga = frontend.SoLidFPGA(opts.Board, 1, minversion=opts.fwversion)
+    print "Initial ADC settings:"
+    for adc in fpga.adcs:
+        adc.getstatus()
+    fpga.reset()
+    fpga.readvoltages()
+    fpga.bias(bias)
+    trim = opts.trim
+    assert trim >= 0.0 and trim <= 5.0
+    #fpga.trim(trim)
+    #fpga.readvoltages()
+    trims = {}
+    trimlist = []
+    for i in range(8):
+        trims[i] = trim
+        trimlist.append(trim)
+    for chantrim in opts.chantrim:
+        chan, trim = chantrim.split(",")
+        chan = int(chan)
+        trim = float(trim)
+        assert chan >= 0 and chan < 8
+        assert trim >= 0.0 and trim <= 5.0
+        trims[chan] = trim
+        trimlist[chan] = trim
+    fpga.trims(trims)
+    fpga.readvoltages()
+
+    for adc in fpga.adcs:
+        adc.getstatus()
+    if opts.testpattern is not None:
+        testpattern = int(opts.testpattern) & 0x3fff
+        for adc in fpga.adcs:
+            adc.testpattern(True, testpattern)
+            adc.gettestpattern()
+            adc.getstatus()
+    outp = storedata.ROOTFile(opts.output, chanmap.fpgachans) 
+    print "Triggering %d random events." % opts.nevt
+    for i in range(opts.nevt):
+        if opts.nevt > 1000:
+            if i % (opts.nevt / 10) == 0:
+                print "%d of %d" % (i, opts.nevt)
+        data = fpga.trigger.trigger()
+        ns.addwaveforms(data)
+        outp.fill(data)
+    if tempmonitor is not None:
+        tempmonitor.update()
+        tempfinal = tempmonitor.temps[0]
+        finaltemps = list(tempmonitor.temps)
+    outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
+    outp.close()
