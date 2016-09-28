@@ -106,4 +106,5 @@ if __name__ == "__main__":
         tempfinal = tempmonitor.temps[0]
         finaltemps = list(tempmonitor.temps)
     outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
+    outp.storehistos(ns.histos)
     outp.close()

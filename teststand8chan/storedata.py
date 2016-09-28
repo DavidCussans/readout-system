@@ -102,6 +102,11 @@ class ROOTFile:
         self.temptree.Branch("final", self.tfinal, "final/D")
         self.temptree.Fill()
 
+    def storehistos(self, histos):
+        self.outp.cd()
+        for h in histos:
+            h.Write()
+
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-b", "--bias", default=65.0, type=float)
