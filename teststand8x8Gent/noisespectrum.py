@@ -10,22 +10,46 @@ import frontend
 import storedata
 import temperature
 
+import numpy as np
+import numpy.fft as fft
+
+import matplotlib.pyplot as plt
+#import root2matplot as r2m
+
 class NoiseSpectra:
 
-    def __init__(self):
+    def __init__(self, mapping=chanmap.fpgachans):
+        self.mapping = mapping
         self.histos = []
+        for i in range(8):
+            channumber = self.mapping[i]
+            name = "wf_chan%d" % channumber
+            h = ROOT.TH1I("h_noise_%s" % name, name, 1000, 0, 100000000)
+            h.SetXTitle("frequency [Hz]")
+            #h.SetYTitle("samples")
+            self.histos.append(h)
 
     def draw(self):
-        "Update noise histogram plot for ~real time dispaly"
-        pass
+        #Update noise histogram plot for ~real time display
+	#for i, h in enumerate(self.histos):
+	#    hist = r2m.Hist(h)
+	#    plt.subplot(2,4,i+1)
+	#plt.draw()
+	pass
 
     def addwaveforms(self, data):
-        """Get noise spectrum from new waveforms, add to existing histos."""
+        #Get noise spectrum from new waveforms, add to existing histos.
         for i in range(len(data)):
             wf = data[i]
-            # FFT to create spectrum
-
+            fftwf = np.abs(fft.fft(wf))**2
+            time_step = 25e-09
+            freqs = fft.fftfreq(len(wf), time_step)
+            idx = np.argsort(freqs)
             # Add spectrum to existing histo
+            h = self.histos[i]
+            for f in idx:
+		bin = h.FindBin(freqs[f])
+		h.AddBinContent(bin, fftwf[f])
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
@@ -100,6 +124,7 @@ if __name__ == "__main__":
                 print "%d of %d" % (i, opts.nevt)
         data = fpga.trigger.trigger()
         ns.addwaveforms(data)
+	ns.draw()
         outp.fill(data)
     if tempmonitor is not None:
         tempmonitor.update()
