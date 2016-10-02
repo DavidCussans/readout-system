@@ -13,18 +13,21 @@ import temperature
 import numpy as np
 import numpy.fft as fft
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #import root2matplot as r2m
 
 class NoiseSpectra:
 
-    def __init__(self, mapping=chanmap.fpgachans):
+    def __init__(self, plot=False, mapping=chanmap.fpgachans):
         self.mapping = mapping
+        self.plot = plot
+        if self.plot:
+            self.canv = ROOT.TCanvas()
         self.histos = []
         for i in range(8):
             channumber = self.mapping[i]
             name = "wf_chan%d" % channumber
-            h = ROOT.TH1I("h_noise_%s" % name, name, 1000, 0, 100000000)
+            h = ROOT.TH1D("h_noise_%s" % name, name, 1000, 0, 100000000)
             h.SetXTitle("frequency [Hz]")
             #h.SetYTitle("samples")
             self.histos.append(h)
@@ -35,7 +38,9 @@ class NoiseSpectra:
 	#    hist = r2m.Hist(h)
 	#    plt.subplot(2,4,i+1)
 	#plt.draw()
-	pass
+        if self.plot:
+            self.histos[0].Draw()
+            self.canv.Update()
 
     def addwaveforms(self, data):
         #Get noise spectrum from new waveforms, add to existing histos.
@@ -48,8 +53,8 @@ class NoiseSpectra:
             # Add spectrum to existing histo
             h = self.histos[i]
             for f in idx:
-		bin = h.FindBin(freqs[f])
-		h.AddBinContent(bin, fftwf[f])
+                h.Fill(freqs[f], fftwf[f])
+        self.draw()
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
@@ -61,7 +66,7 @@ if __name__ == "__main__":
     parser.add_option("-v", "--fwversion", type=int)
     parser.add_option("-t", "--testpattern", type=int)
     parser.add_option("-B", "--Board", default="SoLidFPGA")
-    parser.add_option("-o", "--output", default="data/test.root")
+    parser.add_option("-o", "--output", default="data/noisetest.root")
     parser.add_option("--temp", default=False, action="store_true")
     (opts, args) = parser.parse_args()
     tempinitial = None
@@ -80,7 +85,7 @@ if __name__ == "__main__":
     if opts.testpattern is not None:
         bias = 0.0
     assert bias >= 0.0 and bias <= 70.0
-    ns = NoiseSpectra()
+    ns = NoiseSpectra(plot=opts.plot)
     fpga = frontend.SoLidFPGA(opts.Board, 1, minversion=opts.fwversion)
     print "Initial ADC settings:"
     for adc in fpga.adcs:
