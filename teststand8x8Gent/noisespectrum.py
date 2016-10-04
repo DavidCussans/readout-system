@@ -25,6 +25,9 @@ class NoiseSpectra:
         self.mapping = mapping
         self.plot = plot
         if self.plot:
+            print "Setting up plotting."
+            ROOT.gROOT.SetBatch(ROOT.kFALSE)
+            print "BAtch mode: ", ROOT.gROOT.IsBatch()
             self.canv = ROOT.TCanvas()
             self.canv.SetLogy()
         self.histos = []
@@ -44,6 +47,7 @@ class NoiseSpectra:
         for i in range(8):
             g = ROOT.TGraph(len(self.freqs), self.freqs, self.coeffs[i])
             g.SetName("g_noisespectrum_chan%d" % i)
+            g.SetTitle("channel %d" % i)
             g.GetXaxis().SetTitle("freq [MHz]")
             self.graphs.append(g)
 
