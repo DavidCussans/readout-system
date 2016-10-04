@@ -162,4 +162,6 @@ if __name__ == "__main__":
     outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
     ns.makegraphs()
     outp.storehistos(ns.graphs)
+    if opts.plot:
+        raw_input("Press enter to exit.")
     outp.close()
