@@ -19,18 +19,33 @@ import numpy.fft as fft
 class NoiseSpectra:
 
     def __init__(self, plot=False, mapping=chanmap.fpgachans):
+        dt = 25e-9
+        wflen = 2048
+        self.freqs = np.fft.rfftfreq(wflen, dt) / 1e6 # in MHz
         self.mapping = mapping
         self.plot = plot
         if self.plot:
             self.canv = ROOT.TCanvas()
+            self.canv.SetLogy()
         self.histos = []
+        self.graphs = []
+        self.coeffs = []
         for i in range(8):
+            self.coeffs.append(None)
             channumber = self.mapping[i]
             name = "wf_chan%d" % channumber
             h = ROOT.TH1D("h_noise_%s" % name, name, 1000, 0, 100000000)
             h.SetXTitle("frequency [Hz]")
             #h.SetYTitle("samples")
             self.histos.append(h)
+
+    def makegraphs(self):
+        self.graphs = []
+        for i in range(8):
+            g = ROOT.TGraph(len(self.freqs), self.freqs, self.coeffs[i])
+            g.SetName("g_noisespectrum_chan%d" % i)
+            g.GetXaxis().SetTitle("freq [MHz]")
+            self.graphs.append(g)
 
     def draw(self):
         #Update noise histogram plot for ~real time display
@@ -39,21 +54,30 @@ class NoiseSpectra:
 	#    plt.subplot(2,4,i+1)
 	#plt.draw()
         if self.plot:
-            self.histos[0].Draw()
+            x = self.freqs
+            y = self.coeffs[0]
+            g = ROOT.TGraph(len(x), x, y)
+            g.GetXaxis().SetTitle("freq [MHz]")
+            g.Draw("AL")
             self.canv.Update()
 
     def addwaveforms(self, data):
         #Get noise spectrum from new waveforms, add to existing histos.
         for i in range(len(data)):
             wf = data[i]
-            fftwf = np.abs(fft.fft(wf))**2
-            time_step = 25e-09
-            freqs = fft.fftfreq(len(wf), time_step)
-            idx = np.argsort(freqs)
+            coeffs = np.abs(fft.rfft(wf))
+            if self.coeffs[i] is None:
+                self.coeffs[i] = coeffs
+            else:
+                self.coeffs[i] += coeffs
+            #fftwf = np.abs(fft.rfft(wf))**2
+            #time_step = 25e-09
+            #freqs = fft.fftfreq(len(wf), time_step)
+            #idx = np.argsort(freqs)
             # Add spectrum to existing histo
-            h = self.histos[i]
-            for f in idx:
-                h.Fill(freqs[f], fftwf[f])
+            #h = self.histos[i]
+            #for f in idx:
+                #h.Fill(freqs[f], fftwf[f])
         self.draw()
 
 if __name__ == "__main__":
@@ -136,5 +160,6 @@ if __name__ == "__main__":
         tempfinal = tempmonitor.temps[0]
         finaltemps = list(tempmonitor.temps)
     outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
-    outp.storehistos(ns.histos)
+    ns.makegraphs()
+    outp.storehistos(ns.graphs)
     outp.close()
