@@ -1,0 +1,23 @@
+<node id="trig" description="Local and board triggers" fwinfo="endpoint">
+	<node id="csr" address="0x0" description="ctrl/stat reg" fwinfo="endpoint;width=2">
+		<node id="ctrl" address="0x0">
+			<node id="dtmon_en" mask="0x1"/>
+		</node>
+		<node id="evt_ctr" address="0x2"/>
+		<node id="stat" address="0x3">
+			<node id="seq_err" mask="0x1"/>
+			<node id="rveto" mask="0x2"/>
+		</node>
+	</node>
+	<node id="loc" address="0x4" description="local trigger generator" fwinfo="endpoint;width=0">
+		<node id="trig_en" mask="0xff"/>
+		<node id="trig_force" mask="0x100"/>
+		<node id="rnd_mode" mask="0x30000"/>
+		<node id="rnd_div" mask="0xfc0000"/>
+	</node>
+	<node id="dtmon" address="0x6" description="deadtime monitor buffer" fwinfo="endpoint;width=1">
+		<node id="addr" address="0x0"/>
+		<node id="data" address="0x1" mode="port"/>
+	</node>
+	<node id="seq" address="0x8" module="file://sc_seq.xml"/>
+</node>

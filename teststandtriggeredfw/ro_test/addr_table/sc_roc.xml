@@ -1,0 +1,34 @@
+<node id="roc" description="readout buffer" fwinfo="endpoint">
+	<node id="csr" address="0x0" fwinfo="endpoint;width=3">
+		<node id="ctrl" address="0x0">
+			<node id="en_auto" mask="0x1"/>
+			<node id="occ_freeze" mask="0x2"/>
+			<node id="occ_clr" mask="0x4"/>
+		</node>
+		<node id="stat" address="0x4">
+			<node id="fifo_empty" mask="0x1"/>
+			<node id="fifo_full" mask="0x2"/>
+			<node id="fifo_valid" mask="0x4"/>
+			<node id="fifo_blkend" mask="0x8"/>
+			<node id="hfifo_empty" mask="0x10"/>
+			<node id="hfifo_full" mask="0x20"/>
+			<node id="hfifo_valid" mask="0x40"/>
+			<node id="hfifo_blkend" mask="0x80"/>
+			<node id="tfifo_empty" mask="0x100"/>
+			<node id="tfifo_full" mask="0x200"/>
+			<node id="tfifo_warn" mask="0x400"/>
+			<node id="tfifo_blkend" mask="0x800"/>
+			<node id="rsrc" mask="0x1000"/>
+			<node id="err" mask="0x2000"/>
+			<node id="werr" mask="0x4000"/>
+			<node id="werrb" mask="0x8000"/>
+		</node>
+		<node id="tot_data" address="0x5"/>
+		<node id="wctr" address="0x6"/>
+	</node>
+	<node id="buf" address="0x8" fwinfo="endpoint;width=1">
+		<node id="data" address="0x0" mode="port"/>
+		<node id="count" address="0x1" mask="0xffff"/>
+	</node>
+	<node id="occ" address="0x10" mode="block" size="0x8" fwinfo="endpoint;width=3"/>
+</node>	
