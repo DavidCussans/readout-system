@@ -28,7 +28,7 @@ if opts.notemp is False:
     ec = envchamber.EnvChamber()
     ec.setTempWait(temp)
 
-fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
+fpga = frontend.SoLidFPGA("SoLidFPGA", 1, minversion=opts.fwversion)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
