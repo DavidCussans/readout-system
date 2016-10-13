@@ -3,6 +3,7 @@ import time
 
 import uhal
 
+import chanmap
 import envchamber
 import frontend
 import storedata
@@ -76,7 +77,7 @@ fn = "data/sipmcalib_%0.2fV_%0.2fC_%s.root" % (bias, temp, time.strftime("%d%b%Y
 if opts.trim is not None:
     fn = fn.replace("V_", "V_trim%gV_" % opts.trim)
 outp = storedata.ROOTFile(fn)
-outp.conditions(bias, measbias, temp, chantrims)
+outp.conditions(bias, measbias, temp, chantrims, chanmap.sipms["SoLidFPGA"])
 print "Using %d triggers." % opts.nevt
 nevt = opts.nevt
 for i in range(nevt):
