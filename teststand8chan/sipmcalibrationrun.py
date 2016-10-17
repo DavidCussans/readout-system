@@ -3,6 +3,7 @@ import time
 
 import uhal
 
+import chanmap
 import envchamber
 import frontend
 import storedata
@@ -14,6 +15,7 @@ parser.add_option("-m", "--measbias", default=False, action="store_true")
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
 parser.add_option("-v", "--fwversion")
+parser.add_option("-u", "--notemp", default=False, action="store_true")
 (opts, args) = parser.parse_args()
 assert len(args) == 2, "Must provide bias voltage and temperature."
 bias = float(args[0])
@@ -22,10 +24,12 @@ temp = float(args[1])
 assert temp > 0.0 and temp < 30.0
 assert bias > 50.0 and bias < 75.0
 
-ec = envchamber.EnvChamber()
-ec.setTempWait(temp)
+# If the flag notemp is set then don't try to control the temperature.
+if opts.notemp is False:
+    ec = envchamber.EnvChamber()
+    ec.setTempWait(temp)
 
-fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
+fpga = frontend.SoLidFPGA("SoLidFPGA", 1, minversion=opts.fwversion)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
@@ -73,7 +77,7 @@ fn = "data/sipmcalib_%0.2fV_%0.2fC_%s.root" % (bias, temp, time.strftime("%d%b%Y
 if opts.trim is not None:
     fn = fn.replace("V_", "V_trim%gV_" % opts.trim)
 outp = storedata.ROOTFile(fn)
-outp.conditions(bias, measbias, temp, chantrims)
+outp.conditions(bias, measbias, temp, chantrims, chanmap.sipms["SoLidFPGA"])
 print "Using %d triggers." % opts.nevt
 nevt = opts.nevt
 for i in range(nevt):

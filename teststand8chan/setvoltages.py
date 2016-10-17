@@ -1,4 +1,5 @@
 import optparse
+import sys
 import time
 
 import uhal
@@ -12,13 +13,15 @@ parser = optparse.OptionParser(usage=usage)
 parser.add_option("-d", "--dachv", default=None, type=float)
 parser.add_option("-t", "--trim", default=None, type=float)
 parser.add_option("-c", "--chantrim", default=[], action="append")
+parser.add_option("-r", "--readonly", default=False, action="store_true")
+parser.add_option("-B", "--Board", default="SoLidFPGA")
 (opts, args) = parser.parse_args()
 assert len(args) == 1, "Must provide global bias voltage."
 bias = float(args[0])
 
 assert bias >= 0.0 and bias < 75.0
 
-fpga = frontend.SoLidFPGA(1)
+fpga = frontend.SoLidFPGA(opts.Board, 1)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
@@ -36,6 +39,8 @@ fpga.reset()
 
 print "Previous DAC settings:"
 fpga.readvoltages()
+if opts.readonly:
+    sys.exit()
 print "Setting bias voltage: %g V" % bias
 if opts.dachv is None:
     fpga.bias(bias)
