@@ -18,34 +18,54 @@ import numpy.fft as fft
 
 class NoiseSpectra:
 
-    def __init__(self, plot=False, mapping=chanmap.fpgachans):
+    def __init__(self, plot=None, mapping=chanmap.fpgachans):
         dt = 25e-9
         wflen = 2048
         self.freqs = np.fft.rfftfreq(wflen, dt) / 1e6 # in MHz
         self.mapping = mapping
         self.plot = plot
-        if self.plot:
+        self.canv = None
+        if self.plot is not None:
             print "Setting up plotting."
             ROOT.gROOT.SetBatch(ROOT.kFALSE)
             print "BAtch mode: ", ROOT.gROOT.IsBatch()
             self.canv = ROOT.TCanvas()
-            self.canv.SetLogy()
+            #self.canv.SetLogy()
         self.histos = []
+        self.h2dft = None
         self.graphs = []
         self.coeffs = []
+        self.nwf = 0
         for i in range(8):
             self.coeffs.append(None)
             channumber = self.mapping[i]
             name = "wf_chan%d" % channumber
             h = ROOT.TH1D("h_noise_%s" % name, name, 1000, 0, 100000000)
-            h.SetXTitle("frequency [Hz]")
+            h.SetXTitle("frequency [MHz]")
             #h.SetYTitle("samples")
             self.histos.append(h)
+
+    def draw2d(self):
+        df = self.freqs[1] - self.freqs[2]
+        self.h2dft = ROOT.TH2D("h2dft", "", 8, 0, 8, len(self.freqs), self.freqs[0], self.freqs[-1] + df)
+        self.h2dft.SetXTitle("Channel")
+        self.h2dft.SetYTitle("freq [MHz]")
+        self.h2dft.SetZTitle("power")
+        for i in range(8):
+            for j in range(1, len(self.freqs)):
+                f = self.freqs[j]
+                p = np.abs(self.coeffs[i][j]) / self.nwf
+                self.h2dft.Fill(i, f, p)
+        if self.plot is not None:
+            #self.canv.SetLogy(0)
+            #self.canv.SetLogz()
+            self.h2dft.Draw("COLZ")
+            self.canv.Update()
 
     def makegraphs(self):
         self.graphs = []
         for i in range(8):
-            g = ROOT.TGraph(len(self.freqs), self.freqs, self.coeffs[i])
+            g = ROOT.TGraph(len(self.freqs), self.freqs, np.abs(self.coeffs[i]))
             g.SetName("g_noisespectrum_chan%d" % i)
             g.SetTitle("channel %d" % i)
             g.GetXaxis().SetTitle("freq [MHz]")
@@ -57,18 +77,22 @@ class NoiseSpectra:
 	#    hist = r2m.Hist(h)
 	#    plt.subplot(2,4,i+1)
 	#plt.draw()
-        if self.plot:
+        if self.plot is not None:
             x = self.freqs
-            y = self.coeffs[0]
-            g = ROOT.TGraph(len(x), x, y)
+            y = self.coeffs[self.plot] / self.nwf
+            g = ROOT.TGraph(len(x[1:]), x[1:], y[1:])
+            g.SetTitle("Channel %d" % self.plot)
             g.GetXaxis().SetTitle("freq [MHz]")
+            g.GetYaxis().SetTitle("power")
             g.Draw("AL")
             self.canv.Update()
 
     def addwaveforms(self, data):
+        self.nwf += 1
         #Get noise spectrum from new waveforms, add to existing histos.
         for i in range(len(data)):
-            wf = data[i]
+            wf = np.array(data[i]) & 0x3fff
+            #coeffs = np.abs(fft.rfft(wf))
             coeffs = np.abs(fft.rfft(wf))
             if self.coeffs[i] is None:
                 self.coeffs[i] = coeffs
@@ -89,7 +113,7 @@ if __name__ == "__main__":
     parser.add_option("-b", "--bias", default=65.0, type=float)
     parser.add_option("-c", "--chantrim", default=[], action="append")
     parser.add_option("--trim", default=0.0, type=float)
-    parser.add_option("-p", "--plot", default=False, action="store_true")
+    parser.add_option("-p", "--plot", type=int)
     parser.add_option("-n", "--nevt", default=10, type=int)
     parser.add_option("-v", "--fwversion", type=int)
     parser.add_option("-t", "--testpattern", type=int)
@@ -102,6 +126,8 @@ if __name__ == "__main__":
     tempmonitor = None
     initialtemps = []
     finaltemps = []
+    if opts.plot is not None:
+        assert opts.plot >= 0 and opts.plot < 8
     if opts.temp:
         tempmonitor = temperature.TemperatureMonitor()
         tempmonitor.update()
@@ -166,6 +192,10 @@ if __name__ == "__main__":
     outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board], tinitial=initialtemps, tfinal = finaltemps)
     ns.makegraphs()
     outp.storehistos(ns.graphs)
-    if opts.plot:
+    if opts.plot is not None:
+        raw_input("...")
+    ns.draw2d()
+    if opts.plot is not None:
         raw_input("Press enter to exit.")
+    outp.storehistos([ns.h2dft])
     outp.close()
