@@ -3,6 +3,7 @@ import time
 
 import uhal
 
+import chanmap
 import envchamber
 import frontend
 import storedata
@@ -28,7 +29,7 @@ if opts.notemp is False:
     ec = envchamber.EnvChamber()
     ec.setTempWait(temp)
 
-fpga = frontend.SoLidFPGA(1, minversion=opts.fwversion)
+fpga = frontend.SoLidFPGA("SoLidFPGA", 1, minversion=opts.fwversion)
 fpga.reset()
 
 #target = uhal.getDevice("trenz", "ipbusudp-2.0://192.168.235.0:50001", "file://addr_table/top.xml")
@@ -76,7 +77,7 @@ fn = "data/sipmcalib_%0.2fV_%0.2fC_%s.root" % (bias, temp, time.strftime("%d%b%Y
 if opts.trim is not None:
     fn = fn.replace("V_", "V_trim%gV_" % opts.trim)
 outp = storedata.ROOTFile(fn)
-outp.conditions(bias, measbias, temp, chantrims)
+outp.conditions(bias, measbias, temp, chantrims, chanmap.sipms["SoLidFPGA"])
 print "Using %d triggers." % opts.nevt
 nevt = opts.nevt
 for i in range(nevt):
