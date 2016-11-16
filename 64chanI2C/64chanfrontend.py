@@ -29,40 +29,44 @@ class TempMCP9808:
 
         #New from here down.
 #-------------------------------------------------------------------------------
-class LM82:
+class TempLM82:
     """Temp chip on 64 chan board"""
     regLM82 = 0b011000 # 7 bit binary address with ADD0 and 1 set to 0
     #temp data is set in binary with LSB = 1 deg C
+    def __init__(self, i2ccore, addr=0b0011000):
+        self.i2ccore = i2ccore
+        self.slaveaddr = addr & 0x7f
+##change this to reflect the board address etc.
 
-def rtc(self, regaddr):
-    """ read T_CRIT from board """
-    pass
-    # address of T_CRIT to READ 0x42  set to 127 (0b1111111) default
-    # convert local_temp from bin to dec
-    # return local_temp
+    def read_tcrit(self, regaddr):
+        """ read T_CRIT from board """
+        pass
+        # address of T_CRIT to READ 0x42  set to 127 (0b1111111) default
+        # convert local_temp from bin to dec
+        # return local_temp
 
-def set_tcrit(self, thresh):
-    """set critical temp alarm threshold """
-    pass
-    # adr to SET T_CRIT is 0x5A for write, 0x42 for reading
-    # Note! this needs the config reg to have D3 & D5 set to 1 before the T_CRIT
-    # can be lowered below 127
+    def set_tcrit(self, thresh):
+        """set critical temp alarm threshold """
+        pass
+        # adr to SET T_CRIT is 0x5A for write, 0x42 for reading
+        # Note! this needs the config reg to have D3 & D5 set to 1 before the T_CRIT
+        # can be lowered below 127
 
-    #  functions to write-------------------------------------------------------
+        #  functions to write-------------------------------------------------------
 
-    #   arg needs to be user input dec
-    #   convert the dec to bin write address is 0x09 read address 0x03
-    #   set the D5 and D3 pins to 1 (power up default to all 0's)
-    #   pass this to the 0x5A address to set T_CRIT
-    #   pass set value back to user and convert from bin to dec read 0x5A D0-D7
-    #   retun t crit set point from 0x42 ie execute rtc command
+        #   arg needs to be user input dec
+        #   convert the dec to bin write address is 0x09 read address 0x03
+        #   set the D5 and D3 pins to 1 (power up default to all 0's)
+        #   pass this to the 0x5A address to set T_CRIT
+        #   pass set value back to user and convert from bin to dec read 0x5A D0-D7
+        #   retun t crit set point from 0x42 ie execute rtc command
 
-    # TEST IF LT HAS TO BE SET ALSO OR IF T_CRIT IS ENOUGH AS IT LOOKS SO FROM THE CIRCUIT DIAGRAM
-    # CONFIG REG details... address read/write  0x03 / 0x09
-    # D5 AND D3 = 1 allows set temp below 127
-    # D4 = 1 turns off the remote temp sensor attached to J14 (TSW-102-23-L-S)
+        # TEST IF LT HAS TO BE SET ALSO OR IF T_CRIT IS ENOUGH AS IT LOOKS SO FROM THE CIRCUIT DIAGRAM
+        # CONFIG REG details... address read/write  0x03 / 0x09
+        # D5 AND D3 = 1 allows set temp below 127
+        # D4 = 1 turns off the remote temp sensor attached to J14 (TSW-102-23-L-S)
 
-    pass
+        pass
 
 #-------------------------------------------------------------------------------
 class EUI_24AA025E48:
@@ -87,7 +91,7 @@ class EUI_24AA025E48:
 
 
 #-------------------------------------------------------------------------------
-class LTC2990:
+class VoltageLTC2990:
 """Voltage/Current sensor that can also do temperature"""
 # adr0 and adr1 both pulled up to 1 on 3v3 rail
 
@@ -99,7 +103,7 @@ class LTC2990:
 #     convert and pass to user
 
 #-------------------------------------------------------------------------------
-class INA219:
+class PowerINA219:
 """Current and power chip"""
 #     There are two of these per board so each needs a different address
 #     LHS VMON3V3 is pulled down to 00 RHS, VMON2V5 pulled to 10 for A0 and A1 respectively
