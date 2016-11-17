@@ -1,0 +1,4 @@
+dir SiPm   : SiPm ribbon cable 
+dir img :  svg files used for the initial cable files
+dir initialcablestudies  : calculation inital made to estimate the cable diameters with LV power units outside the container
+

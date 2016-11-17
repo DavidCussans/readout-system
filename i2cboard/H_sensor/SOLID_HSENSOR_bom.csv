@@ -1,0 +1,11 @@
+SOLID Humidity sensor::Version 1.0::::::
+Resistors 1%  in not indicated otherwise::::::::
+Capicitors  10V  / 20 %  if not indicated otherwise::::::::
+::::::::
+Part:Value:Device:Package:Description:MPN:OC_FARNELL:PARTNO:SUPPLIER
+C5:100n:C-EUC0805:C0805:CAPACITOR, European symbol:::*:
+R1:0R:R-EU_R0402:R0402:RESISTOR, European symbol::::
+R13:10K:R-EU_R0402:R0402:RESISTOR, European symbol::::
+U1:NC:NCP170:SOT563::NCP170AXV330T2G:2507604::ON
+U8:HTS221:HTS221:HLGA-6:Capacitive humidity sensor:HTS221:2433085::ST
+X1:MICROMATCH-6SMD:MICROMATCH-6SMD:MICROMATCH_SMD-6:MicroMaTch 6  7-215464-6 / 0-215464-6:7-188275-6:1056234::
