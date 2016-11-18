@@ -21,8 +21,16 @@ class TemperatureMonitor:
     def update(self, verbose=False):
         self.ser.write("T")
         l = self.ser.readline()
+        if l == "":
+            print "Temperature sensor not responding, sending '?'"
+            self.ser.write("?\n")
+            l = "x"
+            while l != "":
+                l = self.ser.readline()
+            self.ser.write("T")
+            l = self.ser.readline()
         if verbose:
-            print l.rstrip()
+            print "Read from UART: ", l.rstrip()
         try:
             self.parse(l)
         except:
