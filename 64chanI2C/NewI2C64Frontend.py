@@ -1,126 +1,3 @@
-class TempMCP9808:
-    """Temperture chip on analog board."""
-
-    regTemp = 0x5 #<<< 0b0001010 ie register for temp on the chip
-
-    def __init__(self, i2ccore, addr=0b0011000):
-    # this is the chip address right? ie the 7 bit 0011000 and a 0 for write in LSB
-        self.i2ccore = i2ccore
-        self.slaveaddr = addr & 0x7f #<<< this verifies the address given is correct from internal error?
-        # slave address is the chip address of the mcp9808 yes?
-
-    def readreg(self, regaddr): #<- for generic reading to the reg provided
-    # but which reg? can I set regaddr = e.g. 0x00
-        n, data = self.i2ccore.writeread(self.slaveaddr, [regaddr], 2)
-# here I think that you're function is being told "use the i2cwriteread function
-# on the slave address and then assign the variable n the value of the array at
-# regaddr, then assign data to an array length of 2 bytes"?
-
-        assert n == 1 #check n has bytes zero and one filled?
-        assert len(data) == 2 # ensure that data has a length of two bytes ie byte 0 and 1
-        val = data[0] << 8 #pushes the bits 8 places from byto 0 towards msb and leaves the
-        # 8 bits towards lsb as 0's ?? does this not then fill byte 1?
-        val |= data[1] # bitwise or takes the zeroed LSB bits and flips them if
-        # either val or data[1] are 1
-        # isnt this just duplicating byte 1 as byte 0?
-        return val
-
-    def temp(self):
-        val = self.readreg(TempMCP9808.regTemp) ##<< this is pointing to the 0x5
-        #  address and passing val the contents of 0x5 after performing the readreg function.
-        return self.u16todeg(val) ##<< this is passing the contents of val to the
-        # u16todeg function, which is then converting from bin to dec for 16 bits
-
-
-# here can we not use dec(bin) or similar? ie the built in pyton functions,
-# or is it better to perform the calculations on chip, ie bitwise manipulation
-# via the code below
-    def u16todeg(self, val): #val = 0011001110101010
-        val &= 0x1fff # 0001111111111111 -> 0001001110101010 so again verifying the data?
-        neg = val & 0x1000 > 0 #0001000000000000 ??
-        val &= 0x0fff #0000111111111111
-        if neg:
-            return -float(0xfff - val) / 16.0
-        return float(val) / 16.0
-
-
-
-    def write(self, addr, data, stop=True):
-        """Write data to the device with the given address."""
-        # Start transfer with 7 bit address and write bit (0)
-        nwritten = -1
-        addr &= 0x7f
-        addr = addr << 1
-        startcmd = 0x1 << 7
-        stopcmd = 0x1 << 6
-        writecmd = 0x1 << 4
-        self.data.write(addr)
-        self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
-        self.target.dispatch()
-        ack = self.delayorcheckack()
-        if not ack:
-            self.cmd_stat.write(I2CCore.stopcmd)
-            self.target.dispatch()
-            return nwritten
-        nwritten += 1
-        for val in data:
-            val &= 0xff
-            self.data.write(val)
-            self.cmd_stat.write(I2CCore.writecmd)
-            self.target.dispatch()
-            ack = self.delayorcheckack()
-            if not ack:
-                self.cmd_stat.write(I2CCore.stopcmd)
-                self.target.dispatch()
-                return nwritten
-            nwritten += 1
-        if stop:
-            self.cmd_stat.write(I2CCore.stopcmd)
-            self.target.dispatch()
-        return nwritten
-
-    def read(self, addr, n):
-        """Read n bytes of data from the device with the given address."""
-        # Start transfer with 7 bit address and read bit (1)
-        data = []
-        addr &= 0x7f
-        addr = addr << 1
-        addr |= 0x1 # read bit
-        self.data.write(addr)
-        self.cmd_stat.write(I2CCore.startcmd | I2CCore.writecmd)
-        self.target.dispatch()
-        ack = self.delayorcheckack()
-        if not ack:
-            self.cmd_stat.write(I2CCore.stopcmd)
-            self.target.dispatch()
-            return data
-        for i in range(n):
-            self.cmd_stat.write(I2CCore.readcmd)
-            self.target.dispatch()
-            ack = self.delayorcheckack()
-            val = self.data.read()
-            self.target.dispatch()
-            data.append(val & 0xff)
-        self.cmd_stat.write(I2CCore.stopcmd)
-        self.target.dispatch()
-        return data
-
-    def writeread(self, addr, data, n):
-        """Write data to device, then read n bytes back from it."""
-        nwritten = self.write(addr, data, stop=False)
-        readdata = []
-        if nwritten == len(data):
-            readdata = self.read(addr, n)
-        return nwritten, readdata
-
-
-
-
-#-------------------------------------------------------------------------------
-        #New from here down.
-#-------------------------------------------------------------------------------
-
-
 class TempLM82:
     """Temp chip on 64 chan board"""
 
@@ -148,7 +25,7 @@ class TempLM82:
 #-------------------------------------------------------------------------------
 
     def binToDec:
-        # feed temp the reg address byte data, NOT address...
+        # feed val the reg address byte data, NOT address...
         # val = regaddr # which should be passed from readreg I hope...
         neg = val & 0b10000000 > 0 # test if msb is 1
         if neg > 0:
@@ -189,25 +66,15 @@ class TempLM82:
                 print "Something went wrong here..."
             else:
     #convert from dec to binary
-
-
-                #format threshold as binary
+            #format threshold as binary
         return threshold
-
-
-
-
         # get user input, convert to binary
-
 
         # set D3 and 5 to one to allow T_CRIT to be lowered
 
         #     regSetCritLM82 =  0x5A
         # set T_CRIT to user inputself.
         # read the set point
-
-
-
         pass
         # adr to SET T_CRIT is 0x5A for write, 0x42 for reading
         # Note! this needs the config reg to have D3 & D5 set to 1 before the T_CRIT

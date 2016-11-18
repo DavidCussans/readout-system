@@ -157,7 +157,7 @@ if __name__ == "__main__":
             adc.testpattern(True, testpattern)
             adc.gettestpattern()
             adc.getstatus()
-    outp = ROOTFile(opts.output, chanmap.fpgachans) 
+    outp = ROOTFile(opts.output, chanmap.fpgachans)
     outp.conditions(bias, 0.0, 0.0, trimlist, chanmap.sipms[opts.Board])
     print "Triggering %d random events." % opts.nevt
     for i in range(opts.nevt):
