@@ -4,8 +4,8 @@ being prototyped.
 
 For the ADC:
     One or more LTM9007 ADCs can be controlled via the IPbus SPI block.
-    Each chip is really two four channel ADCs, with each controlled with a 
-    separate chip select line. Bank A is channels 1, 4, 5, 8. 
+    Each chip is really two four channel ADCs, with each controlled with a
+    separate chip select line. Bank A is channels 1, 4, 5, 8.
     Bank B is 2, 3, 6, 7.
 
     Control is via a simple SPI interface where 16 bits are transferred.
@@ -196,10 +196,23 @@ class Trigger:
 
 class OutputBuffer:
     """Output data block."""
-    
+
     def __init__(self, target):
         self.target = target
-        
+
+
+################################################################################
+/*
+        ██ ██████   ██████        ██████  ██████  ██████  ███████
+        ██      ██ ██            ██      ██    ██ ██   ██ ██
+        ██  █████  ██            ██      ██    ██ ██████  █████
+        ██ ██      ██            ██      ██    ██ ██   ██ ██
+        ██ ███████  ██████        ██████  ██████  ██   ██ ███████
+*/
+################################################################################
+
+
+
 """
 I2C core XML:
 
@@ -289,6 +302,16 @@ class I2CCore:
             time.sleep(self.delay)
         return ack
 
+        /*
+        ██     ██ ██████  ██ ████████ ███████
+        ██     ██ ██   ██ ██    ██    ██
+        ██  █  ██ ██████  ██    ██    █████
+        ██ ███ ██ ██   ██ ██    ██    ██
+         ███ ███  ██   ██ ██    ██    ███████
+        */
+
+
+
     def write(self, addr, data, stop=True):
         """Write data to the device with the given address."""
         # Start transfer with 7 bit address and write bit (0)
@@ -323,6 +346,16 @@ class I2CCore:
             self.target.dispatch()
         return nwritten
 
+        /*
+        ██████  ███████  █████  ██████
+        ██   ██ ██      ██   ██ ██   ██
+        ██████  █████   ███████ ██   ██
+        ██   ██ ██      ██   ██ ██   ██
+        ██   ██ ███████ ██   ██ ██████
+        */
+
+
+
     def read(self, addr, n):
         """Read n bytes of data from the device with the given address."""
         # Start transfer with 7 bit address and read bit (1)
@@ -348,6 +381,16 @@ class I2CCore:
         self.cmd_stat.write(I2CCore.stopcmd)
         self.target.dispatch()
         return data
+
+    /*
+    ██     ██ ██████  ██ ████████ ███████ ██████  ███████  █████  ██████
+    ██     ██ ██   ██ ██    ██    ██      ██   ██ ██      ██   ██ ██   ██
+    ██  █  ██ ██████  ██    ██    █████   ██████  █████   ███████ ██   ██
+    ██ ███ ██ ██   ██ ██    ██    ██      ██   ██ ██      ██   ██ ██   ██
+     ███ ███  ██   ██ ██    ██    ███████ ██   ██ ███████ ██   ██ ██████
+    */
+
+
 
     def writeread(self, addr, data, n):
         """Write data to device, then read n bytes back from it."""
@@ -599,12 +642,12 @@ class ADCLTM9007:
         if bank == "A" or bank is None:
             if verbose:
                 print "Reset A"
-            self.writerega(0x0, rstcmd) 
+            self.writerega(0x0, rstcmd)
             time.sleep(0.5)
         if bank == "B" or bank is None:
             if verbose:
                 print "Reset B"
-            self.writeregb(0x0, rstcmd) 
+            self.writeregb(0x0, rstcmd)
             time.sleep(0.5)
 
     def testpattern(self, on, pattern=0x0, bank=None):
@@ -767,7 +810,7 @@ class DACMCP4725:
         self.i2ccore = i2ccore
         self.slaveaddr = addr & 0x7f
         self.vdd = float(vdd)
-    
+
     def setbias(self, bias):
         # DAC voltage goes through potential divider to HV chip, where it is scaled up
         r1 = 1.0
@@ -812,7 +855,7 @@ class DACMCP4725:
         ready = (data[0] & (0x1 << 7)) > 0
         por = (data[0] & (0x1 << 6)) > 0 # power on reset?
         powerdown = (data[0] & 0b110) >> 1
-        dacvalue = data[1] << 4 
+        dacvalue = data[1] << 4
         dacvalue |= (data[2] & 0xf0) >> 4
         voltage = self.vdd * dacvalue / 2**12
         #print dacvalue, voltage
@@ -871,7 +914,7 @@ class DACMCP4728:
     sequentialwrite = 0b10
     singlewrite = 0b11
 
-    # stuff 
+    # stuff
     vref = 0b0 << 7 # Uses external reference, ie Vdd
 
     def __init__(self, i2ccore, addr, vdd=5.0):
