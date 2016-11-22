@@ -199,20 +199,7 @@ class OutputBuffer:
 
     def __init__(self, target):
         self.target = target
-
-
-################################################################################
-/*
-        ██ ██████   ██████        ██████  ██████  ██████  ███████
-        ██      ██ ██            ██      ██    ██ ██   ██ ██
-        ██  █████  ██            ██      ██    ██ ██████  █████
-        ██ ██      ██            ██      ██    ██ ██   ██ ██
-        ██ ███████  ██████        ██████  ██████  ██   ██ ███████
-*/
-################################################################################
-
-
-
+        
 """
 I2C core XML:
 
@@ -302,16 +289,6 @@ class I2CCore:
             time.sleep(self.delay)
         return ack
 
-        /*
-        ██     ██ ██████  ██ ████████ ███████
-        ██     ██ ██   ██ ██    ██    ██
-        ██  █  ██ ██████  ██    ██    █████
-        ██ ███ ██ ██   ██ ██    ██    ██
-         ███ ███  ██   ██ ██    ██    ███████
-        */
-
-
-
     def write(self, addr, data, stop=True):
         """Write data to the device with the given address."""
         # Start transfer with 7 bit address and write bit (0)
@@ -346,16 +323,6 @@ class I2CCore:
             self.target.dispatch()
         return nwritten
 
-        /*
-        ██████  ███████  █████  ██████
-        ██   ██ ██      ██   ██ ██   ██
-        ██████  █████   ███████ ██   ██
-        ██   ██ ██      ██   ██ ██   ██
-        ██   ██ ███████ ██   ██ ██████
-        */
-
-
-
     def read(self, addr, n):
         """Read n bytes of data from the device with the given address."""
         # Start transfer with 7 bit address and read bit (1)
@@ -381,16 +348,6 @@ class I2CCore:
         self.cmd_stat.write(I2CCore.stopcmd)
         self.target.dispatch()
         return data
-
-    /*
-    ██     ██ ██████  ██ ████████ ███████ ██████  ███████  █████  ██████
-    ██     ██ ██   ██ ██    ██    ██      ██   ██ ██      ██   ██ ██   ██
-    ██  █  ██ ██████  ██    ██    █████   ██████  █████   ███████ ██   ██
-    ██ ███ ██ ██   ██ ██    ██    ██      ██   ██ ██      ██   ██ ██   ██
-     ███ ███  ██   ██ ██    ██    ███████ ██   ██ ███████ ██   ██ ██████
-    */
-
-
 
     def writeread(self, addr, data, n):
         """Write data to device, then read n bytes back from it."""

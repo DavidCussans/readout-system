@@ -1,14 +1,14 @@
-
-/*##############################################################################
-
-██      ███    ███  █████  ██████      ████████ ███████ ███    ███ ██████
-██      ████  ████ ██   ██      ██        ██    ██      ████  ████ ██   ██
-██      ██ ████ ██  █████   █████         ██    █████   ██ ████ ██ ██████
-██      ██  ██  ██ ██   ██ ██             ██    ██      ██  ██  ██ ██
-███████ ██      ██  █████  ███████        ██    ███████ ██      ██ ██
-
-*/##############################################################################
-
+#
+# /*##############################################################################
+#
+# ██      ███    ███  █████  ██████      ████████ ███████ ███    ███ ██████
+# ██      ████  ████ ██   ██      ██        ██    ██      ████  ████ ██   ██
+# ██      ██ ████ ██  █████   █████         ██    █████   ██ ████ ██ ██████
+# ██      ██  ██  ██ ██   ██ ██             ██    ██      ██  ██  ██ ██
+# ███████ ██      ██  █████  ███████        ██    ███████ ██      ██ ██
+#
+# */##############################################################################
+#
 
 
 class TempLM82:
@@ -54,31 +54,22 @@ class TempLM82:
         return self.u8binToDec(val)
 
 #-------------------------------------------------------------------------------
-
-/*
-██     ██    ██    ██████
-██     ██    ██    ██   ██
-██  █  ██    ██    ██████
-██ ███ ██    ██    ██
- ███ ███  ██ ██ ██ ██
-*/
-
+#
+# /*
+# ██     ██    ██    ██████
+# ██     ██    ██    ██   ██
+# ██  █  ██    ██    ██████
+# ██ ███ ██    ██    ██
+#  ███ ███  ██ ██ ██ ██
+# */
+#
 
 
 
     def setTCrit(self, threshold):
         """set critical temp alarm threshold """
         #this needs to have the setpoint passed as an argument?
-        # or as a while loop an test for errors
-        while True:
-            try:
-                threshold = int(raw_input('Specify Critical Temperatre set point:'))
-                # If we fail we ask again user to enter binary number
-            except ValueError: # ie not being passed an int.
-    #        number out of range needs adding too?
-                print "Something went wrong here..."
-            else:
-
+    #The set point has to be hardcoded in
     #convert from dec to binary
     # if positive can i just pass this straight across?
     #
@@ -95,7 +86,8 @@ class TempLM82:
         # get user input, convert to binary
 
         # set D3 and 5 to one to allow T_CRIT to be lowered
-# this has to be a writeread function to write to d5 and 3 to set them both true and then to write t crit
+# this has to be a writeread function to write to d5 and 3 to set them both true
+#and then to write t crit
 # then run the read T_CRIT function.
         #     regSetCritLM82 =  0x5A
         # set T_CRIT to user inputself.
@@ -114,7 +106,8 @@ class TempLM82:
         #   pass set value back to user and convert from bin to dec read 0x5A D0-D7
         #   retun t crit set point from 0x42 ie execute rtc command
 
-        # TEST IF LT HAS TO BE SET ALSO OR IF T_CRIT IS ENOUGH AS IT LOOKS SO FROM THE CIRCUIT DIAGRAM
+        # TEST IF LT HAS TO BE SET ALSO OR IF T_CRIT IS ENOUGH AS IT LOOKS SO
+        # FROM THE CIRCUIT DIAGRAM
         # CONFIG REG details... address read/write  0x03 / 0x09
         # D5 AND D3 = 1 allows set temp below 127
         # D4 = 1 turns off the remote temp sensor attached to J14 (TSW-102-23-L-S)
@@ -122,17 +115,17 @@ class TempLM82:
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-
-/*##############################################################################
-
-███████ ██    ██ ██ ██████      ██   ██  █████      ██████  ██ ████████
-██      ██    ██ ██ ██   ██     ██   ██ ██   ██     ██   ██ ██    ██
-█████   ██    ██ ██ ██   ██     ███████  █████      ██████  ██    ██
-██      ██    ██ ██ ██   ██          ██ ██   ██     ██   ██ ██    ██
-███████  ██████  ██ ██████           ██  █████      ██████  ██    ██
-
-*/##############################################################################
-
+#
+# /*##############################################################################
+#
+# ███████ ██    ██ ██ ██████      ██   ██  █████      ██████  ██ ████████
+# ██      ██    ██ ██ ██   ██     ██   ██ ██   ██     ██   ██ ██    ██
+# █████   ██    ██ ██ ██   ██     ███████  █████      ██████  ██    ██
+# ██      ██    ██ ██ ██   ██          ██ ██   ██     ██   ██ ██    ██
+# ███████  ██████  ██ ██████           ██  █████      ██████  ██    ██
+#
+# */##############################################################################
+#
 
 
 
@@ -152,8 +145,10 @@ class EUI_24AA025E48:
     def read48bitUID(self, n, data): # reads the set point for T_CRIT
         """ read 48 bit UID from chip """
         # as this is write protected must send only read? not writeread? check i2c functions.
-        n, data = self.i2ccore.read(self.slaveaddr, [0xfa:0xff], 6) # can i fix the reg address this way?
-        # then read the next six bytes, ie from 0xfa to 0xff? or is it enough to just have [oxfa]?
+        n, data = self.i2ccore.read(self.slaveaddr, [0xfa:0xff], 6) # can i fix the reg
+        # address this way?
+        # then read the next six bytes, ie from 0xfa to 0xff? or is it enough to
+        # just have [oxfa]?
         #n, data = self.i2ccore.read(self.slaveaddr, [0xfa], 6) #like this?
         assert n == 6 # six bytes
         assert len(data) == 6 # set data to six bytes
@@ -162,24 +157,29 @@ class EUI_24AA025E48:
         # we can debug as we know 0:3 are pre-set by factory to 0x00 0x04 and 0xa3.
 
 
-#     read generic random bitstream to mem from 0x00 to 0x7f (although random read from anywhere?)
+#     read generic random bitstream to mem from 0x00 to 0x7f (although random
+# read from anywhere?)
 
-
-            /*
-            ██     ██    ██    ██████
-            ██     ██    ██    ██   ██
-            ██  █  ██    ██    ██████
-            ██ ███ ██    ██    ██
-             ███ ███  ██ ██ ██ ██
-            */
-
+            #
+            # /*
+            # ██     ██    ██    ██████
+            # ██     ██    ██    ██   ██
+            # ██  █  ██    ██    ██████
+            # ██ ███ ██    ██    ██
+            #  ███ ███  ██ ██ ██ ██
+            # */
+            #
 
 
 ################################################################################
 ############### THIS IS EXTRA FOR READING/WRITING TO THE ONCHIP MEMORY #########
 ################################################################################
 
-    def writeread(self, addr, data, n):
+
+# write and ead back random data up to 6 bytes in adresses given.
+
+
+    def writeread(self, data, n): # does this need an address to be given to it?
         """Write data to device, then read n bytes back from it."""
         nwritten = self.write(addr, data, stop=False)
         readdata = []
@@ -228,17 +228,17 @@ class EUI_24AA025E48:
 # factory set to 0x0004A3, the remaining are the UID of the chip.
 #
 
-
-/*###############################################################################
-
-██   ████████  ██████ ██████   █████   █████   ██████      ██    ██    ██  ██████
-██      ██    ██           ██ ██   ██ ██   ██ ██  ████     ██    ██   ██  ██
-██      ██    ██       █████   ██████  ██████ ██ ██ ██     ██    ██  ██   ██
-██      ██    ██      ██           ██      ██ ████  ██      ██  ██  ██    ██
-███████ ██     ██████ ███████  █████   █████   ██████        ████  ██      ██████
-
-*/###############################################################################
-
+#
+# /*###############################################################################
+#
+# ██   ████████  ██████ ██████   █████   █████   ██████      ██    ██    ██  ██████
+# ██      ██    ██           ██ ██   ██ ██   ██ ██  ████     ██    ██   ██  ██
+# ██      ██    ██       █████   ██████  ██████ ██ ██ ██     ██    ██  ██   ██
+# ██      ██    ██      ██           ██      ██ ████  ██      ██  ██  ██    ██
+# ███████ ██     ██████ ███████  █████   █████   ██████        ████  ██      ██████
+#
+# */###############################################################################
+#
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -258,9 +258,10 @@ class VoltageLTC2990:
 # for V3 and V4 pins LSB is 305.18uV
 # for diff between V1 and V2 LSB = 19.42uV
 
-    reg1v8LTC2990 =  0x0c and 0x0d #the registry for the 1.8V rail
-    reg3v3LTC2990 =  0x0a and 0x0b #the registry for the 3.3V rail
-    regCurrentLTC2990 = 0x06 and 0x07 to 0x08 and 0x09 # the reg for the current across V3 and V4 pins
+    reg1v8LTC2990 =  0x0c #and 0x0d #the registry for the 1.8V rail
+    reg3v3LTC2990 =  0x0a #and 0x0b #the registry for the 3.3V rail
+    regCurrentLTC2990 = 0x06 #and 0x07 to 0x08 and 0x09 # the reg for the current
+    # across V3 and V4 pins
     regControlLTC2990 = 0x01 # can use this to set the mode that the chip runs in.
 
     def __init__(self, i2ccore, addr=0b1001111):
@@ -283,15 +284,15 @@ class VoltageLTC2990:
         else:
             print float(val)
 
-
-            /*
-            ██     ██    ██    ██████
-            ██     ██    ██    ██   ██
-            ██  █  ██    ██    ██████
-            ██ ███ ██    ██    ██
-             ███ ███  ██ ██ ██ ██
-            */
-
+            #
+            # /*
+            # ██     ██    ██    ██████
+            # ██     ██    ██    ██   ██
+            # ██  █  ██    ██    ██████
+            # ██ ███ ██    ██    ██
+            #  ███ ███  ██ ██ ██ ██
+            # */
+            #
 
 
 ################################################################################
@@ -300,6 +301,63 @@ class VoltageLTC2990:
 ####
 ################################################################################
 ################################################################################
+
+
+    reg1v8LTC2990 =  0x0c #and 0x0d #the registry for the 1.8V rail
+    reg3v3LTC2990 =  0x0a #and 0x0b #the registry for the 3.3V rail
+    regCurrentLTC2990 = 0x06 #and 0x07 to 0x08 and 0x09 # the reg for the current
+    # across V3 and V4 pins
+    regControlLTC2990 = 0x01 # can use this to set the mode that the chip runs in.
+
+
+    def readCurrent(self, regDataA, regDataB)
+        n, regDataA = self.i2ccore.writeread(self.slaveaddr, [0x06], 2)
+        assert n == 1
+        assert len(regDataA) == 2
+        valA = regDataA[0] << 8
+        valA |= regDataA[1]
+
+        # convert into 14 bit signed array
+        # bini to dec
+
+        n, regDataB = self.i2ccore.writeread(self.slaveaddr, [0x08], 2)
+        assert n == 1
+        assert len(regDataB) == 2
+        valB = regDataB[0] << 8
+        valB |= regDataB[1]
+
+        # convert this to 14 bit signed array
+        # bin to dec
+
+        val = valA - valB
+        return val
+
+
+
+def u16binToDec(self, val, negMask, signBit): #this is for generic conversion.
+if signBit == 15:
+    negMask = 0b1000000000000000
+elif signBit == 14:
+    negMask = 0b0100000000000000
+elif signBit == 13:
+    negMask = 0b0010000000000000
+elif signBit == 12
+    negMask = 0b0001000000000000
+
+    neg = val & negMask > 0 # test if msb is 1 OR 0x8000 bin 0b1000000000000000
+    if neg > 0:
+        val = ~val + 1 #invert the bits, add one
+        if signBit == 15:
+            print -(float(val)+0xffff) - 1 # convert from unsigned 8bit to signed dec
+        elif signBit == 14:
+            print -(float(val)+0xffff) - 1
+        elif signBit == 13:
+            print -(float(val)+0xffff) - 1
+        elif signBit == 12
+            print -(float(val)+0xffff) - 1
+    else:
+        print float(val)
+
 
     def writeread(self, addr, data, n):
         """Write data to device, then read n bytes back from it."""
@@ -352,25 +410,25 @@ class VoltageLTC2990:
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
-
-/*##############################################################################
-
-██ ███    ██  █████  ██████   ██  █████       ██████     ██ ██████
-██ ████   ██ ██   ██      ██ ███ ██   ██     ██         ██  ██   ██
-██ ██ ██  ██ ███████  █████   ██  ██████     ██        ██   ██████
-██ ██  ██ ██ ██   ██ ██       ██      ██     ██       ██    ██
-██ ██   ████ ██   ██ ███████  ██  █████       ██████ ██     ██
-
-*/##############################################################################
-
-/*
-███████ ██ ███    ██ ██████
-██      ██ ████   ██      ██
-█████   ██ ██ ██  ██   ▄███
-██      ██ ██  ██ ██   ▀▀
-██      ██ ██   ████   ██
-*/
-
+#
+# /*##############################################################################
+#
+# ██ ███    ██  █████  ██████   ██  █████       ██████     ██ ██████
+# ██ ████   ██ ██   ██      ██ ███ ██   ██     ██         ██  ██   ██
+# ██ ██ ██  ██ ███████  █████   ██  ██████     ██        ██   ██████
+# ██ ██  ██ ██ ██   ██ ██       ██      ██     ██       ██    ██
+# ██ ██   ████ ██   ██ ███████  ██  █████       ██████ ██     ██
+#
+# */##############################################################################
+#
+# /*
+# ███████ ██ ███    ██ ██████
+# ██      ██ ████   ██      ██
+# █████   ██ ██ ██  ██   ▄███
+# ██      ██ ██  ██ ██   ▀▀
+# ██      ██ ██   ████   ██
+# */
+#
 
 
 
@@ -394,7 +452,8 @@ class Current2v5INA219:
     ## Bus voltage is NOT right aligned and needs >> 3 to shift BD0 into LSB.
     # id est this is 13 bit resolution... ie a byte and a nibble AND a bit...
     ## ALSO the bus and shunt voltages are temperature dependant!
-    # AND... this assumes the shunt is set to PGA /8 which will give the greatest range of values.
+    # AND... this assumes the shunt is set to PGA /8 which will give the greatest
+    # range of values.
     # if we are setting PGA NOT to /8 we will have to amend the sign bits...
 
      def readreg(self, regaddr):
@@ -407,7 +466,8 @@ class Current2v5INA219:
 
 # FTAO Nick: I couldn't get your temp u16bin to dec function to work correctly
 # when testing...
-# So I had to write my own. I've been testing on the codeacademy notebook page to execute the scripts.
+# So I had to write my own. I've been testing on the codeacademy notebook page to
+# execute the scripts.
 # http://labs.codecademy.com/#:workspace I trust this is a suitable environment?
 
     def u16binToDec(self, val): #this is for generic conversion.
