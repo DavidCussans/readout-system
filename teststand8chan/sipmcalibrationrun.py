@@ -88,7 +88,7 @@ measbias = 0.0
 #triggerblock = storedata.TriggerBlock(target)
 fn = "data/sipmcalib_%s_%0.2fV_%0.2fC_%s.root" % (opts.Board, bias, temp, time.strftime("%d%b%Y_%H%M"))
 if opts.trim is not None:
-    fn = fn.replace("V_", "V_trim%gV_" % opts.trim)
+    fn = fn.replace("V_", "V_trim%0.3fV_" % opts.trim)
 outp = storedata.ROOTFile(fn)
 print "Using %d triggers." % opts.nevt
 nevt = opts.nevt
