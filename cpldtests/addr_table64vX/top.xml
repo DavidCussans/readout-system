@@ -1,0 +1,10 @@
+<node id="TOP">
+	<node id="csr" address="0x0" module="file://payload.xml"/>
+	<node id="chan" address="0x10" module="file://sc_chan.xml"/>
+	<node id="io" address="0x20" module="file://sc_io_64chan.xml"/>
+	<node id="timing" address="0x40" module="file://sc_timing.xml"/>
+	<node id="tlink" address="0x50" fwinfo="endpoint;width=0"/>
+	<node id="trig" address="0x60" module="file://sc_trig.xml"/>
+	<node id="roc" address="0x80" module="file://sc_roc.xml"/>
+<!--	<node id="mon" address="0x90" module="file://sc_temp.xml"/> -->
+</node>

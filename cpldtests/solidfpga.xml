@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+  <connection id="Fry"            uri="ipbusudp-2.0://192.168.235.129:50001" address_table="file://addr_table64vX/top.xml" />
+  <connection id="Leela"          uri="ipbusudp-2.0://192.168.235.1:50001" address_table="file://addr_table64vX/top.xml" />
+  <connection id="Bender"         uri="ipbusudp-2.0://192.168.235.2:50001" address_table="file://addr_table64vX/top.xml" />
+  <connection id="Zoidberg"       uri="ipbusudp-2.0://192.168.235.3:50001" address_table="file://addr_table64vX/top.xml" />
+</connections>
