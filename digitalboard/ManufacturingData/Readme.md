@@ -10,6 +10,9 @@ Contains information for :
 1) main board
 * pc051c-manufacturing-artwork-2017-04-25.zip
 2) I2C pass-through ( that connects I2C busses to sensors in frame )
-* pc051c_i2c_passthrough-manufacturing-artwork-2017-04-28.zip
+* pc051c_i2c_passthrough.pdf (Circuit schematic)
+* pc051c_i2c_passthrough-manufacturing-artwork-2017-04-28.zip ( Gerber files, drill, ODB++, bill of materials )
+* pc051c_i2c_passthrough_04_assembly.pdf ( Assembly drawing )
 3) Power filter / distribution board
-* pc051c_power_filter-manufacturing-artwork-2017-05-05.zip
+* pc051c_power_filter-manufacturing-artwork-2017-05-05.zip ( Gerber files, drill, ODB++, bill of materials  )
+* pc051c_power_filter.pdf (Circuit schematic)
