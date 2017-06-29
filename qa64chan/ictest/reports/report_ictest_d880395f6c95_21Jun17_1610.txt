@@ -1,0 +1,16 @@
+Time: 21Jun17_1610
+Tester: nr16874
+Board: d880395f6c95
+Tests:
+	Contact:	success
+	UniqueID:	success
+	DigitalI2C:	success
+	PowerChips:	success
+	Voltages:	success
+	Currents:	success
+	LM82Temp:	success
+	InDetectorI2C:	warning
+	Temperature:	success
+	ADCControl:	success
+	Analog0I2C:	success
+	Analog1I2C:	success
