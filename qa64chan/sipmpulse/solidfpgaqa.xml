@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+    <!-- This file for QA only -->
+    <connection id="qa64"           uri="ipbusudp-2.0://192.168.235.%d:50001" address_table="file://addr_table64v12/top.xml" />
+</connections>
