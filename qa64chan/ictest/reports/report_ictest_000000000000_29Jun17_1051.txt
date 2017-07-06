@@ -1,0 +1,18 @@
+Time: 29Jun17_1051
+Tester: nr16874
+Board: 000000000000
+Address: 
+Tests:
+	Contact:	failure
+	UniqueID:	
+	DigitalI2C:	
+	PowerChips:	
+	Voltages:	
+	Currents:	
+	LM82Temp:	
+	InDetectorI2C:	
+	Temperature:	
+	ADCControl:	
+	Analog0I2C:	
+	Analog1I2C:	
+	ClockSA:	

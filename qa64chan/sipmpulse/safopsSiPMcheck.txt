@@ -1,0 +1,64 @@
+# Saffron2 options file used for the Gent plane test (default options).
+
+# Lines beginning with hashtag are ignored (can be used for comments).
+# Whitespace matters - no unndeed spaces - but empty lines is ok.
+# Command order as shown here needs to be kept. See wiki for option details.
+
+# Detector specification
+DetectorConfig=SixtyFourChanPlane
+
+# Output file names. Optional extension to all output file names can also be
+# provided (.root will be added automatically).
+#HistosFileName=Saffron-histos_test
+#OutputExtension=_test2
+
+# Run mode option
+ScriptMode=False
+
+# Baseline options. Can be a histos file made by the calib script, or SoLid database, or None (default).
+#BaselineLocation=None
+#BaselineLocation=SoLidDatabase
+BaselineLocation=auto
+#BaselineLocation=S2-histos_cycleMode.root
+
+# Masked Channels (based on SafChanIndex)
+#MaskedChannel=0
+
+
+# Algorithm/script chain.
+AppendAlgorithm=SRawBufferFiller
+AppendAlgorithm=SWaveformParser
+AppendAlgorithm=SWaveformMerger
+#AppendAlgorithm=SPeakFinder
+#AppendAlgorithm=SEventFinder
+AppendAlgorithm=SWaveformMon
+#AppendAlgorithm=SPeakMon
+#AppendAlgorithm=SEventMon
+#AppendAlgorithm=SExtCubeMon
+#AppendAlgorithm=SMaxVal
+#AppendAlgorithm=STriggers
+#AppendAlgorithm=STupleWriter
+AppendAlgorithm=SCheckTestPattern
+#AppendAlgorithm=SCountWaveforms
+#AppendAlgorithm=SDeltaT
+#AppendAlgorithm=SWaveformChunkMon
+#AppendAlgorithm=SPeakFinder
+#AppendAlgorithm=SPeakMon
+
+
+# Number of cycles to process.
+CycleLimit=100000000
+
+# Algorithm specific options.
+# AlgorithmOption:SUserAlgorithm:TestOptionInt=15
+# AlgorithmOption:SUserAlgorithm:TestOptionDouble=1.235456
+#AlgorithmOption:SPeakFinder:Threshold=80
+#AlgorithmOption:SPeakFinder:IntegralRange=10
+# Cycle time thresholds (in seconds)
+#AlgorithmOption:SWaveformParser:maxcyclehtime=0.2
+#AlgorithmOption:SWaveformParser:maxgaphtime=1.0
+AlgorithmOption:SCheckTestPattern:targetpattern=0x2030
+
+# Input file names - can be wildcard, and can have several.
+# AppendInputFiles=/home/dsaunder/workspace/trig_data/runs/run0/run8chtrig_16Mar17_1732.sbf
+#AppendInputFiles=/home/dsaunder/workspace/readout_sw/run8chtrig_v0.3b/data/run8chtrig_0000000d_Smithers_22Mar17_1558.sbf

@@ -1,0 +1,20 @@
+<node id="roc" description="readout buffer" fwinfo="endpoint">
+	<node id="csr" address="0x0" fwinfo="endpoint;width=3">
+		<node id="ctrl" address="0x0">
+			<node id="en" mask="0x1"/>
+			<node id="en_auto" mask="0x2"/>
+			<node id="occ_freeze" mask="0x4"/>
+			<node id="occ_clr" mask="0x8"/>
+		</node>
+		<node id="stat" address="0x4"/>
+		<node id="tot_data" address="0x5"/>
+		<node id="wctr" address="0x6"/>
+	</node>
+	<node id="buf" address="0x8" fwinfo="endpoint;width=1">
+		<node id="data" address="0x0" mode="port"/>
+			<node id="count" address="0x1">
+				 <node id="count" mask="0xffff"/>
+			</node>
+	</node>
+	<node id="occ" address="0x10" mode="block" size="0x8" fwinfo="endpoint;width=3"/>
+</node>	

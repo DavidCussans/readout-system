@@ -1,0 +1,27 @@
+<node id="timing" description="Sample clock domain control" fwinfo="endpoint">
+	<node id="csr" address="0x0" description="ctrl/status register" fwinfo="endpoint;width=3">
+		<node id="ctrl" address="0x0">
+			<node id="rst" mask="0x1"/>
+			<node id="rst_ctr" mask="0x2"/>
+			<node id="cap_ctr" mask="0x4"/>
+			<node id="en_ext_sync" mask="0x8"/>
+			<node id="force_sync" mask="0x10"/>
+			<node id="pipeline_en" mask="0x20"/>
+			<node id="send_sync" mask="0x40"/>
+			<node id="chan_slip" mask="0x1000"/>
+			<node id="chan_rst_buf" mask="0x2000"/>
+			<node id="chan_cap" mask="0x4000"/>
+			<node id="chan_inc" mask="0x8000"/>
+		</node>
+		<node id="stat" address="0x8">
+			<node id="wait_sync" mask="0x1"/>
+			<node id="sync_err" mask="0x2"/>
+			<node id="io_err" mask="0x4"/>
+			<node id="locked" mask="0x8"/>
+		</node>
+		<node id="sctr_l" address="0x9"/>
+		<node id="sctr_h" address="0xa"/>
+		<node id="sync_ctr" address="0xb"/>
+		<node id="trig_ctr" address="0xc"/>
+	</node>
+</node>
