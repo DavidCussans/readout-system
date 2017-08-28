@@ -1,0 +1,13 @@
+<node id="sc_io" description="IO controllers" fwinfo="endpoint">
+	<node id="csr" address="0x0" description="ctrl/stat register" fwinfo="endpoint;width=1">
+		<node id="ctrl" address="0x0">
+			<node id="clkgen_rst" mask="0x1"/>
+		</node>
+		<node id="stat" address="0x1">
+			<node id="clkgen_lol" mask="0x1"/>
+		</node>
+	</node>
+	<node id="freq_ctr" address="0x4" module="file://freq_ctr.xml"/>
+	<node id="i2c" address="0x8" module="file://opencores_i2c.xml"/>
+	<node id="spi" address="0x10" module="file://opencores_spi.xml"/>
+</node>

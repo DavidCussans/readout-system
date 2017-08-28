@@ -1,0 +1,20 @@
+<node id="fake" description="Fake data generator" fwinfo="endpoint">
+    <node id="ctrl" address="0x0" description="fake data ctrl">
+		<node id="en" mask="0x1"/>
+		<node id="mode" mask="0x2"/>
+		<node id="force" mask="0x4"/>
+		<node id="samp_lock" mask="0x8"/>
+	</node>
+	<node id="params" address="0x2" description="fake data params" fwinfo="endpoint;width=1">
+		<node id="freq" address="0x0">
+			<node id="freq_div" mask="0xf"/>
+			<node id="n" mask="0xff00"/>
+			<node id="gap" mask="0xff0000"/>
+			<node id="samp" mask="0xff000000"/>
+		</node>
+		<node id="size" address="0x1">
+			<node id="level" mask="0x3ff"/>
+			<node id="ped" mask="0x3ff0000"/>
+		</node>
+	</node>
+</node>

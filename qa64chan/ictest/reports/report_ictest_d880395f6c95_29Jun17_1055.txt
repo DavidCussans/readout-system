@@ -1,0 +1,18 @@
+Time: 29Jun17_1055
+Tester: nr16874
+Board: d880395f6c95
+Address: 192.168.235.1:50001
+Tests:
+	Contact:	success
+	UniqueID:	success
+	DigitalI2C:	success
+	PowerChips:	success
+	Voltages:	success
+	Currents:	success
+	LM82Temp:	success
+	InDetectorI2C:	warning
+	Temperature:	success
+	ADCControl:	success
+	Analog0I2C:	success
+	Analog1I2C:	success
+	ClockSA:	success
