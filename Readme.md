@@ -17,4 +17,4 @@ Permissions
 -----------
 
 The `Readout developers` group have write access, other members of the collaboration have read access.
-If you need access contact Nick Ryder.
+If you need access contact Dan Saunders.
