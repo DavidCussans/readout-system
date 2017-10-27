@@ -21,3 +21,7 @@ Contains information for :
 Contains information on how to modify power supply circuit for correct operation:
 
 * pc054a_changes_to_psu.pdf
+
+Contains bitstreams ( with different IP addresses ):
+
+* bitstreams/
