@@ -17,3 +17,11 @@ Contains information for :
 * pc054a_fmc.pdf ( Circuit schematic )
 * pc054a_toplevel_27_assembly.pdf  ( Assembly drawings )
 * pc054a_fmc_08.brd ( PCB database file in Cadence Allegro format )
+
+Contains information on how to modify power supply circuit for correct operation:
+
+* pc054a_changes_to_psu.pdf
+
+Contains bitstreams ( with different IP addresses ):
+
+* bitstreams/
