@@ -1,0 +1,11 @@
+===================================
+Configuration Memory information
+===================================
+File Format        MCS
+Interface          SPIX4
+Size               2M
+Start Address      0x00000000
+End Address        0x001FFFFF
+
+Addr1         Addr2         Date                    File(s)
+0x00000000    0x000F2DBB    Oct 27 17:15:56 2017    /users/phdgc/Solid/firmware/work_timing/build/proj/timing_test/top/top.runs/impl_1/top_192-168-10-136.bit
