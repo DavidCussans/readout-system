@@ -1,0 +1,28 @@
+Forward Design Changes Report
+-----------------------------
+
+Report File:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out (PCB - Forward Design Changes Report).txt
+Report Written:     Monday, October 31, 2016
+Project Path:       H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fanout.prj
+Design Path:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.pcb
+Design Title:       
+Created:            20/09/2016 07:58:07
+Last Saved:         31/10/2016 10:10:55
+Editing Time:       18631 min
+Units:              mm (precision 1)
+
+Connected pin "U48-6" to net "Bias-".
+Connected pin "U48-7" to net "Bias+".
+Connected pin "U48-8" to net "N0014".
+Connected pin "U8-8" to net "N0106".
+Connected pin "U15-8" to net "N0111".
+Connected pin "U19-8" to net "N0116".
+Connected pin "U23-8" to net "N0121".
+Connected pin "U27-8" to net "N0130".
+Connected pin "U31-8" to net "N0134".
+Connected pin "U35-8" to net "N0138".
+Connected pin "U39-8" to net "N0142".
+Connected pin "U43-8" to net "N0146".
+
+
+End Of Report.

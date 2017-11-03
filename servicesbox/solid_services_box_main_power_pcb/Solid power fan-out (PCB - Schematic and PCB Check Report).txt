@@ -1,0 +1,21 @@
+Schematic and PCB Check Report
+------------------------------
+
+Report File:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out (PCB - Schematic and PCB Check Report).txt
+Report Written:     Thursday, November 24, 2016
+Project Path:       H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fanout.prj
+Design Path:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.pcb
+Design Title:       
+Created:            20/09/2016 07:58:07
+Last Saved:         31/10/2016 15:54:12
+Editing Time:       18976 min
+Units:              mm (precision 1)
+
+
+Checking integrity of Schematic "H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.sch" with PCB "H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.pcb"
+==========================================================================================================================================================================================================
+
+The designs are the same.
+
+
+End Of Report.
