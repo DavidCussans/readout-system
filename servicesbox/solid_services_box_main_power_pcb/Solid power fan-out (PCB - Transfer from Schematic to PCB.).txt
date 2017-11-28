@@ -1,0 +1,15 @@
+Transfer from Schematic to PCB.
+-------------------------------
+
+Report File:        H:\Projects\SoLid\DCDC Test circuit\Solid power fan-out (PCB - Transfer from Schematic to PCB.).txt
+Report Written:     Tuesday, September 20, 2016
+Design Path:        H:\Projects\SoLid\DCDC Test circuit\Solid power fan-out.pcb
+Design Title:       
+Created:            20/09/2016 08:58:07
+Last Saved:         20/09/2016 08:58:22
+Editing Time:       0 min
+Units:              mm (precision 1)
+
+Net class "Power" was not defined, but has been created. Please check the values in the PCB design.
+
+End Of Report.

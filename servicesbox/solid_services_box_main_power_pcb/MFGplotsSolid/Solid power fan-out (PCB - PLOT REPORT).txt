@@ -1,0 +1,391 @@
+PLOT REPORT
+-----------
+
+Report File:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out (PCB - PLOT REPORT).txt
+Report Written:     Thursday, March 02, 2017
+Project Path:       H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fanout.prj
+Design Path:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.pcb
+Design Title:       
+Created:            20/09/2016 07:58:07
+Last Saved:         14/02/2017 13:44:44
+Editing Time:       22663 min
+Units:              mm (precision 1)
+
+
+Device Settings
+===============
+
+
+Gerber Settings
+===============
+
+    Leading zero suppression.
+    G01 assumed throughout.
+    Line termination <*> <CR> <LF>.
+    2.3 format absolute inches.
+    Format commands defined in Gerber file.
+    Aperture table defined in Gerber file.
+    Hardware arcs allowed.
+
+
+Drill Settings
+==============
+
+    Excellon Format 1    Format 2.3 absolute in mm.
+    No zero suppression.
+
+
+Plots Output
+============
+
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Top Silkscreen.gbr
+
+    Layers:
+    ------------------
+    Top Silkscreen
+    Board Outlines
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+    D16    Round 5.00
+    D84    Round 6.00
+    D85    Round 3.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Top Copper.gbr
+
+    Layers:
+    --------------
+    Top Copper
+
+    D-Code Shape  (thou)
+    ----------------------------------------------
+    D10    Round 12.00
+    D11    Round 10.00
+    D15    Round 100.00
+    D17    Round 196.85
+    D18    Round 80.00
+    D19    Round 200.00
+    D71    Rectangle 74.00 X 98.00  Rotation 90
+    D20    Square 52.00
+    D21    Round 52.00
+    D23    Round 78.74
+    D25    Round 125.98
+    D26    Round 39.37
+    D27    Round 40.00
+    D28    Round 137.80
+    D88    Round 59.06
+    D89    Round 250.00
+    D90    Square 60.00
+    D91    Round 60.00
+    D92    Round 141.73
+    D96    Round 110.00
+    D97    Rectangle 74.00 X 98.00
+    D98    Round 98.43
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Top Copper (Resist).gbr
+
+    Layers:
+    --------------
+    Top Copper
+
+    D-Code Shape  (thou)
+    -----------------------------------------------
+    D72    Round 206.85
+    D73    Round 90.00
+    D74    Round 210.00
+    D76    Rectangle 84.00 X 108.00  Rotation 90
+    D77    Square 62.00
+    D78    Round 62.00
+    D80    Round 88.74
+    D81    Round 110.00
+    D93    Round 260.00
+    D94    Square 70.00
+    D95    Round 70.00
+    D99    Round 120.00
+    D100   Rectangle 84.00 X 108.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Top Copper (Paste).gbr
+
+    Layers:
+    --------------
+    Top Copper
+
+    D-Code Shape  (thou)
+    ----------------------------------------------
+    D83    Rectangle 70.00 X 94.00  Rotation 90
+    D101   Rectangle 70.00 X 94.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Layer 2 Copper.gbr
+
+    Layers:
+    ------------------
+    Layer 2 Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+    D15    Round 100.00
+    D16    Round 5.00
+    D17    Round 196.85
+    D18    Round 80.00
+    D19    Round 200.00
+    D20    Square 52.00
+    D21    Round 52.00
+    D23    Round 78.74
+    D27    Round 40.00
+    D88    Round 59.06
+    D89    Round 250.00
+    D90    Square 60.00
+    D91    Round 60.00
+    D96    Round 110.00
+    D102   Round 23.62
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Layer 3 Copper.gbr
+
+    Layers:
+    ------------------
+    Layer 3 Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+    D15    Round 100.00
+    D16    Round 5.00
+    D17    Round 196.85
+    D18    Round 80.00
+    D19    Round 200.00
+    D20    Square 52.00
+    D21    Round 52.00
+    D23    Round 78.74
+    D27    Round 40.00
+    D88    Round 59.06
+    D89    Round 250.00
+    D90    Square 60.00
+    D91    Round 60.00
+    D96    Round 110.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Layer 4 Copper.gbr
+
+    Layers:
+    ------------------
+    Layer 4 Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+    D15    Round 100.00
+    D16    Round 5.00
+    D17    Round 196.85
+    D18    Round 80.00
+    D19    Round 200.00
+    D20    Square 52.00
+    D21    Round 52.00
+    D23    Round 78.74
+    D27    Round 40.00
+    D88    Round 59.06
+    D89    Round 250.00
+    D90    Square 60.00
+    D91    Round 60.00
+    D96    Round 110.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Layer 5 Copper.gbr
+
+    Layers:
+    ------------------
+    Layer 5 Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+    D15    Round 100.00
+    D16    Round 5.00
+    D17    Round 196.85
+    D18    Round 80.00
+    D19    Round 200.00
+    D20    Square 52.00
+    D21    Round 52.00
+    D23    Round 78.74
+    D27    Round 40.00
+    D88    Round 59.06
+    D89    Round 250.00
+    D90    Square 60.00
+    D91    Round 60.00
+    D96    Round 110.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Bottom Copper.gbr
+
+    Layers:
+    -----------------
+    Bottom Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+    D15    Round 100.00
+    D16    Round 5.00
+    D17    Round 196.85
+    D18    Round 80.00
+    D19    Round 200.00
+    D20    Square 52.00
+    D21    Round 52.00
+    D23    Round 78.74
+    D27    Round 40.00
+    D88    Round 59.06
+    D89    Round 250.00
+    D90    Square 60.00
+    D91    Round 60.00
+    D92    Round 141.73
+    D96    Round 110.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Bottom Copper (Resist).gbr
+
+    Layers:
+    -----------------
+    Bottom Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+    D72    Round 206.85
+    D73    Round 90.00
+    D74    Round 210.00
+    D77    Square 62.00
+    D78    Round 62.00
+    D80    Round 88.74
+    D81    Round 110.00
+    D93    Round 260.00
+    D94    Square 70.00
+    D95    Round 70.00
+    D99    Round 120.00
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Bottom Copper (Paste).gbr
+
+    Layers:
+    -----------------
+    Bottom Copper
+
+    D-Code Shape  (thou)
+    -----------------------
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Bottom Silkscreen.gbr
+
+    Layers:
+    ---------------------
+    Bottom Silkscreen
+
+    D-Code Shape  (thou)
+    -----------------------
+    D10    Round 12.00
+
+NC Drill Output
+===============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Drill Data - [Through Hole].drl
+
+    Output:
+    ---------------------------
+    Plated Round Drill Holes
+    Plated Slots
+    Plated Board Outlines
+
+    Tool  Size      Count   ID
+    ---------------------------------
+    T001  00.024 in 36    K
+    T002  00.032 in 6     F
+    T003  00.038 in 9     M
+    T004  00.040 in 9     N
+    T005  00.043 in 21    C
+    T006  00.047 in 198   H
+    T007  00.052 in 126   I
+    T008  00.082 in 6     D
+    T009  00.130 in 12    E
+    T010  00.138 in 28    L
+    ---------------------------------
+    Total           451
+    ---------------------------------
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Drill Data - [Through Hole] (Unplated).drl
+
+    Output:
+    -----------------------------
+    Unplated Round Drill Holes
+    Unplated Slots
+    Unplated Board Outlines
+
+    Tool  Size      Count   ID
+    ---------------------------------
+    T001  00.025 in 1
+    ---------------------------------
+    Total           1
+    ---------------------------------
+
+
+Gerber Output
+=============
+
+H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out - Drill Ident Drawing - [Through Hole].gbr
+
+    Layers:
+    ------------------
+    [Through Hole]
+
+
+Drill Ident Drawing
+===================
+
+    Drill Plated Size Shape ID
+    -----------------------------------
+    43    Y      100  Round C
+    82    Y      100  Round D
+    130   Y      100  Round E
+    32    Y      100  Round F
+    47    Y      100  Round H
+    52    Y      100  Round I
+    24    Y      100  Round K
+    138   Y      100  Round L
+    38    Y      100  Round M
+    40    Y      100  Round N
+
+    D-Code Shape  (thou)
+    -----------------------
+    D15    Round 100.00
+    D16    Round 5.00
+
+End Of Report.

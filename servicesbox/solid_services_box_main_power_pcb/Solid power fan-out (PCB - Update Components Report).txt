@@ -1,0 +1,97 @@
+Update Components Report
+------------------------
+
+Report File:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out (PCB - Update Components Report).txt
+Report Written:     Friday, October 28, 2016
+Project Path:       H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fanout.prj
+Design Path:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.pcb
+Design Title:       
+Created:            20/09/2016 08:58:07
+Last Saved:         28/10/2016 14:59:54
+Editing Time:       14537 min
+Units:              mm (precision 1)
+
+
+Library Files:
+==============
+
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Connectors-PCB Connectors-PCB Headers.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Connectors-PCB Connectors-PCB Terminal Blocks.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\DCDC convertors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Displays & Optoelectronics-LEDs & LED Accessories-Visible LEDs.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Operational Amplifiers.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Passive Components-Capacitors-Aluminium Capacitors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Passive Components-Capacitors-Ceramic Multilayer Capacitors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Passive Components-Capacitors-Tantalum Capacitors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Passive Components-Fixed Resistors-Through Hole Fixed Resistors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Passive Components-Variable Resistors-Potentiometers.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Passive Components-Variable Resistors-Trimmer Resistors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Power Connectors.cml
+C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Switching Diodes.cml
+
+Selected items to be updated:
+=============================
+
+
+Components:
+===========
+
+    (None) 
+
+Symbols:
+========
+
+    (None) 
+
+Additional items to be updated:
+===============================
+
+
+Components:
+===========
+
+    (None) 
+
+Symbols:
+========
+
+    (None) 
+
+Selected items not to be updated  (Same version as library)
+===========================================================
+
+
+Components:
+===========
+
+508 10 pcb C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\DCDC convertors.cml
+
+Symbols:
+========
+
+508 10pin Connector C:\Users\Public\Documents\DesignSpark PCB\DownloadedLibrary\Power Connectors.psl
+
+
+
+Update Components Summary
+=========================
+
+Updating single component.
+Update component values
+Update component value positions
+(Remove pad style exceptions on updated components)
+
+	Selected for update:			   1  Component 
+						   1  Symbol 
+
+	Selected items to be updated:		   0  Components
+						   0  Symbols
+
+	Additional items to be updated:		   0  Components
+						   0  Symbols
+
+	Selected items NOT to be updated:	   1  Component 
+	  (Same version as library)		   1  Symbol 
+
+
+End Of Report.
