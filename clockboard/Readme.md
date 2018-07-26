@@ -25,3 +25,7 @@ Contains information on how to modify power supply circuit for correct operation
 Contains bitstreams ( with different IP addresses ):
 
 * bitstreams/
+
+Contains prom files ( 4x SPI , s25fl512s-spi-x1_x2_x4 )
+
+* prom_files

@@ -1,0 +1,15 @@
+Pour Copper Report
+------------------
+
+Report File:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out (PCB - Pour Copper Report).txt
+Report Written:     Wednesday, January 18, 2017
+Project Path:       H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fanout.prj
+Design Path:        H:\Projects\SoLid\DCDC Test circuit\Solid Power Fanout\Solid power fan-out.pcb
+Design Title:       
+Created:            20/09/2016 07:58:07
+Last Saved:         18/01/2017 12:43:25
+Editing Time:       20600 min
+Units:              mm (precision 1)
+
+
+End Of Report.
