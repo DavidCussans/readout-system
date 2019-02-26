@@ -11,6 +11,8 @@ The repository is split into the separate development parts:
 * software - to collect data transmitted from the FPGA, further reduce the data and write it to disk. The interface for operators to control the system
 * cabling - to connect the senors to the analog board, the analog board to the digital board, power supplies to each board, etc.
 * docs - system level documents such as requirements, reports, etc.
+* utility_box   design info and documentation about the utility box
+
 
 
 Permissions

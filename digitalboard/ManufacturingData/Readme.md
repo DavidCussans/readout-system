@@ -16,3 +16,17 @@ Contains information for :
 3) Power filter / distribution board
 * pc051c_power_filter-manufacturing-artwork-2017-05-05.zip ( Gerber files, drill, ODB++, bill of materials  )
 * pc051c_power_filter.pdf (Circuit schematic)
+
+
+Changes made on the ADC board 
+
+19 October 2017 
+
+all boards for module 1 .. 4 
+
+Put in parallel to R19   a resistor of 180K 
+
+modified boards see 
+
+https://docs.google.com/spreadsheets/d/17iVyDD3zpS0zKJI71sC7qOBFLLtJkKOROC2uzFVCJ_E/edit?usp=sharing_eip&ts=5a1d8e48
+
