@@ -14,7 +14,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg81"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="utilbox_terminal_layout.svg">
   <defs
      id="defs75" />
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.300313"
-     inkscape:cx="479.69348"
-     inkscape:cy="613.75434"
+     inkscape:cx="409.05092"
+     inkscape:cy="544.19859"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1045,5 +1045,37 @@
        height="6.6145883"
        x="115.43161"
        y="111.44842" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 103.1875,103.85417 H 92.604166"
+       id="path988"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 130.96875,99.885417 h 5.29166"
+       id="path990"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="65.109932"
+       y="104.75291"
+       id="text4704-98"><tspan
+         sodipodi:role="line"
+         id="tspan4702-2"
+         x="65.109932"
+         y="104.75291"
+         style="stroke-width:0.26458332">12V in DC/DC  +</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.52777767px;line-height:1;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="77.830811"
+       y="151.98076"
+       id="text4704-0-5"><tspan
+         sodipodi:role="line"
+         id="tspan4702-5-2"
+         x="77.830811"
+         y="151.98076"
+         style="stroke-width:0.26458332">12V DC/DC  -</tspan></text>
   </g>
 </svg>
